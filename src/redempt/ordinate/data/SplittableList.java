@@ -14,7 +14,6 @@ public class SplittableList<T> implements Iterable<T> {
 	
 	public SplittableList(T[] array, int start) {
 		this.array = array;
-		this.removed = new boolean[array.length];
 		this.start = start;
 	}
 	
@@ -25,11 +24,15 @@ public class SplittableList<T> implements Iterable<T> {
 	public void skip(int amount) {
 		int counter = 0;
 		for (int i = start; i < array.length; i++) {
-			if (!removed[i] && counter++ == amount) {
+			if (!isRemoved(i) && counter++ == amount) {
 				start = i;
 				return;
 			}
 		}
+	}
+	
+	private boolean isRemoved(int index) {
+		return removed != null && removed[index];
 	}
 	
 	public T peek() {
@@ -40,7 +43,7 @@ public class SplittableList<T> implements Iterable<T> {
 	}
 	
 	public T poll() {
-		while (removed[start]) start++;
+		while (isRemoved(start)) start++;
 		T val = peek();
 		if (val != null) {
 			start++;
@@ -63,7 +66,7 @@ public class SplittableList<T> implements Iterable<T> {
 	private int trueIndex(int index) {
 		int counter = 0;
 		for (int i = start; i < array.length; i++) {
-			if (!removed[i] && counter++ == index) {
+			if (!isRemoved(i) && counter++ == index) {
 				return i;
 			}
 		}
@@ -71,6 +74,9 @@ public class SplittableList<T> implements Iterable<T> {
 	}
 	
 	public void remove(int index) {
+		if (removed == null) {
+			removed = new boolean[array.length];
+		}
 		removedCount++;
 		index = trueIndex(index);
 		removed[index] = true;
@@ -78,7 +84,9 @@ public class SplittableList<T> implements Iterable<T> {
 	
 	public SplittableList<T> split(int newStart) {
 		SplittableList<T> list = new SplittableList<>(array, start + newStart);
-		list.removed = Arrays.copyOf(removed, removed.length);
+		if (removed != null) {
+			list.removed = Arrays.copyOf(removed, removed.length);
+		}
 		return list;
 	}
 	
@@ -89,7 +97,7 @@ public class SplittableList<T> implements Iterable<T> {
 			int index = start;
 			
 			private void advanceToNext() {
-				while (removed[index]) index++;
+				while (isRemoved(index)) index++;
 			}
 			
 			@Override
@@ -110,7 +118,7 @@ public class SplittableList<T> implements Iterable<T> {
 	@Override
 	public void forEach(Consumer<? super T> action) {
 		for (int i = start; i < array.length; i++) {
-			if (!removed[i]) {
+			if (!isRemoved(i)) {
 				action.accept(array[i]);
 			}
 		}
