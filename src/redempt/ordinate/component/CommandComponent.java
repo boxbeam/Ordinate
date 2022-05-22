@@ -2,7 +2,8 @@ package redempt.ordinate.component;
 
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
-import redempt.ordinate.data.HelpComponent;
+import redempt.ordinate.help.HelpComponent;
+import redempt.ordinate.help.LiteralHelpComponent;
 
 import java.util.List;
 

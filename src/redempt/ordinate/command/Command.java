@@ -3,8 +3,8 @@ package redempt.ordinate.command;
 import redempt.ordinate.component.CommandComponent;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
-import redempt.ordinate.data.HelpComponent;
 import redempt.ordinate.data.Named;
+import redempt.ordinate.help.HelpComponent;
 
 public class Command<T> extends CommandComponent<T> implements Named {
 	
