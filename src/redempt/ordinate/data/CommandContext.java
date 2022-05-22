@@ -24,6 +24,10 @@ public class CommandContext<T> {
 		return args.poll();
 	}
 	
+	public SplittableList<Argument> getArguments() {
+		return args;
+	}
+	
 	public T sender() {
 		return sender;
 	}
@@ -57,6 +61,10 @@ public class CommandContext<T> {
 			return null;
 		}
 		return parsed[pos];
+	}
+	
+	public CommandContext<T> clone() {
+		return new CommandContext<>(parent, sender, args.split(0), parsed.length - 1);
 	}
 	
 }

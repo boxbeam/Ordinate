@@ -44,6 +44,6 @@ public abstract class CommandComponent<T> {
 	
 	public abstract int getPriority();
 	public abstract boolean canParse(CommandContext<T> context);
-	public abstract CommandResult<T> parse();
+	public abstract CommandResult<T> parse(CommandContext<T> context);
 	
 }

@@ -17,7 +17,7 @@ public class Command<T> extends CommandComponent<T> {
 	}
 	
 	@Override
-	public CommandResult<T> parse() {
+	public CommandResult<T> parse(CommandContext<T> context) {
 		return null;
 	}
 	
