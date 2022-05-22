@@ -3,6 +3,8 @@ package redempt.ordinate.component;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 
+import java.util.List;
+
 public abstract class CommandComponent<T> {
 	
 	private int index;
@@ -40,6 +42,10 @@ public abstract class CommandComponent<T> {
 	
 	public int getMaxWidth() {
 		return 1;
+	}
+	
+	public List<String> completions(CommandContext<T> context) {
+		return null;
 	}
 	
 	public abstract int getPriority();
