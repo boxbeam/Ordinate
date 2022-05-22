@@ -40,6 +40,7 @@ public class SplittableList<T> implements Iterable<T> {
 	}
 	
 	public T poll() {
+		while (removed[start]) start++;
 		T val = peek();
 		if (val != null) {
 			start++;
@@ -48,7 +49,7 @@ public class SplittableList<T> implements Iterable<T> {
 	}
 	
 	public boolean hasNext() {
-		return start < array.length;
+		return start < array.length - removedCount;
 	}
 	
 	public int size() {
