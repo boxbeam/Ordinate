@@ -10,7 +10,6 @@ public class CommandResult<T> {
 	
 	private CommandComponent<T> component;
 	private String[] error;
-	private boolean remove = false;
 	
 	public CommandResult(CommandComponent<T> component, String[] error) {
 		this.component = component;
@@ -27,15 +26,6 @@ public class CommandResult<T> {
 	
 	public String[] getError() {
 		return error;
-	}
-	
-	public CommandResult<T> remove() {
-		remove = true;
-		return this;
-	}
-	
-	public boolean isRemove() {
-		return remove;
 	}
 	
 }

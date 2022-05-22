@@ -1,12 +1,20 @@
 package redempt.ordinate.data;
 
-public class SplittableList<T> {
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.function.Consumer;
+
+public class SplittableList<T> implements Iterable<T> {
 	
 	private T[] array;
+	private boolean[] removed;
+	private int removedCount = 0;
 	private int start;
 	
 	public SplittableList(T[] array, int start) {
 		this.array = array;
+		this.removed = new boolean[array.length];
 		this.start = start;
 	}
 	
@@ -15,8 +23,13 @@ public class SplittableList<T> {
 	}
 	
 	public void skip(int amount) {
-		start += amount;
-		start = Math.min(start, array.length - 1);
+		int counter = 0;
+		for (int i = start; i < array.length; i++) {
+			if (!removed[i] && counter++ == amount) {
+				start = i;
+				return;
+			}
+		}
 	}
 	
 	public T peek() {
@@ -39,15 +52,72 @@ public class SplittableList<T> {
 	}
 	
 	public int size() {
-		return array.length - start;
+		return array.length - start - removedCount;
 	}
 	
 	public T get(int index) {
-		return array[start + index];
+		return array[trueIndex(index)];
+	}
+	
+	private int trueIndex(int index) {
+		int counter = 0;
+		for (int i = start; i < array.length; i++) {
+			if (!removed[i] && counter++ == index) {
+				return i;
+			}
+		}
+		return array.length;
+	}
+	
+	public void remove(int index) {
+		removedCount++;
+		index = trueIndex(index);
+		removed[index] = true;
 	}
 	
 	public SplittableList<T> split(int newStart) {
-		return new SplittableList<>(array, start + newStart);
+		SplittableList<T> list = new SplittableList<>(array, start + newStart);
+		list.removed = Arrays.copyOf(removed, removed.length);
+		return list;
+	}
+	
+	@Override
+	public Iterator<T> iterator() {
+		return new Iterator<T>() {
+			
+			int index = start;
+			
+			private void advanceToNext() {
+				while (removed[index]) index++;
+			}
+			
+			@Override
+			public boolean hasNext() {
+				advanceToNext();
+				return index < array.length;
+			}
+			
+			@Override
+			public T next() {
+				advanceToNext();
+				return array[index++];
+			}
+			
+		};
+	}
+	
+	@Override
+	public void forEach(Consumer<? super T> action) {
+		for (int i = start; i < array.length; i++) {
+			if (!removed[i]) {
+				action.accept(array[i]);
+			}
+		}
+	}
+	
+	@Override
+	public Spliterator<T> spliterator() {
+		return Iterable.super.spliterator();
 	}
 	
 }
