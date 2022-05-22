@@ -27,7 +27,7 @@ public class SplittableList<T> {
 
 	public void skip(int amount) {
 		start += amount;
-		start = Math.min(start, array.length - 1);
+		start = Math.min(start, array.length);
 	}
 
 	public T peek() {
