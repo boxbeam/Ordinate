@@ -3,11 +3,12 @@ package redempt.ordinate.argument;
 import redempt.ordinate.component.CommandComponent;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.Message;
+import redempt.ordinate.data.Named;
 
 import java.util.List;
 import java.util.function.BiFunction;
 
-public class ArgType<T, V> {
+public class ArgType<T, V> implements Named {
 
 	private String name;
 	private String errorMessage;
@@ -21,6 +22,7 @@ public class ArgType<T, V> {
 		this.completer = completer;
 	}
 	
+	@Override
 	public String getName() {
 		return name;
 	}

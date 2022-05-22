@@ -2,10 +2,12 @@ package redempt.ordinate.component;
 
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
+import redempt.ordinate.data.HelpComponent;
+import redempt.ordinate.data.Named;
 
 import java.util.function.Function;
 
-public class ContextComponent<T, V> extends CommandComponent<T> {
+public class ContextComponent<T, V> extends CommandComponent<T> implements Named {
 	
 	private String name;
 	private Function<CommandContext<T>, V> contextProvider;
@@ -17,6 +19,7 @@ public class ContextComponent<T, V> extends CommandComponent<T> {
 		this.error = error;
 	}
 	
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -24,6 +27,11 @@ public class ContextComponent<T, V> extends CommandComponent<T> {
 	@Override
 	public int getPriority() {
 		return 10;
+	}
+	
+	@Override
+	public HelpComponent getHelpDisplay() {
+		return null;
 	}
 	
 	@Override

@@ -2,6 +2,7 @@ package redempt.ordinate.component;
 
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
+import redempt.ordinate.data.HelpComponent;
 
 import java.util.List;
 
@@ -49,6 +50,7 @@ public abstract class CommandComponent<T> {
 	}
 	
 	public abstract int getPriority();
+	public abstract HelpComponent getHelpDisplay();
 	public abstract boolean canParse(CommandContext<T> context);
 	public abstract CommandResult<T> parse(CommandContext<T> context);
 	
