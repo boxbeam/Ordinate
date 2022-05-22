@@ -1,19 +1,26 @@
 package redempt.ordinate.data;
 
+import redempt.ordinate.command.Command;
+
 public class CommandContext<T> {
 
+	private Command<T> command;
 	private CommandContext<T> parent;
 	private T sender;
 	private SplittableList<Argument> args;
 	private Object[] parsed;
 	private int lastParsed = -1;
 	
-	public CommandContext(CommandContext<T> parent, T sender, SplittableList<Argument> args, int processAllocation) {
+	public CommandContext(Command<T> command, CommandContext<T> parent, T sender, SplittableList<Argument> args, int processAllocation) {
 		this.parent = parent;
 		this.sender = sender;
 		this.args = args;
 		parsed = new Object[processAllocation + 1];
 		parsed[0] = sender;
+	}
+	
+	public Command<T> getCommand() {
+		return command;
 	}
 	
 	public Argument peekArg() {
@@ -63,8 +70,8 @@ public class CommandContext<T> {
 		return parsed[pos];
 	}
 	
-	public CommandContext<T> clone() {
-		return new CommandContext<>(parent, sender, args.split(0), parsed.length - 1);
+	public CommandContext<T> clone(Command<T> command) {
+		return new CommandContext<>(command, parent, sender, args.split(0), parsed.length - 1);
 	}
 	
 }
