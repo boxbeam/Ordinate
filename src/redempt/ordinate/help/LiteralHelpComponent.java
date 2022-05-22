@@ -8,7 +8,7 @@ public class LiteralHelpComponent implements HelpComponent {
 	private String value;
 	private int priority;
 	
-	public LiteralHelpComponent(CommandComponent<?> owner, String value, int priority) {
+	public LiteralHelpComponent(CommandComponent<?> owner, int priority, String value) {
 		this.owner = owner;
 		this.value = value;
 		this.priority = priority;
