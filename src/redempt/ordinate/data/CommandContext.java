@@ -1,21 +1,17 @@
 package redempt.ordinate.data;
 
-import java.util.ArrayDeque;
-import java.util.Collection;
-import java.util.Queue;
-
 public class CommandContext<T> {
 
 	private CommandContext<T> parent;
 	private T sender;
-	private Queue<Argument> args = new ArrayDeque<>();
+	private SplittableList<Argument> args;
 	private Object[] parsed;
 	private int lastParsed = -1;
 	
-	public CommandContext(CommandContext<T> parent, T sender, Collection<Argument> args, int processAllocation) {
+	public CommandContext(CommandContext<T> parent, T sender, SplittableList<Argument> args, int processAllocation) {
 		this.parent = parent;
 		this.sender = sender;
-		this.args.addAll(args);
+		this.args = args;
 		parsed = new Object[processAllocation + 1];
 		parsed[0] = sender;
 	}
