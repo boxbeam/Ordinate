@@ -15,12 +15,12 @@ public class SplittableList<T> {
 		this(array, 0);
 	}
 
-	public void remove(int rawIndex) {
-		int index = rawIndex + start;
+	public void remove(int index) {
+		int trueIndex = index + start;
 
-		Object[] newArray = new Object[array.length - 1];
+		Object[] newArray = new Object[array.length - start - 1];
 		System.arraycopy(array, start, newArray, 0, index);
-		System.arraycopy(array, index + 1, newArray, index, array.length - start - 1);
+		System.arraycopy(array, trueIndex + 1, newArray, index, array.length - trueIndex - 1);
 		array = newArray;
 		start = 0;
 	}
