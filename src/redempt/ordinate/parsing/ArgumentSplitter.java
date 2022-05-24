@@ -38,6 +38,11 @@ public class ArgumentSplitter {
 			}
 			buffer.append(c);
 		}
+		if (buffer.length() > 0) {
+			String last = buffer.toString();
+			last = (quoted ? "\"" : "") + last;
+			args.add(new Argument(last, false));
+		}
 		Argument[] array = args.toArray(new Argument[0]);
 		return new SplittableList<>(array);
 	}
