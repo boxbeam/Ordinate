@@ -10,6 +10,7 @@ public class CommandResult<T> {
 	
 	private CommandComponent<T> component;
 	private String[] error;
+	private boolean complete = false;
 	
 	public CommandResult(CommandComponent<T> component, String[] error) {
 		this.component = component;
@@ -19,7 +20,16 @@ public class CommandResult<T> {
 	public CommandComponent<T> getComponent() {
 		return component;
 	}
-	
+
+	public CommandResult<T> complete() {
+		complete = true;
+		return this;
+	}
+
+	public boolean isComplete() {
+		return complete;
+	}
+
 	public boolean isSuccess() {
 		return error == null;
 	}

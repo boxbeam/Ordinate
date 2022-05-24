@@ -3,7 +3,6 @@ package redempt.ordinate.component;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.help.HelpComponent;
-import redempt.ordinate.help.LiteralHelpComponent;
 
 import java.util.List;
 
@@ -42,14 +41,12 @@ public abstract class CommandComponent<T> {
 		return new CommandResult<>(this, error);
 	}
 	
-	public int getMaxWidth() {
-		return 1;
-	}
-	
 	public List<String> completions(CommandContext<T> context) {
 		return null;
 	}
-	
+
+	public abstract int getMaxConsumedArgs();
+	public abstract int getMaxParsedObjects();
 	public abstract int getPriority();
 	public abstract HelpComponent getHelpDisplay();
 	public abstract boolean canParse(CommandContext<T> context);

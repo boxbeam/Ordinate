@@ -1,6 +1,7 @@
 package redempt.ordinate.argument;
 
 import redempt.ordinate.component.CommandComponent;
+import redempt.ordinate.constraint.ConstraintParser;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.Message;
 import redempt.ordinate.data.Named;
@@ -14,6 +15,7 @@ public class ArgType<T, V> implements Named {
 	private String errorMessage;
 	private BiFunction<CommandContext<T>, Integer, V> converter;
 	private BiFunction<CommandContext<T>, Integer, List<String>> completer;
+	private ConstraintParser<T, V> constraintParser;
 
 	public ArgType(String name, String errorMessage, BiFunction<CommandContext<T>, Integer, V> converter, BiFunction<CommandContext<T>, Integer, List<String>> completer) {
 		this.name = name;
@@ -41,6 +43,15 @@ public class ArgType<T, V> implements Named {
 	
 	public List<String> complete(CommandContext<T> context, int index) {
 		return completer.apply(context, index);
+	}
+
+	public ArgType<T, V> constraint(ConstraintParser<T, V> constraintParser) {
+		this.constraintParser = constraintParser;
+		return this;
+	}
+
+	public ConstraintParser<T, V> getConstraintParser() {
+		return constraintParser;
 	}
 	
 }
