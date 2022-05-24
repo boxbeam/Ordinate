@@ -6,6 +6,7 @@ import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.data.Named;
 import redempt.ordinate.dispatch.CommandDispatcher;
 import redempt.ordinate.help.HelpComponent;
+import redempt.ordinate.processing.CachedSupplier;
 import redempt.ordinate.processing.CommandParsingPipeline;
 
 import java.util.function.Supplier;
@@ -14,10 +15,10 @@ public class Command<T> extends CommandComponent<T> implements Named {
 	
 	private String[] names;
 	private CommandParsingPipeline<T> pipeline;
-	private Supplier<CommandDispatcher<T>> dispatchTarget;
+	private CachedSupplier<CommandDispatcher<T>> dispatchTarget;
 
 	public void setDispatchTarget(Supplier<CommandDispatcher<T>> dispatchTarget) {
-		this.dispatchTarget = dispatchTarget;
+		this.dispatchTarget = CachedSupplier.cached(dispatchTarget);
 	}
 
 	public CommandParsingPipeline<T> getPipeline() {
