@@ -2,7 +2,7 @@ package redempt.ordinate.processing;
 
 import java.util.function.Supplier;
 
-public class CachedSupplier<T> {
+public class CachedSupplier<T> implements Supplier<T> {
 
 	public static <T> CachedSupplier<T> cached(Supplier<T> supplier) {
 		return new CachedSupplier<>(supplier);
