@@ -4,13 +4,21 @@ import redempt.ordinate.component.CommandComponent;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.data.Named;
+import redempt.ordinate.dispatch.CommandDispatcher;
 import redempt.ordinate.help.HelpComponent;
 import redempt.ordinate.processing.CommandParsingPipeline;
+
+import java.util.function.Supplier;
 
 public class Command<T> extends CommandComponent<T> implements Named {
 	
 	private String[] names;
 	private CommandParsingPipeline<T> pipeline;
+	private Supplier<CommandDispatcher<T>> dispatchTarget;
+
+	public void setDispatchTarget(Supplier<CommandDispatcher<T>> dispatchTarget) {
+		this.dispatchTarget = dispatchTarget;
+	}
 
 	public CommandParsingPipeline<T> getPipeline() {
 		return pipeline;
@@ -49,6 +57,10 @@ public class Command<T> extends CommandComponent<T> implements Named {
 	@Override
 	public String getName() {
 		return names[0];
+	}
+
+	public String[] getNames() {
+		return names;
 	}
 	
 }
