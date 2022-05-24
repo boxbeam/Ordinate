@@ -12,14 +12,12 @@ import java.util.function.BiFunction;
 public class ArgType<T, V> implements Named {
 
 	private String name;
-	private String errorMessage;
-	private BiFunction<CommandContext<T>, Integer, V> converter;
+	private BiFunction<CommandContext<T>, String, V> converter;
 	private BiFunction<CommandContext<T>, Integer, List<String>> completer;
 	private ConstraintParser<T, V> constraintParser;
 
-	public ArgType(String name, String errorMessage, BiFunction<CommandContext<T>, Integer, V> converter, BiFunction<CommandContext<T>, Integer, List<String>> completer) {
+	public ArgType(String name, BiFunction<CommandContext<T>, String, V> converter, BiFunction<CommandContext<T>, Integer, List<String>> completer) {
 		this.name = name;
-		this.errorMessage = errorMessage;
 		this.converter = converter;
 		this.completer = completer;
 	}
@@ -29,15 +27,11 @@ public class ArgType<T, V> implements Named {
 		return name;
 	}
 	
-	public Message<T, String, V> convert(CommandComponent<T> component, CommandContext<T> context, int index) {
+	public V convert(CommandContext<T> context, String arg) {
 		try {
-			V val = converter.apply(context, index);
-			if (val == null) {
-				return new Message<>(component, errorMessage, null);
-			}
-			return new Message<>(component, null, val);
+			return converter.apply(context, arg);
 		} catch (Exception e) {
-			return new Message<>(component, errorMessage, null);
+			return null;
 		}
 	}
 	

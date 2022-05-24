@@ -30,6 +30,10 @@ public class CommandContext<T> {
 	public Argument pollArg() {
 		return args.poll();
 	}
+
+	public boolean hasArg() {
+		return args.hasNext();
+	}
 	
 	public SplittableList<Argument> getArguments() {
 		return args;

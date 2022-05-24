@@ -3,16 +3,15 @@ package redempt.ordinate.constraint;
 import redempt.ordinate.component.CommandComponent;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
+import redempt.ordinate.processing.Formatter;
 import redempt.ordinate.help.HelpComponent;
-
-import java.util.function.UnaryOperator;
 
 public class ConstraintComponent<T, V> extends CommandComponent<T> {
 
 	private Constraint<T, V> constraint;
-	private UnaryOperator<String> errorGenerator;
+	private Formatter errorGenerator;
 
-	public ConstraintComponent(Constraint<T, V> constraint, UnaryOperator<String> errorGenerator) {
+	public ConstraintComponent(Constraint<T, V> constraint, Formatter errorGenerator) {
 		this.constraint = constraint;
 		this.errorGenerator = errorGenerator;
 	}
