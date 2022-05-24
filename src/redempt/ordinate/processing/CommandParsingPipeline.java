@@ -37,6 +37,9 @@ public class CommandParsingPipeline<T> {
 	}
 
 	public void prepare() {
+		if (finalized) {
+			throw new IllegalStateException("Pipeline already finalized, cannot add more components");
+		}
 		finalized = true;
 		components.sort(comparator);
 	}
