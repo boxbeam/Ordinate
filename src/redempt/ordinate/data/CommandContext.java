@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class CommandContext<T> {
 
-	private Map<Class<?>, Deque<Object>> dependables = new HashMap<>();
+	private Map<Class<?>, SplittableStack<Object>> dependables = new HashMap<>();
 	private Command<T> command;
 	private CommandContext<T> parent;
 	private T sender;
@@ -26,19 +26,19 @@ public class CommandContext<T> {
 	}
 
 	public void provide(Object dependable) {
-		dependables.computeIfAbsent(dependable.getClass(), k -> new ArrayDeque<>()).add(dependable);
+		dependables.computeIfAbsent(dependable.getClass(), k -> new SplittableStack<>()).push(dependable);
 	}
 
 	public <V> void provide(Class<V> clazz, V dependable) {
-		dependables.computeIfAbsent(clazz, k -> new ArrayDeque<>()).add(dependable);
+		dependables.computeIfAbsent(clazz, k -> new SplittableStack<>()).push(dependable);
 	}
 
 	public <V> V request(Class<V> clazz) {
-		Deque<V> deque = (Deque<V>) dependables.get(clazz);
-		if (deque == null || deque.size() == 0) {
+		SplittableStack<V> stack = (SplittableStack<V>) dependables.get(clazz);
+		if (stack == null || stack.size() == 0) {
 			throw new IllegalStateException("Unable to provide dependency value of type " + clazz.getName());
 		}
-		return deque.pollLast();
+		return stack.pop();
 	}
 
 	public Command<T> getCommand() {
@@ -86,7 +86,9 @@ public class CommandContext<T> {
 	}
 	
 	public CommandContext<T> clone(Command<T> command) {
-		return new CommandContext<>(command, parent, sender, args.split(0), parsed.length - 1);
+		CommandContext<T> clone = new CommandContext<>(command, parent, sender, args.split(0), parsed.length - 1);
+		dependables.forEach((k, v) -> clone.dependables.put(k, v.split()));
+		return clone;
 	}
 	
 }
