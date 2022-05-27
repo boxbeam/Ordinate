@@ -1,9 +1,7 @@
 package redempt.ordinate.argument;
 
-import redempt.ordinate.component.CommandComponent;
 import redempt.ordinate.constraint.ConstraintParser;
 import redempt.ordinate.data.CommandContext;
-import redempt.ordinate.data.Message;
 import redempt.ordinate.data.Named;
 
 import java.util.List;

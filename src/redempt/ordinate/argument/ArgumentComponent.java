@@ -1,21 +1,22 @@
 package redempt.ordinate.argument;
 
-import redempt.ordinate.component.CommandComponent;
+import redempt.ordinate.component.abstracts.CommandComponent;
+import redempt.ordinate.component.abstracts.HelpProvider;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.data.Named;
-import redempt.ordinate.processing.Formatter;
+import redempt.ordinate.processing.MessageFormatter;
 import redempt.ordinate.help.HelpComponent;
 import redempt.ordinate.help.LiteralHelpComponent;
 
-public class ArgumentComponent<T, V> extends CommandComponent<T> implements Named {
+public class ArgumentComponent<T, V> extends CommandComponent<T> implements Named, HelpProvider {
 
 	private String name;
 	private ArgType<T, V> type;
-	private Formatter missingError;
-	private Formatter invalidError;
+	private MessageFormatter<T> missingError;
+	private MessageFormatter<T> invalidError;
 
-	public ArgumentComponent(String name, ArgType<T, V> type, Formatter missingError, Formatter invalidError) {
+	public ArgumentComponent(String name, ArgType<T, V> type, MessageFormatter<T> missingError, MessageFormatter<T> invalidError) {
 		this.name = name;
 		this.type = type;
 		this.missingError = missingError;
@@ -38,19 +39,14 @@ public class ArgumentComponent<T, V> extends CommandComponent<T> implements Name
 	}
 
 	@Override
-	public HelpComponent getHelpDisplay() {
-		return new LiteralHelpComponent(this, 1, "<" + name + ">");
-	}
-
-	@Override
-	public boolean canParse(CommandContext<T> context) {
-		return true;
+	public HelpComponent getHelpComponent() {
+		return new LiteralHelpComponent(this, 1, false, "<" + name + ">");
 	}
 
 	@Override
 	public CommandResult<T> parse(CommandContext<T> context) {
 		if (!context.hasArg()) {
-			return failure(missingError.apply(name));
+			return failure(missingError.apply(context.sender(), name));
 		}
 		String arg = context.pollArg().getValue();
 		V val = type.convert(context, arg);
@@ -58,7 +54,7 @@ public class ArgumentComponent<T, V> extends CommandComponent<T> implements Name
 			context.setParsed(getIndex(), val);
 			return success();
 		}
-		return failure(invalidError.apply(name, arg));
+		return failure(invalidError.apply(context.sender(), name, arg));
 	}
 
 	@Override

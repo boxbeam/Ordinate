@@ -1,6 +1,6 @@
 package redempt.ordinate.help;
 
-import redempt.ordinate.component.CommandComponent;
+import redempt.ordinate.component.abstracts.CommandComponent;
 
 import java.util.StringJoiner;
 
@@ -10,12 +10,14 @@ public class DelimitedHelpComponent implements HelpComponent {
 	private String delimiter;
 	private HelpComponent[] components;
 	private int priority;
+	private boolean line;
 	
-	public DelimitedHelpComponent(CommandComponent<?> owner, int priority, String delimiter, HelpComponent... components) {
+	public DelimitedHelpComponent(CommandComponent<?> owner, int priority, boolean line, String delimiter, HelpComponent... components) {
 		this.owner = owner;
 		this.priority = priority;
 		this.delimiter = delimiter;
 		this.components = components;
+		this.line = line;
 	}
 	
 	@Override
@@ -36,7 +38,12 @@ public class DelimitedHelpComponent implements HelpComponent {
 	public CommandComponent<?> getSource() {
 		return owner;
 	}
-	
+
+	@Override
+	public boolean isLine() {
+		return line;
+	}
+
 	public HelpComponent[] getChildren() {
 		return components;
 	}

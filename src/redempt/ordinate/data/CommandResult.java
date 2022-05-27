@@ -1,6 +1,6 @@
 package redempt.ordinate.data;
 
-import redempt.ordinate.component.CommandComponent;
+import redempt.ordinate.component.abstracts.CommandComponent;
 
 public class CommandResult<T> {
 	

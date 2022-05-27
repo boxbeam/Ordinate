@@ -1,6 +1,7 @@
 package redempt.ordinate.command;
 
-import redempt.ordinate.component.CommandComponent;
+import redempt.ordinate.component.abstracts.CommandComponent;
+import redempt.ordinate.component.abstracts.HelpProvider;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.data.Named;
@@ -11,7 +12,7 @@ import redempt.ordinate.processing.CommandParsingPipeline;
 
 import java.util.function.Supplier;
 
-public class Command<T> extends CommandComponent<T> implements Named {
+public class Command<T> extends CommandComponent<T> implements Named, HelpProvider {
 	
 	private String[] names;
 	private CommandParsingPipeline<T> pipeline;
@@ -41,13 +42,8 @@ public class Command<T> extends CommandComponent<T> implements Named {
 	}
 	
 	@Override
-	public HelpComponent getHelpDisplay() {
+	public HelpComponent getHelpComponent() {
 		return null;
-	}
-	
-	@Override
-	public boolean canParse(CommandContext<T> context) {
-		return false;
 	}
 	
 	@Override

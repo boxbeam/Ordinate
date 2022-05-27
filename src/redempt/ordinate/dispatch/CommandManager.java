@@ -6,5 +6,6 @@ public interface CommandManager<T> {
 
 	public CommandRegistrar<T> getRegistrar();
 	public HelpDisplayer<T> getHelpDisplayer();
+	public MessageDispatcher<T> getMessageDispatcher();
 
 }

@@ -1,10 +1,10 @@
-package redempt.ordinate.component;
+package redempt.ordinate.component.abstracts;
 
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.help.HelpComponent;
 
-import java.util.List;
+import java.util.Set;
 
 public abstract class CommandComponent<T> {
 	
@@ -41,15 +41,13 @@ public abstract class CommandComponent<T> {
 		return new CommandResult<>(this, error);
 	}
 	
-	public List<String> completions(CommandContext<T> context) {
-		return null;
+	public CommandResult<T> complete(CommandContext<T> context, Set<String> completions) {
+		return parse(context);
 	}
 
 	public abstract int getMaxConsumedArgs();
 	public abstract int getMaxParsedObjects();
 	public abstract int getPriority();
-	public abstract HelpComponent getHelpDisplay();
-	public abstract boolean canParse(CommandContext<T> context);
 	public abstract CommandResult<T> parse(CommandContext<T> context);
 	
 }

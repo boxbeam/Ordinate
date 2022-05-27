@@ -1,5 +1,6 @@
 package redempt.ordinate.component;
 
+import redempt.ordinate.component.abstracts.CommandComponent;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.data.Named;
@@ -23,20 +24,20 @@ public class ContextComponent<T, V> extends CommandComponent<T> implements Named
 	public String getName() {
 		return name;
 	}
-	
+
+	@Override
+	public int getMaxConsumedArgs() {
+		return 0;
+	}
+
+	@Override
+	public int getMaxParsedObjects() {
+		return 0;
+	}
+
 	@Override
 	public int getPriority() {
 		return 10;
-	}
-	
-	@Override
-	public HelpComponent getHelpDisplay() {
-		return null;
-	}
-	
-	@Override
-	public boolean canParse(CommandContext<T> context) {
-		return true;
 	}
 	
 	@Override

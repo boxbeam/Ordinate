@@ -1,17 +1,19 @@
 package redempt.ordinate.help;
 
-import redempt.ordinate.component.CommandComponent;
+import redempt.ordinate.component.abstracts.CommandComponent;
 
 public class LiteralHelpComponent implements HelpComponent {
 
 	private CommandComponent<?> owner;
 	private String value;
 	private int priority;
+	private boolean line;
 	
-	public LiteralHelpComponent(CommandComponent<?> owner, int priority, String value) {
+	public LiteralHelpComponent(CommandComponent<?> owner, int priority, boolean line, String value) {
 		this.owner = owner;
 		this.value = value;
 		this.priority = priority;
+		this.line = line;
 	}
 	
 	@Override
@@ -23,7 +25,12 @@ public class LiteralHelpComponent implements HelpComponent {
 	public CommandComponent<?> getSource() {
 		return owner;
 	}
-	
+
+	@Override
+	public boolean isLine() {
+		return line;
+	}
+
 	@Override
 	public int getPriority() {
 		return priority;

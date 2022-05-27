@@ -1,17 +1,17 @@
 package redempt.ordinate.constraint;
 
-import redempt.ordinate.component.CommandComponent;
+import redempt.ordinate.component.abstracts.CommandComponent;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
-import redempt.ordinate.processing.Formatter;
+import redempt.ordinate.processing.MessageFormatter;
 import redempt.ordinate.help.HelpComponent;
 
 public class ConstraintComponent<T, V> extends CommandComponent<T> {
 
 	private Constraint<T, V> constraint;
-	private Formatter errorGenerator;
+	private MessageFormatter<T> errorGenerator;
 
-	public ConstraintComponent(Constraint<T, V> constraint, Formatter errorGenerator) {
+	public ConstraintComponent(Constraint<T, V> constraint, MessageFormatter<T> errorGenerator) {
 		this.constraint = constraint;
 		this.errorGenerator = errorGenerator;
 	}
@@ -22,21 +22,11 @@ public class ConstraintComponent<T, V> extends CommandComponent<T> {
 	}
 
 	@Override
-	public HelpComponent getHelpDisplay() {
-		return null;
-	}
-
-	@Override
-	public boolean canParse(CommandContext<T> context) {
-		return true;
-	}
-
-	@Override
 	public CommandResult<T> parse(CommandContext<T> context) {
 		V val = (V) context.getParsed(getIndex());
 		String err = constraint.apply(context, val);
 		if (err != null) {
-			return failure(errorGenerator.apply(err));
+			return failure(errorGenerator.apply(context.sender(), err));
 		}
 		return success();
 	}

@@ -1,11 +1,8 @@
 package redempt.ordinate.processing;
 
-import redempt.ordinate.component.CommandComponent;
+import redempt.ordinate.component.abstracts.CommandComponent;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class CommandParsingPipeline<T> {
 
@@ -27,6 +24,10 @@ public class CommandParsingPipeline<T> {
 		this.argWidth = (int) Math.min(Integer.MAX_VALUE, argWidth);
 	}
 
+	public List<CommandComponent<T>> getComponents() {
+		return components;
+	}
+
 	public void addComponent(CommandComponent<T> component) {
 		if (finalized) {
 			throw new IllegalStateException("Pipeline already finalized, cannot add more components");
@@ -42,6 +43,7 @@ public class CommandParsingPipeline<T> {
 		}
 		finalized = true;
 		components.sort(comparator);
+		components = Collections.unmodifiableList(components);
 	}
 
 }
