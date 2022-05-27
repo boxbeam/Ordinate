@@ -8,11 +8,11 @@ import java.util.List;
 
 public class ArgumentSplitter {
 
-	public static SplittableList<Argument> split(String[] command) {
-		return split(String.join(" ", command));
+	public static SplittableList<Argument> split(String[] command, boolean forCompletions) {
+		return split(String.join(" ", command), forCompletions);
 	}
 
-	public static SplittableList<Argument> split(String command) {
+	public static SplittableList<Argument> split(String command, boolean forCompletions) {
 		List<Argument> args = new ArrayList<>();
 		boolean quoted = false;
 		StringBuilder buffer = new StringBuilder();
@@ -41,7 +41,10 @@ public class ArgumentSplitter {
 		if (buffer.length() > 0) {
 			String last = buffer.toString();
 			last = (quoted ? "\"" : "") + last;
-			args.add(new Argument(last, false));
+			String[] split = last.split(" ", forCompletions ? -1 : 0);
+			for (String arg : split) {
+				args.add(new Argument(arg, false));
+			}
 		}
 		Argument[] array = args.toArray(new Argument[0]);
 		return new SplittableList<>(array);

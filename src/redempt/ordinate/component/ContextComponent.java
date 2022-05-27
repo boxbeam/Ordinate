@@ -47,7 +47,7 @@ public class ContextComponent<T, V> extends CommandComponent<T> implements Named
 			context.setParsed(getIndex(), value);
 			return success();
 		}
-		return failure(error);
+		return failure(error).complete();
 	}
 	
 }

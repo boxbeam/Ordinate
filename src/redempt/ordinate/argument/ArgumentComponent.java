@@ -54,7 +54,7 @@ public class ArgumentComponent<T, V> extends CommandComponent<T> implements Name
 			context.setParsed(getIndex(), val);
 			return success();
 		}
-		return failure(invalidError.apply(context.sender(), name, arg));
+		return failure(invalidError.apply(context.sender(), name, arg)).complete();
 	}
 
 	@Override

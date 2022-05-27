@@ -26,7 +26,7 @@ public class ConstraintComponent<T, V> extends CommandComponent<T> {
 		V val = (V) context.getParsed(getIndex());
 		String err = constraint.apply(context, val);
 		if (err != null) {
-			return failure(errorGenerator.apply(context.sender(), err));
+			return failure(errorGenerator.apply(context.sender(), err)).complete();
 		}
 		return success();
 	}

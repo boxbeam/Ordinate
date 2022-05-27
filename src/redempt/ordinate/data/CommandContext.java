@@ -12,6 +12,7 @@ public class CommandContext<T> {
 	private CommandContext<T> parent;
 	private T sender;
 	private SplittableList<Argument> args;
+	private int initialArgCount;
 	private Object[] parsed;
 	
 	public CommandContext(Command<T> command, CommandContext<T> parent, T sender, SplittableList<Argument> args, int processAllocation) {
@@ -19,6 +20,7 @@ public class CommandContext<T> {
 		this.parent = parent;
 		this.sender = sender;
 		this.args = args;
+		initialArgCount = args.size();
 		parsed = new Object[processAllocation + 1];
 		parsed[0] = sender;
 	}
@@ -51,8 +53,8 @@ public class CommandContext<T> {
 		return args.poll();
 	}
 
-	public Argument lastArg() {
-		return args.size() > 0 ? args.get(args.size() - 1) : null;
+	public int initialArgCount() {
+		return initialArgCount;
 	}
 
 	public boolean hasArg() {
@@ -75,7 +77,7 @@ public class CommandContext<T> {
 		return parsed[pos + 1];
 	}
 	
-	public int getArgCount() {
+	public int getTotalParsingSlots() {
 		return parsed.length - 1;
 	}
 	
@@ -83,8 +85,8 @@ public class CommandContext<T> {
 		return parent;
 	}
 	
-	public CommandContext<T> clone(Command<T> command) {
-		CommandContext<T> clone = new CommandContext<>(command, parent, sender, args.split(0), parsed.length - 1);
+	public CommandContext<T> clone(Command<T> command, int argsSplit) {
+		CommandContext<T> clone = new CommandContext<>(command, parent, sender, args.split(argsSplit), parsed.length - 1);
 		dependables.forEach((k, v) -> clone.dependables.put(k, v.split()));
 		return clone;
 	}
