@@ -33,8 +33,12 @@ public class CommandContext<T> {
 		dependables.computeIfAbsent(clazz, k -> new ArrayDeque<>()).add(dependable);
 	}
 
-	public <V> void request(Class<V> clazz) {
-
+	public <V> V request(Class<V> clazz) {
+		Deque<V> deque = (Deque<V>) dependables.get(clazz);
+		if (deque == null || deque.size() == 0) {
+			throw new IllegalStateException("Unable to provide dependency value of type " + clazz.getName());
+		}
+		return deque.pollLast();
 	}
 
 	public Command<T> getCommand() {
