@@ -2,8 +2,6 @@ package redempt.ordinate.data;
 
 import redempt.ordinate.command.Command;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
