@@ -1,11 +1,14 @@
 package redempt.ordinate.component;
 
 import redempt.ordinate.component.abstracts.CommandComponent;
+import redempt.ordinate.component.abstracts.HelpProvider;
 import redempt.ordinate.data.*;
+import redempt.ordinate.help.HelpComponent;
+import redempt.ordinate.help.LiteralHelpComponent;
 
 import java.util.Set;
 
-public class BooleanFlagComponent<T> extends CommandComponent<T> implements Named {
+public class BooleanFlagComponent<T> extends CommandComponent<T> implements Named, HelpProvider {
 
 	private final Set<String> names;
 	private final String mainName;
@@ -33,6 +36,11 @@ public class BooleanFlagComponent<T> extends CommandComponent<T> implements Name
 	@Override
 	public int getPriority() {
 		return 5;
+	}
+
+	@Override
+	public HelpComponent getHelpComponent() {
+		return new LiteralHelpComponent(this, 5, false, '[' + mainName + ']');
 	}
 
 	@Override
