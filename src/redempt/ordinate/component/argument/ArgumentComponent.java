@@ -1,4 +1,4 @@
-package redempt.ordinate.argument;
+package redempt.ordinate.component.argument;
 
 import redempt.ordinate.component.abstracts.CommandComponent;
 import redempt.ordinate.component.abstracts.HelpProvider;
@@ -23,6 +23,14 @@ public class ArgumentComponent<T, V> extends CommandComponent<T> implements Name
 		this.type = type;
 		this.missingError = missingError;
 		this.invalidError = invalidError;
+	}
+
+	public MessageFormatter<T> getInvalidError() {
+		return invalidError;
+	}
+
+	public ArgType<T, V> getType() {
+		return type;
 	}
 
 	@Override

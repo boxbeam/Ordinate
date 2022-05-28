@@ -45,6 +45,10 @@ public abstract class CommandComponent<T> {
 		return parse(context);
 	}
 
+	public int getMinConsumedArgs() {
+		return getMaxConsumedArgs();
+	}
+
 	public abstract int getMaxConsumedArgs();
 	public abstract int getMaxParsedObjects();
 	public abstract int getPriority();

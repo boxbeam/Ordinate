@@ -1,4 +1,4 @@
-package redempt.ordinate.argument;
+package redempt.ordinate.component.argument;
 
 import redempt.ordinate.constraint.ConstraintParser;
 import redempt.ordinate.data.CommandContext;

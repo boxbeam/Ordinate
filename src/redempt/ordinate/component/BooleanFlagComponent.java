@@ -24,6 +24,11 @@ public class BooleanFlagComponent<T> extends CommandComponent<T> implements Name
 	}
 
 	@Override
+	public int getMinConsumedArgs() {
+		return 0;
+	}
+
+	@Override
 	public String getName() {
 		return mainName;
 	}
@@ -49,7 +54,7 @@ public class BooleanFlagComponent<T> extends CommandComponent<T> implements Name
 		boolean parsed = false;
 
 		int offset = context.initialArgCount() - arguments.size();
-		int maxIndex = context.getCommand().getPipeline().getArgWidth() - offset;
+		int maxIndex = context.getCommand().getPipeline().getMaxArgWidth() - offset;
 
 		for (int i = 0; i < maxIndex; i++) {
 			Argument arg = arguments.get(i);
@@ -61,7 +66,7 @@ public class BooleanFlagComponent<T> extends CommandComponent<T> implements Name
 
 			if (names.contains(value)) {
 				parsed = true;
-				arguments.remove(i);
+				context.removeArg(i, true);
 				break;
 			}
 		}

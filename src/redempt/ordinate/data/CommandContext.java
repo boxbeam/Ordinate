@@ -53,6 +53,13 @@ public class CommandContext<T> {
 		return args.poll();
 	}
 
+	public void removeArg(int index, boolean removeInitial) {
+		args.remove(index);
+		if (removeInitial) {
+			initialArgCount--;
+		}
+	}
+
 	public int initialArgCount() {
 		return initialArgCount;
 	}

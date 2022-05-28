@@ -1,4 +1,4 @@
-package redempt.ordinate.parsing;
+package redempt.ordinate.processing;
 
 import redempt.ordinate.data.Argument;
 import redempt.ordinate.data.SplittableList;

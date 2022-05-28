@@ -4,7 +4,13 @@ import redempt.ordinate.component.abstracts.CommandComponent;
 
 public class CommandResult<T> {
 	
-	public static <T> CommandResult<T> deeper(CommandResult<T> first, CommandResult<T> second) {
+	public static <T> CommandResult<T> deepest(CommandResult<T> first, CommandResult<T> second) {
+		if (first == null) {
+			return second;
+		}
+		if (second == null) {
+			return first;
+		}
 		return first.component.getDepth() >= second.component.getDepth() ? first : second;
 	}
 	
