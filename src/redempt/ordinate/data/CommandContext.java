@@ -101,6 +101,7 @@ public class CommandContext<T> {
 	
 	public CommandContext<T> clone(Command<T> command, int argsSplit) {
 		CommandContext<T> clone = new CommandContext<>(command, parent, sender, args.split(argsSplit), parsed.length - 1);
+		clone.parent = this;
 		dependables.forEach((k, v) -> clone.dependables.put(k, v.split()));
 		return clone;
 	}

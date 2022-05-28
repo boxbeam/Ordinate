@@ -95,4 +95,8 @@ public class CommandParsingPipeline<T> {
 		return minArgWidth;
 	}
 
+	public int getParsingSlots() {
+		return parsingSlots;
+	}
+
 }

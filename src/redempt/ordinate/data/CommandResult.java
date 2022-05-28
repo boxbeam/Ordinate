@@ -32,6 +32,11 @@ public class CommandResult<T> {
 		return this;
 	}
 
+	public CommandResult<T> uncomplete() {
+		complete = false;
+		return this;
+	}
+
 	public boolean isComplete() {
 		return complete;
 	}

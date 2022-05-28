@@ -2,6 +2,7 @@ package redempt.ordinate.command;
 
 import redempt.ordinate.component.abstracts.CommandComponent;
 import redempt.ordinate.component.abstracts.HelpProvider;
+import redempt.ordinate.data.Argument;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.data.Named;
@@ -10,16 +11,22 @@ import redempt.ordinate.help.HelpComponent;
 import redempt.ordinate.processing.CachedSupplier;
 import redempt.ordinate.processing.CommandParsingPipeline;
 
+import java.util.Set;
 import java.util.function.Supplier;
 
 public class Command<T> extends CommandComponent<T> implements Named, HelpProvider {
-	
-	private String[] names;
-	private CommandParsingPipeline<T> pipeline;
-	private CachedSupplier<CommandDispatcher<T>> dispatchTarget;
 
-	public void setDispatchTarget(Supplier<CommandDispatcher<T>> dispatchTarget) {
-		this.dispatchTarget = CachedSupplier.cached(dispatchTarget);
+	private Command<T> parent;
+	private String mainName;
+	private Set<String> names;
+	private CommandParsingPipeline<T> pipeline;
+
+	public Command<T> getParent() {
+		return parent;
+	}
+
+	public boolean isRoot() {
+		return parent == null;
 	}
 
 	public CommandParsingPipeline<T> getPipeline() {
@@ -28,17 +35,17 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 
 	@Override
 	public int getMaxConsumedArgs() {
-		return 0;
+		return pipeline.getMaxArgWidth();
 	}
 
 	@Override
 	public int getMaxParsedObjects() {
-		return 0;
+		return pipeline.getParsingSlots();
 	}
 
 	@Override
 	public int getPriority() {
-		return 0;
+		return 20;
 	}
 	
 	@Override
@@ -48,15 +55,30 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 	
 	@Override
 	public CommandResult<T> parse(CommandContext<T> context) {
-		return null;
-	}
-	
-	@Override
-	public String getName() {
-		return names[0];
+		if (isRoot()) {
+			return pipeline.parse(context);
+		}
+		if (!context.hasArg()) {
+			return success();
+		}
+		Argument arg = context.peekArg();
+		if (arg.isQuoted() || !names.contains(arg.getValue())) {
+			return success();
+		}
+		CommandContext<T> clone = context.clone(this, 1);
+		CommandResult<T> result = pipeline.parse(clone);
+		if (!result.isSuccess()) {
+			result.uncomplete();
+		}
+		return result;
 	}
 
-	public String[] getNames() {
+	@Override
+	public String getName() {
+		return mainName;
+	}
+
+	public Set<String> getNames() {
 		return names;
 	}
 	
