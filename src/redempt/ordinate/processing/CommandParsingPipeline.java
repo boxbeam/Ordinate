@@ -46,4 +46,8 @@ public class CommandParsingPipeline<T> {
 		components = Collections.unmodifiableList(components);
 	}
 
+	public int getArgWidth() {
+		return argWidth;
+	}
+
 }
