@@ -9,6 +9,8 @@ import redempt.ordinate.processing.MessageFormatter;
 import redempt.ordinate.help.HelpComponent;
 import redempt.ordinate.help.LiteralHelpComponent;
 
+import java.util.Set;
+
 public class ArgumentComponent<T, V> extends CommandComponent<T> implements Named, HelpProvider {
 
 	private String name;
@@ -55,6 +57,16 @@ public class ArgumentComponent<T, V> extends CommandComponent<T> implements Name
 			return success();
 		}
 		return failure(invalidError.apply(context.sender(), name, arg)).complete();
+	}
+
+	@Override
+	public CommandResult<T> complete(CommandContext<T> context, Set<String> completions) {
+		if (context.getArguments().size() > 1) {
+			return parse(context);
+		}
+		String partial = context.peekArg().getValue();
+		completions.addAll(type.complete(context, partial));
+		return success();
 	}
 
 	@Override

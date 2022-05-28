@@ -11,10 +11,10 @@ public class ArgType<T, V> implements Named {
 
 	private String name;
 	private BiFunction<CommandContext<T>, String, V> converter;
-	private BiFunction<CommandContext<T>, Integer, List<String>> completer;
+	private BiFunction<CommandContext<T>, String, List<String>> completer;
 	private ConstraintParser<T, V> constraintParser;
 
-	public ArgType(String name, BiFunction<CommandContext<T>, String, V> converter, BiFunction<CommandContext<T>, Integer, List<String>> completer) {
+	public ArgType(String name, BiFunction<CommandContext<T>, String, V> converter, BiFunction<CommandContext<T>, String, List<String>> completer) {
 		this.name = name;
 		this.converter = converter;
 		this.completer = completer;
@@ -33,8 +33,8 @@ public class ArgType<T, V> implements Named {
 		}
 	}
 	
-	public List<String> complete(CommandContext<T> context, int index) {
-		return completer.apply(context, index);
+	public List<String> complete(CommandContext<T> context, String partial) {
+		return completer.apply(context, partial);
 	}
 
 	public ArgType<T, V> constraint(ConstraintParser<T, V> constraintParser) {
