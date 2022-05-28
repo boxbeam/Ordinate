@@ -45,6 +45,7 @@ public class ContextComponent<T, V> extends CommandComponent<T> implements Named
 		V value = contextProvider.apply(context);
 		if (value != null) {
 			context.setParsed(getIndex(), value);
+			context.provide(value);
 			return success();
 		}
 		return failure(error).complete();

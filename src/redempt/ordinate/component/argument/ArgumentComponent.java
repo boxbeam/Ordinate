@@ -62,6 +62,7 @@ public class ArgumentComponent<T, V> extends CommandComponent<T> implements Name
 		V val = type.convert(context, arg);
 		if (val != null) {
 			context.setParsed(getIndex(), val);
+			context.provide(val);
 			return success();
 		}
 		return failure(invalidError.apply(context.sender(), name, arg)).complete();

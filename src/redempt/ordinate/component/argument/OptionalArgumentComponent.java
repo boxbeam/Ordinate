@@ -36,6 +36,7 @@ public class OptionalArgumentComponent<T, V> extends ArgumentComponent<T, V> {
 		}
 		context.pollArg();
 		context.setParsed(getIndex(), parsed);
+		context.provide(parsed);
 		return success();
 	}
 
