@@ -15,6 +15,7 @@ public class CachedSupplier<T> implements Supplier<T> {
 		this.supplier = supplier;
 	}
 
+	@Override
 	public T get() {
 		if (val == null) {
 			val = supplier.get();
