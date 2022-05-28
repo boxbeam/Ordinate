@@ -33,6 +33,16 @@ public class CommandParsingPipeline<T> {
 		return components;
 	}
 
+	public boolean removeComponent(CommandComponent<T> component) {
+		if (!components.remove(component)) {
+			return false;
+		}
+		parsingSlots -= component.getMaxParsedObjects();
+		maxArgWidth -= component.getMaxConsumedArgs();
+		minArgWidth -= component.getMinConsumedArgs();
+		return true;
+	}
+
 	public void addComponent(CommandComponent<T> component) {
 		if (finalized) {
 			throw new IllegalStateException("Pipeline already finalized, cannot add more components");
@@ -40,6 +50,7 @@ public class CommandParsingPipeline<T> {
 		components.add(component);
 		parsingSlots += component.getMaxParsedObjects();
 		maxArgWidth += component.getMaxConsumedArgs();
+		minArgWidth += component.getMinConsumedArgs();
 	}
 
 	public void prepare() {
