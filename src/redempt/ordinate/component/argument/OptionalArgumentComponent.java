@@ -34,6 +34,7 @@ public class OptionalArgumentComponent<T, V> extends ArgumentComponent<T, V> {
 		if (parsed == null) {
 			return failure(getInvalidError().apply(context.sender(), getName(), value)).complete();
 		}
+		context.pollArg();
 		context.setParsed(getIndex(), parsed);
 		return success();
 	}
