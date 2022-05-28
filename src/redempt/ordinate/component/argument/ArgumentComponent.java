@@ -29,6 +29,10 @@ public class ArgumentComponent<T, V> extends CommandComponent<T> implements Name
 		return invalidError;
 	}
 
+	public MessageFormatter<T> getMissingError() {
+		return missingError;
+	}
+
 	public ArgType<T, V> getType() {
 		return type;
 	}
@@ -56,7 +60,7 @@ public class ArgumentComponent<T, V> extends CommandComponent<T> implements Name
 	@Override
 	public CommandResult<T> parse(CommandContext<T> context) {
 		if (!context.hasArg()) {
-			return failure(missingError.apply(context.sender(), name));
+			return failure(missingError.apply(context.sender(), name)).complete();
 		}
 		String arg = context.pollArg().getValue();
 		V val = type.convert(context, arg);
