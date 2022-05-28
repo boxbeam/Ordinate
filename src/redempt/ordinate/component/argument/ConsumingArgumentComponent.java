@@ -9,9 +9,11 @@ import java.util.StringJoiner;
 public class ConsumingArgumentComponent<T, V> extends ArgumentComponent<T, V> {
 
 	private boolean optional;
+	private V defaultValue;
 
-	public ConsumingArgumentComponent(String name, ArgType<T, V> type, boolean optional, MessageFormatter<T> missingError, MessageFormatter<T> invalidError) {
+	public ConsumingArgumentComponent(String name, ArgType<T, V> type, boolean optional, V defaultValue, MessageFormatter<T> missingError, MessageFormatter<T> invalidError) {
 		super(name, type, missingError, invalidError);
+		this.defaultValue = defaultValue;
 		this.optional = optional;
 	}
 
@@ -28,6 +30,10 @@ public class ConsumingArgumentComponent<T, V> extends ArgumentComponent<T, V> {
 	public CommandResult<T> parse(CommandContext<T> context) {
 		if (!context.hasArg() && !optional) {
 			return failure(getMissingError().apply(context.sender(), getName())).complete();
+		}
+		if (!context.hasArg()) {
+			context.setParsed(getIndex(), defaultValue);
+			context.provide(defaultValue);
 		}
 		StringJoiner joiner = new StringJoiner(" ");
 		while (context.hasArg()) {
