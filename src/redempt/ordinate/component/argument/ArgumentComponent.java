@@ -1,5 +1,6 @@
 package redempt.ordinate.component.argument;
 
+import redempt.ordinate.command.ArgType;
 import redempt.ordinate.component.abstracts.CommandComponent;
 import redempt.ordinate.component.abstracts.HelpProvider;
 import redempt.ordinate.data.CommandContext;

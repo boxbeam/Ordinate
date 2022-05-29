@@ -1,5 +1,6 @@
 package redempt.ordinate.creation;
 
+import redempt.ordinate.command.ArgType;
 import redempt.ordinate.component.BooleanFlagComponent;
 import redempt.ordinate.component.argument.*;
 import redempt.ordinate.constraint.ConstraintParser;
@@ -22,6 +23,7 @@ public class PropertiesComponentFactory<T> implements ComponentFactory<T> {
 		props.setProperty("executionFailed", "Command execution failed due to an unexpected error. Please report this to an administrator.");
 		props.setProperty("tooManyArguments", "Too many arguments supplied: Extra %1 argument(s) provided");
 		props.setProperty("numberOutsideRange", "Number %1 outside range: %2");
+		props.setProperty("contextError", "%1");
 		return props;
 	}
 
@@ -83,8 +85,8 @@ public class PropertiesComponentFactory<T> implements ComponentFactory<T> {
 	}
 
 	@Override
-	public <V> ContextComponent<T, V> createContext(ContextProvider<T, V> provider, String name, MessageFormatter<T> error) {
-		return new ContextComponent<>(name, provider, error);
+	public <V> ContextComponent<T, V> createContext(ContextProvider<T, V> provider, String name) {
+		return new ContextComponent<>(name, provider, getMessage("contextError"));
 	}
 
 	@Override

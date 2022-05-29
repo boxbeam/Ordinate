@@ -49,7 +49,7 @@ public class ContextComponent<T, V> extends CommandComponent<T> implements Named
 			context.provide(value);
 			return success();
 		}
-		return failure(error.apply(context.sender())).complete();
+		return failure(error.apply(context.sender(), contextProvider.getError())).complete();
 	}
 	
 }
