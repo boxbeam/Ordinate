@@ -6,7 +6,7 @@ import redempt.ordinate.context.ContextProvider;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class ParserConfig<T> {
+public class ParserOptions<T> {
 
 	private ArgumentParser<T> argumentParser;
 	private Map<String, TagProcessor<T>> tagProcessors;

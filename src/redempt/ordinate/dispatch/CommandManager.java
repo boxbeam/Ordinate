@@ -9,5 +9,6 @@ public interface CommandManager<T> {
 	public HelpDisplayer<T> getHelpDisplayer();
 	public MessageDispatcher<T> getMessageDispatcher();
 	public ComponentFactory<T> getComponentFactory();
+	public void setComponentFactory(ComponentFactory<T> componentFactory);
 
 }
