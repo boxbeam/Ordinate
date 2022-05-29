@@ -2,6 +2,8 @@ package redempt.ordinate.creation;
 
 import redempt.ordinate.component.BooleanFlagComponent;
 import redempt.ordinate.component.argument.*;
+import redempt.ordinate.constraint.ConstraintParser;
+import redempt.ordinate.constraint.NumberConstraint;
 import redempt.ordinate.context.ContextComponent;
 import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.dispatch.CommandDispatcher;
@@ -9,6 +11,7 @@ import redempt.ordinate.dispatch.DispatchComponent;
 import redempt.ordinate.processing.MessageFormatter;
 
 import java.util.*;
+import java.util.function.Function;
 
 public class PropertiesComponentFactory<T> implements ComponentFactory<T> {
 
@@ -18,6 +21,7 @@ public class PropertiesComponentFactory<T> implements ComponentFactory<T> {
 		props.setProperty("invalidArgumentValue", "Invalid value for argument %1: %2");
 		props.setProperty("executionFailed", "Command execution failed due to an unexpected error. Please report this to an administrator.");
 		props.setProperty("tooManyArguments", "Too many arguments supplied: Extra %1 argument(s) provided");
+		props.setProperty("numberOutsideRange", "Number %1 outside range: %2");
 		return props;
 	}
 
@@ -86,6 +90,11 @@ public class PropertiesComponentFactory<T> implements ComponentFactory<T> {
 	@Override
 	public DispatchComponent<T> createDispatch(CommandDispatcher<T> dispatcher) {
 		return new DispatchComponent<>(dispatcher, getMessage("executionFailed"), getMessage("tooManyArguments"));
+	}
+
+	@Override
+	public <V extends Number & Comparable<V>> ConstraintParser<T, V> createNumberConstraintParser(Function<String, V> parseNumber) {
+		return NumberConstraint.createParser(parseNumber, getMessage("numberOutsideRange"));
 	}
 
 }

@@ -2,11 +2,14 @@ package redempt.ordinate.creation;
 
 import redempt.ordinate.component.BooleanFlagComponent;
 import redempt.ordinate.component.argument.*;
+import redempt.ordinate.constraint.ConstraintParser;
 import redempt.ordinate.context.ContextComponent;
 import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.dispatch.CommandDispatcher;
 import redempt.ordinate.dispatch.DispatchComponent;
 import redempt.ordinate.processing.MessageFormatter;
+
+import java.util.function.Function;
 
 public interface ComponentFactory<T> {
 
@@ -17,5 +20,6 @@ public interface ComponentFactory<T> {
 	public BooleanFlagComponent<T> createBooleanFlag(String... names);
 	public <V> ContextComponent<T, V> createContext(ContextProvider<T, V> provider, String name, MessageFormatter<T> error);
 	public DispatchComponent<T> createDispatch(CommandDispatcher<T> dispatcher);
+	public <V extends Number & Comparable<V>> ConstraintParser<T, V> createNumberConstraintParser(Function<String, V> parseNumber);
 
 }
