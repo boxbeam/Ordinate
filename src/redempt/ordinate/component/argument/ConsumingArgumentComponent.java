@@ -1,5 +1,6 @@
 package redempt.ordinate.component.argument;
 
+import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.processing.MessageFormatter;
@@ -9,9 +10,9 @@ import java.util.StringJoiner;
 public class ConsumingArgumentComponent<T, V> extends ArgumentComponent<T, V> {
 
 	private boolean optional;
-	private V defaultValue;
+	private ContextProvider<T, V> defaultValue;
 
-	public ConsumingArgumentComponent(String name, ArgType<T, V> type, boolean optional, V defaultValue, MessageFormatter<T> missingError, MessageFormatter<T> invalidError) {
+	public ConsumingArgumentComponent(String name, ArgType<T, V> type, boolean optional, ContextProvider<T, V> defaultValue, MessageFormatter<T> missingError, MessageFormatter<T> invalidError) {
 		super(name, type, missingError, invalidError);
 		this.defaultValue = defaultValue;
 		this.optional = optional;
@@ -32,7 +33,7 @@ public class ConsumingArgumentComponent<T, V> extends ArgumentComponent<T, V> {
 			return failure(getMissingError().apply(context.sender(), getName())).complete();
 		}
 		if (!context.hasArg()) {
-			context.setParsed(getIndex(), defaultValue);
+			context.setParsed(getIndex(), defaultValue.provide(context));
 			context.provide(defaultValue);
 		}
 		StringJoiner joiner = new StringJoiner(" ");

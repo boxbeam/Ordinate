@@ -37,8 +37,8 @@ public class DispatchComponent<T> extends CommandComponent<T> {
 	@Override
 	public CommandResult<T> parse(CommandContext<T> context) {
 		if (context.getArguments().size() > 0) {
-			int expected = context.initialArgCount() - context.getArguments().size();
-			return failure(tooManyArgsError.apply(context.sender(), Integer.toString(expected))).complete();
+			int leftover = context.initialArgCount() - context.getArguments().size();
+			return failure(tooManyArgsError.apply(context.sender(), Integer.toString(leftover))).complete();
 		}
 		try {
 			dispatcher.dispatch(context);

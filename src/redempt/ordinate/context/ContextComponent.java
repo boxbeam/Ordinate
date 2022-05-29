@@ -1,20 +1,21 @@
-package redempt.ordinate.component;
+package redempt.ordinate.context;
 
 import redempt.ordinate.component.abstracts.CommandComponent;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.data.Named;
 import redempt.ordinate.help.HelpComponent;
+import redempt.ordinate.processing.MessageFormatter;
 
 import java.util.function.Function;
 
 public class ContextComponent<T, V> extends CommandComponent<T> implements Named {
 	
 	private String name;
-	private Function<CommandContext<T>, V> contextProvider;
-	private String[] error;
+	private ContextProvider<T, V> contextProvider;
+	private MessageFormatter<T> error;
 	
-	public ContextComponent(String name, Function<CommandContext<T>, V> contextProvider, String... error) {
+	public ContextComponent(String name, ContextProvider<T, V> contextProvider, MessageFormatter<T> error) {
 		this.name = name;
 		this.contextProvider = contextProvider;
 		this.error = error;
@@ -42,13 +43,13 @@ public class ContextComponent<T, V> extends CommandComponent<T> implements Named
 	
 	@Override
 	public CommandResult<T> parse(CommandContext<T> context) {
-		V value = contextProvider.apply(context);
+		V value = contextProvider.provide(context);
 		if (value != null) {
 			context.setParsed(getIndex(), value);
 			context.provide(value);
 			return success();
 		}
-		return failure(error).complete();
+		return failure(error.apply(context.sender())).complete();
 	}
 	
 }
