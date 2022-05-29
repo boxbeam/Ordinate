@@ -4,8 +4,9 @@ sep ::= [ \t]+
 break ::= (sep? "\n")+
 
 flag ::= "-" word ("," word)*
-constraint ::= "<" ("\\" [^] | [^<>])* ">"
-defaultValue ::= "(" ("\\" [^] | [^()])* ")"
+escapeSequence = "\\" [^]
+constraint ::= "<" (escapeSequence | [^<>])* ">"
+defaultValue ::= "(" (escapeSequence | [^()])* ")"
 arg ::= word constraint? ("..." | "[]")? ":" word ("?" defaultValue?)?
 cmdName ::= word ("," word)*
 param ::= flag | arg
