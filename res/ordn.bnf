@@ -9,9 +9,10 @@ defaultValue ::= "(" ("\\" [^] | [^()])* ")"
 arg ::= word constraint? ("..." | "[]")? ":" word ("?" defaultValue?)?
 cmdName ::= word ("," word)*
 param ::= flag | arg
+paramList ::= (sep param)*
 
 tag ::= word (sep? "=" sep? [^{}\n]+) sep?
 entry ::= (tag "\n"? | command) break
 
-command ::= cmdName (sep param)* sep? commandBody
+command ::= cmdName paramList sep? commandBody
 commandBody ::= "{" break? entry* "}" break?
