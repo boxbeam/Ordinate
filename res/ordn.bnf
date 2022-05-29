@@ -1,0 +1,17 @@
+root ::= command*
+word ::= [^\[\](){}:?*,]+
+sep ::= [ \t]+
+break ::= (sep? "\n")+
+
+flag ::= "-" word ("," word)*
+constraint ::= "<" ("\\" [^] | [^<>])* ">"
+defaultValue ::= "(" ("\\" [^] | [^()])* ")"
+arg ::= word constraint? ("..." | "[]")? ":" word ("?" defaultValue?)?
+cmdName ::= word ("," word)*
+param ::= flag | arg
+
+tag ::= word (sep [^}\n]+) sep?
+entry ::= (tag "\n"? | command) break
+
+command ::= cmdName (sep param)* sep? commandBody
+commandBody ::= "{" break? entry* "}" break?
