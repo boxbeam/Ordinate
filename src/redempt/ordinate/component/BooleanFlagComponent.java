@@ -53,10 +53,7 @@ public class BooleanFlagComponent<T> extends CommandComponent<T> implements Name
 		SplittableList<Argument> arguments = context.getArguments();
 		boolean parsed = false;
 
-		int offset = context.initialArgCount() - arguments.size();
-		int maxIndex = context.getCommand().getPipeline().getMaxArgWidth() - offset;
-
-		for (int i = 0; i < maxIndex; i++) {
+		for (int i = 0; i < arguments.size(); i++) {
 			Argument arg = arguments.get(i);
 			String value = arg.getValue();
 
