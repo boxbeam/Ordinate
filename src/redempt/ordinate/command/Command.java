@@ -11,6 +11,8 @@ import redempt.ordinate.help.HelpComponent;
 import redempt.ordinate.processing.CachedSupplier;
 import redempt.ordinate.processing.CommandParsingPipeline;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -18,11 +20,21 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 
 	private Command<T> parent;
 	private String mainName;
-	private Set<String> names;
+	private Set<String> names = new HashSet<>();
 	private CommandParsingPipeline<T> pipeline;
+
+	public Command(String[] names, CommandParsingPipeline<T> pipeline) {
+		mainName = names[0];
+		Collections.addAll(this.names, names);
+		this.pipeline = pipeline;
+	}
 
 	public Command<T> getParent() {
 		return parent;
+	}
+
+	public void setParent(Command<T> parent) {
+		this.parent = parent;
 	}
 
 	public boolean isRoot() {

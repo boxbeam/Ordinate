@@ -15,6 +15,10 @@ public class CommandParsingPipeline<T> {
 	private int maxArgWidth;
 	private int minArgWidth;
 
+	public CommandParsingPipeline() {
+		this(Collections.emptyList());
+	}
+
 	public CommandParsingPipeline(Collection<CommandComponent<T>> components) {
 		this.components.addAll(components);
 		comparator = Comparator.comparingInt(CommandComponent::getPriority);
@@ -59,6 +63,11 @@ public class CommandParsingPipeline<T> {
 		}
 		finalized = true;
 		components.sort(comparator);
+		int index = 0;
+		for (CommandComponent<T> component : components) {
+			component.setIndex(index);
+			index += component.getMaxParsedObjects();
+		}
 		components = Collections.unmodifiableList(components);
 	}
 

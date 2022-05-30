@@ -15,8 +15,8 @@ import java.util.function.Supplier;
 
 public class ParserOptions<T> {
 
-	public static <T> ParserOptions<T> getDefaults(ArgumentParser<T> argumentParser, ComponentFactory<T> componentFactory) {
-		ParserOptions<T> options = new ParserOptions<>(argumentParser);
+	public static <T> ParserOptions<T> getDefaults(ComponentFactory<T> componentFactory) {
+		ParserOptions<T> options = new ParserOptions<>(new DefaultArgumentParser<>());
 		options.contextProviders.put("self", ContextProvider.create("self", null, CommandContext::sender));
 		options.argumentTypes.put("int", numberArgType("int", Integer::parseInt, componentFactory));
 		options.argumentTypes.put("float", numberArgType("float", Float::parseFloat, componentFactory));

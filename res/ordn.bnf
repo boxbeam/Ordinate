@@ -1,7 +1,8 @@
-root ::= command*
+root ::= break? sep? ((comment | command) break sep?)*
 word ::= [^\[\](){}:?*,=]+
 sep ::= [ \t]+
 break ::= (sep? "\n")+
+comment ::= "//" [^\n]*
 
 flag ::= "-" word ("," word)*
 escapeSequence = "\\" [^]
@@ -13,7 +14,7 @@ param ::= flag | arg
 paramList ::= (sep param)*
 
 tag ::= word (sep? "=" sep? [^{}\n]+) sep?
-entry ::= (tag "\n"? | command) break
+entry ::= sep? (tag "\n"? | command | comment) comment? break
 
-command ::= cmdName paramList sep? commandBody
-commandBody ::= "{" break? entry* "}" break?
+command ::= cmdName paramList break? commandBody
+commandBody ::= "{" comment? break? entry* "}" break?
