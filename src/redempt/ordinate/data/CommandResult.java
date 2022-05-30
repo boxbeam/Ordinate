@@ -48,5 +48,10 @@ public class CommandResult<T> {
 	public String[] getError() {
 		return error;
 	}
+
+	@Override
+	public String toString() {
+		return (complete ? "Complete " : "Incomplete ") + (isSuccess() ? "Success" : "Error: " + error[0]);
+	}
 	
 }

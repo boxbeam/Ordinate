@@ -33,7 +33,12 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 
 	public CommandContext<T> createContext(T sender, String[] input, boolean forCompletions) {
 		SplittableList<Argument> args = ArgumentSplitter.split(input, forCompletions);
-		return new CommandContext<>(this, null, sender, args, pipeline.getMaxArgWidth());
+		return new CommandContext<>(this, null, sender, args, pipeline.getParsingSlots());
+	}
+
+	public CommandContext<T> createContext(T sender, String input, boolean forCompletions) {
+		SplittableList<Argument> args = ArgumentSplitter.split(input, forCompletions);
+		return new CommandContext<>(this, null, sender, args, pipeline.getParsingSlots());
 	}
 
 	public Command<T> getParent() {
