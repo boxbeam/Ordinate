@@ -21,4 +21,8 @@ public class CommandCollection<T> {
 		}
 	}
 
+	public List<Command<T>> getCommands() {
+		return commands;
+	}
+
 }

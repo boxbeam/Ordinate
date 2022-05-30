@@ -46,7 +46,6 @@ public class CommandParser<T> {
 	}
 
 	public CommandCollection<T> parse(String input) {
-		System.out.println(input.contains("\r"));
 		Token root = lexer.tokenize(input);
 		List<Token> tokens = root.allByName(TraversalOrder.SHALLOW, "command");
 		List<Command<T>> commands = new ArrayList<>();
