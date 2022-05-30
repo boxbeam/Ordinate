@@ -73,7 +73,7 @@ public class DefaultArgumentParser<T> implements ArgumentParser<T> {
 		} else if (vararg) {
 			pipeline.addComponent(componentFactory.createVariableLengthArgument(type, optional, name));
 			if (constraint != null) {
-				constraint = Constraint.arrayConstraint(constraint);
+				constraint = Constraint.listConstraint(constraint);
 			}
 		} else if (optional) {
 			pipeline.addComponent(componentFactory.createOptionalArgument(type, defaultValue, name));

@@ -23,7 +23,7 @@ public class PropertiesComponentFactory<T> implements ComponentFactory<T> {
 		props.setProperty("missingArgument", "Missing value for argument: %1");
 		props.setProperty("invalidArgumentValue", "Invalid value for argument %1: %2");
 		props.setProperty("executionFailed", "Command execution failed due to an unexpected error. Please report this to an administrator.");
-		props.setProperty("tooManyArguments", "Too many arguments supplied: Extra %1 argument(s) provided");
+		props.setProperty("tooManyArguments", "Too many arguments: Extra %1 argument(s) provided");
 		props.setProperty("numberOutsideRange", "Number %1 outside range: %2");
 		props.setProperty("contextError", "%1");
 		props.setProperty("constraintError", "Constraint failed for %1: %2");

@@ -23,6 +23,7 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 	private HelpComponent helpPage;
 	private HelpComponent helpEntry;
 	private String commandPrefix;
+	private int priority = 20;
 
 	public Command(String commandPrefix, String[] names, CommandParsingPipeline<T> pipeline) {
 		mainName = names[0];
@@ -93,7 +94,11 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 
 	@Override
 	public int getPriority() {
-		return 20;
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
 	}
 	
 	@Override
