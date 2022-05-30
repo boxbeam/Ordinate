@@ -52,7 +52,7 @@ public class PropertiesComponentFactory<T> implements ComponentFactory<T> {
 	}
 
 	private MessageFormatter<T> getMessage(String key) {
-		MessageFormatter<T> message = getMessage(key);
+		MessageFormatter<T> message = messages.get(key);
 		if (message == null) {
 			throw new IllegalArgumentException("No message with key " + key);
 		}

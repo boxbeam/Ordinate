@@ -2,7 +2,6 @@ package redempt.ordinate.parser.argument;
 
 import redempt.ordinate.command.ArgType;
 import redempt.ordinate.constraint.Constraint;
-import redempt.ordinate.constraint.ConstraintComponent;
 import redempt.ordinate.constraint.ConstraintParser;
 import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.creation.ComponentFactory;

@@ -2,14 +2,12 @@ package redempt.ordinate.command;
 
 import redempt.ordinate.component.abstracts.CommandComponent;
 import redempt.ordinate.component.abstracts.HelpProvider;
-import redempt.ordinate.data.Argument;
-import redempt.ordinate.data.CommandContext;
-import redempt.ordinate.data.CommandResult;
-import redempt.ordinate.data.Named;
+import redempt.ordinate.data.*;
 import redempt.ordinate.dispatch.CommandDispatcher;
 import redempt.ordinate.help.DelimitedHelpComponent;
 import redempt.ordinate.help.HelpComponent;
 import redempt.ordinate.help.LiteralHelpComponent;
+import redempt.ordinate.processing.ArgumentSplitter;
 import redempt.ordinate.processing.CachedSupplier;
 import redempt.ordinate.processing.CommandParsingPipeline;
 
@@ -31,6 +29,11 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 		Collections.addAll(this.names, names);
 		this.pipeline = pipeline;
 		this.commandPrefix = commandPrefix;
+	}
+
+	public CommandContext<T> createContext(T sender, String[] input, boolean forCompletions) {
+		SplittableList<Argument> args = ArgumentSplitter.split(input, forCompletions);
+		return new CommandContext<>(this, null, sender, args, pipeline.getMaxArgWidth());
 	}
 
 	public Command<T> getParent() {

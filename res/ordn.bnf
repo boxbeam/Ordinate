@@ -1,11 +1,11 @@
-root ::= break? sep? ((comment | command) break sep?)*
-word ::= [^\[\](){}:?*,=]+
+root ::= break? sep? ((comment | command) (break sep? | <eof>))*
+word ::= [^(){}:?*,=\[\]]+
 sep ::= [ \t]+
 break ::= (sep? "\n")+
 comment ::= "//" [^\n]*
 
 flag ::= "-" word ("," word)*
-escapeSequence = "\\" [^]
+escapeSequence ::= "\\" [^]
 constraint ::= "<" (escapeSequence | [^<>])* ">"
 defaultValue ::= "(" (escapeSequence | [^()])* ")"
 arg ::= word constraint? ("..." | "[]")? ":" word ("?" defaultValue?)?
@@ -14,7 +14,7 @@ param ::= flag | arg
 paramList ::= (sep param)*
 
 tag ::= word (sep? "=" sep? [^{}\n]+) sep?
-entry ::= sep? (tag "\n"? | command | comment) comment? break
+entry ::= sep? (tag | command | comment) comment? break
 
 command ::= cmdName paramList break? commandBody
 commandBody ::= "{" comment? break? entry* "}" break?

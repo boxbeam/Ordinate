@@ -2,7 +2,6 @@ package redempt.ordinate.parser;
 
 import redempt.ordinate.command.ArgType;
 import redempt.ordinate.command.Command;
-import redempt.ordinate.component.abstracts.CommandComponent;
 import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.dispatch.CommandManager;
 import redempt.ordinate.parser.argument.ArgumentParser;
@@ -47,6 +46,7 @@ public class CommandParser<T> {
 	}
 
 	public CommandCollection<T> parse(String input) {
+		System.out.println(input.contains("\r"));
 		Token root = lexer.tokenize(input);
 		List<Token> tokens = root.allByName(TraversalOrder.SHALLOW, "command");
 		List<Command<T>> commands = new ArrayList<>();
@@ -121,7 +121,7 @@ public class CommandParser<T> {
 		String[] names = commandToken.getChildren()[0].joinLeaves("").split(",");
 		CommandParsingPipeline<T> pipeline = new CommandParsingPipeline<>();
 		if (argList != null) {
-			parseArgumentTokens(argList.getChildren()).forEach(pipeline::addComponent);
+			parseArgumentTokens(argList.getChildren(), pipeline);
 		}
 		Token bodyToken = commandToken.getChildren()[commandToken.getChildren().length - 1];
 		Map<String, List<String>> tags = new LinkedHashMap<>();
@@ -146,13 +146,10 @@ public class CommandParser<T> {
 		return cmd;
 	}
 
-	private List<CommandComponent<T>> parseArgumentTokens(Token[] arguments) {
-		List<CommandComponent<T>> list = new ArrayList<>();
+	private void parseArgumentTokens(Token[] arguments, CommandParsingPipeline<T> pipeline) {
 		for (Token arg : arguments) {
-			CommandComponent<T> component = options.getArgumentParser().parseArgument(arg.getValue(), options, manager.getComponentFactory());
-			list.add(component);
+			options.getArgumentParser().parseArgument(arg.getValue(), options, manager.getComponentFactory(), pipeline);
 		}
-		return list;
 	}
 
 	private Token getArgListToken(Token commandToken) {
