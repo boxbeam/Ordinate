@@ -12,5 +12,6 @@ public interface CommandManager<T> {
 	public ComponentFactory<T> getComponentFactory();
 	public CommandParser<T> getCommandParser();
 	public void setComponentFactory(ComponentFactory<T> componentFactory);
+	public String getCommandPrefix();
 
 }

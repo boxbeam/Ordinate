@@ -7,13 +7,13 @@ import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.data.Named;
 import redempt.ordinate.dispatch.CommandDispatcher;
+import redempt.ordinate.help.DelimitedHelpComponent;
 import redempt.ordinate.help.HelpComponent;
+import redempt.ordinate.help.LiteralHelpComponent;
 import redempt.ordinate.processing.CachedSupplier;
 import redempt.ordinate.processing.CommandParsingPipeline;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
 
 public class Command<T> extends CommandComponent<T> implements Named, HelpProvider {
@@ -22,11 +22,15 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 	private String mainName;
 	private Set<String> names = new HashSet<>();
 	private CommandParsingPipeline<T> pipeline;
+	private HelpComponent helpPage;
+	private HelpComponent helpEntry;
+	private String commandPrefix;
 
-	public Command(String[] names, CommandParsingPipeline<T> pipeline) {
+	public Command(String commandPrefix, String[] names, CommandParsingPipeline<T> pipeline) {
 		mainName = names[0];
 		Collections.addAll(this.names, names);
 		this.pipeline = pipeline;
+		this.commandPrefix = commandPrefix;
 	}
 
 	public Command<T> getParent() {
@@ -47,9 +51,26 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 
 	public void preparePipeline() {
 		pipeline.prepare();
+		List<HelpComponent> helpComponents = new ArrayList<>();
+		HelpComponent rootComponent = new LiteralHelpComponent(this, 5, false, (isRoot() ? commandPrefix : "") + getName());
+		helpComponents.add(rootComponent);
+		List<HelpComponent> helpPage = new ArrayList<>();
 		for (CommandComponent<T> component : pipeline.getComponents()) {
 			component.setParent(this);
+			if (component instanceof HelpProvider) {
+				HelpComponent help = ((HelpProvider) component).getHelpComponent();
+				if (help.isLine()) {
+					help = new DelimitedHelpComponent(this, help.getPriority(), true, " ", rootComponent, help);
+				}
+				(help.isLine() ? helpPage : helpComponents).add(help);
+			}
 		}
+		helpComponents.sort(Comparator.comparingInt(HelpComponent::getPriority));
+		HelpComponent[] helpArray = helpComponents.toArray(new HelpComponent[0]);
+		this.helpEntry = new DelimitedHelpComponent(this, 5, true, " ", helpArray);
+		helpPage.add(0, helpEntry);
+		HelpComponent[] helpPageArray = helpPage.toArray(new HelpComponent[0]);
+		this.helpPage = new DelimitedHelpComponent(this, 0, true, "\n", helpPageArray);
 	}
 
 	@Override
@@ -69,9 +90,13 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 	
 	@Override
 	public HelpComponent getHelpComponent() {
-		return null;
+		return helpEntry;
 	}
-	
+
+	public HelpComponent getHelpPage() {
+		return helpPage;
+	}
+
 	@Override
 	public CommandResult<T> parse(CommandContext<T> context) {
 		if (isRoot()) {

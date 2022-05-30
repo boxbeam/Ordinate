@@ -5,7 +5,6 @@ import redempt.ordinate.command.Command;
 import redempt.ordinate.component.abstracts.CommandComponent;
 import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.dispatch.CommandManager;
-import redempt.ordinate.dispatch.DispatchComponent;
 import redempt.ordinate.processing.CommandParsingPipeline;
 import redempt.redlex.bnf.BNFParser;
 import redempt.redlex.data.Token;
@@ -103,7 +102,7 @@ public class CommandParser<T> {
 		}
 		Token bodyToken = commandToken.getChildren()[commandToken.getChildren().length - 1];
 		Map<String, List<String>> tags = new LinkedHashMap<>();
-		Command<T> cmd = new Command<>(names, pipeline);
+		Command<T> cmd = new Command<>(manager.getCommandPrefix(), names, pipeline);
 		for (Token entry : bodyToken.getChildren()) {
 			if (entry.getType().getName().equals("tag")) {
 				String[] split = entry.getValue().split("\\s*=\\s*", 2);

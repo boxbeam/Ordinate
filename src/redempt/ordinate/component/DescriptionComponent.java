@@ -32,7 +32,7 @@ public class DescriptionComponent<T> extends CommandComponent<T> implements Help
 
 	@Override
 	public HelpComponent getHelpComponent() {
-		return new LiteralHelpComponent(this, -10, false, description);
+		return new LiteralHelpComponent(this, -10, false, ": " + description);
 	}
 
 	@Override

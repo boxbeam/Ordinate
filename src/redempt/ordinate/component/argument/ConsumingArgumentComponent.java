@@ -4,6 +4,8 @@ import redempt.ordinate.command.ArgType;
 import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
+import redempt.ordinate.help.HelpComponent;
+import redempt.ordinate.help.LiteralHelpComponent;
 import redempt.ordinate.processing.MessageFormatter;
 
 import java.util.StringJoiner;
@@ -49,6 +51,11 @@ public class ConsumingArgumentComponent<T, V> extends ArgumentComponent<T, V> {
 		context.setParsed(getIndex(), parsed);
 		context.provide(parsed);
 		return success();
+	}
+
+	@Override
+	public HelpComponent getHelpComponent() {
+		return new LiteralHelpComponent(this, 1, false, "<" + getName() + ">+");
 	}
 
 }
