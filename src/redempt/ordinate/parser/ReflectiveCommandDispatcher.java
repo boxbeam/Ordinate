@@ -2,6 +2,7 @@ package redempt.ordinate.parser;
 
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.dispatch.CommandDispatcher;
+import redempt.ordinate.parser.metadata.MethodHook;
 
 import java.lang.reflect.InvocationTargetException;
 

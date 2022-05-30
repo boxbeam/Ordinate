@@ -6,6 +6,8 @@ import redempt.ordinate.component.argument.ArgumentComponent;
 import redempt.ordinate.component.argument.ConsumingArgumentComponent;
 import redempt.ordinate.component.argument.OptionalArgumentComponent;
 import redempt.ordinate.component.argument.VariableLengthArgumentComponent;
+import redempt.ordinate.constraint.Constraint;
+import redempt.ordinate.constraint.ConstraintComponent;
 import redempt.ordinate.constraint.ConstraintParser;
 import redempt.ordinate.context.ContextComponent;
 import redempt.ordinate.context.ContextProvider;
@@ -23,6 +25,7 @@ public interface ComponentFactory<T> {
 	public BooleanFlagComponent<T> createBooleanFlag(String... names);
 	public <V> ContextComponent<T, V> createContext(ContextProvider<T, V> provider, String name);
 	public DispatchComponent<T> createDispatch(CommandDispatcher<T> dispatcher);
+	public <V> ConstraintComponent<T, V> createConstraint(Constraint<T, V> constraint, String name);
 	public <V extends Number & Comparable<V>> ConstraintParser<T, V> createNumberConstraintParser(Function<String, V> parseNumber);
 
 }

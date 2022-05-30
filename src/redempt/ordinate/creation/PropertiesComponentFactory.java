@@ -3,6 +3,8 @@ package redempt.ordinate.creation;
 import redempt.ordinate.command.ArgType;
 import redempt.ordinate.component.BooleanFlagComponent;
 import redempt.ordinate.component.argument.*;
+import redempt.ordinate.constraint.Constraint;
+import redempt.ordinate.constraint.ConstraintComponent;
 import redempt.ordinate.constraint.ConstraintParser;
 import redempt.ordinate.constraint.NumberConstraint;
 import redempt.ordinate.context.ContextComponent;
@@ -24,6 +26,7 @@ public class PropertiesComponentFactory<T> implements ComponentFactory<T> {
 		props.setProperty("tooManyArguments", "Too many arguments supplied: Extra %1 argument(s) provided");
 		props.setProperty("numberOutsideRange", "Number %1 outside range: %2");
 		props.setProperty("contextError", "%1");
+		props.setProperty("constraintError", "Constraint failed for %1: %2");
 		return props;
 	}
 
@@ -92,6 +95,11 @@ public class PropertiesComponentFactory<T> implements ComponentFactory<T> {
 	@Override
 	public DispatchComponent<T> createDispatch(CommandDispatcher<T> dispatcher) {
 		return new DispatchComponent<>(dispatcher, getMessage("executionFailed"), getMessage("tooManyArguments"));
+	}
+
+	@Override
+	public <V> ConstraintComponent<T, V> createConstraint(Constraint<T, V> constraint, String name) {
+		return new ConstraintComponent<>(constraint, name, getMessage("constraintError"));
 	}
 
 	@Override

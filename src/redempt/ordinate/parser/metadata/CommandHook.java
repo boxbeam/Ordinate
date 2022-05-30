@@ -1,4 +1,4 @@
-package redempt.ordinate.parser;
+package redempt.ordinate.parser.metadata;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

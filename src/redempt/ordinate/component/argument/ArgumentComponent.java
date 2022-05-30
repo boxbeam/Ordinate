@@ -38,6 +38,10 @@ public class ArgumentComponent<T, V> extends CommandComponent<T> implements Name
 		return type;
 	}
 
+	public void setType(ArgType<T, ?> type) {
+		this.type = (ArgType<T, V>) type;
+	}
+
 	@Override
 	public int getMaxConsumedArgs() {
 		return 1;

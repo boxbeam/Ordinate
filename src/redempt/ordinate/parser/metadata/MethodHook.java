@@ -1,4 +1,4 @@
-package redempt.ordinate.parser;
+package redempt.ordinate.parser.metadata;
 
 import java.lang.reflect.Method;
 

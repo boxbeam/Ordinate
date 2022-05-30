@@ -1,10 +1,13 @@
-package redempt.ordinate.parser;
+package redempt.ordinate.parser.metadata;
 
 import redempt.ordinate.command.ArgType;
 import redempt.ordinate.component.DescriptionComponent;
 import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.creation.ComponentFactory;
 import redempt.ordinate.data.CommandContext;
+import redempt.ordinate.parser.TagProcessor;
+import redempt.ordinate.parser.argument.ArgumentParser;
+import redempt.ordinate.parser.argument.DefaultArgumentParser;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,6 +21,7 @@ public class ParserOptions<T> {
 	public static <T> ParserOptions<T> getDefaults(ComponentFactory<T> componentFactory) {
 		ParserOptions<T> options = new ParserOptions<>(new DefaultArgumentParser<>());
 		options.contextProviders.put("self", ContextProvider.create("self", null, CommandContext::sender));
+		options.argumentTypes.put("string", new ArgType<>("string", (ctx, str) -> str, (ctx, str) -> Collections.emptyList()));
 		options.argumentTypes.put("int", numberArgType("int", Integer::parseInt, componentFactory));
 		options.argumentTypes.put("float", numberArgType("float", Float::parseFloat, componentFactory));
 		options.argumentTypes.put("long", numberArgType("long", Long::parseLong, componentFactory));

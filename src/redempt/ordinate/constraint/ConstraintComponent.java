@@ -3,17 +3,19 @@ package redempt.ordinate.constraint;
 import redempt.ordinate.component.abstracts.CommandComponent;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
+import redempt.ordinate.data.Named;
 import redempt.ordinate.processing.MessageFormatter;
-import redempt.ordinate.help.HelpComponent;
 
-public class ConstraintComponent<T, V> extends CommandComponent<T> {
+public class ConstraintComponent<T, V> extends CommandComponent<T> implements Named {
 
 	private Constraint<T, V> constraint;
 	private MessageFormatter<T> errorGenerator;
+	private String name;
 
-	public ConstraintComponent(Constraint<T, V> constraint, MessageFormatter<T> errorGenerator) {
+	public ConstraintComponent(Constraint<T, V> constraint, String name, MessageFormatter<T> errorGenerator) {
 		this.constraint = constraint;
 		this.errorGenerator = errorGenerator;
+		this.name = name;
 	}
 
 	@Override
@@ -26,9 +28,14 @@ public class ConstraintComponent<T, V> extends CommandComponent<T> {
 		V val = (V) context.getParsed(getIndex());
 		String err = constraint.apply(context, val);
 		if (err != null) {
-			return failure(errorGenerator.apply(context.sender(), err)).complete();
+			return failure(errorGenerator.apply(context.sender(), name, err)).complete();
 		}
 		return success();
+	}
+
+	@Override
+	public String getName() {
+		return name;
 	}
 
 	@Override

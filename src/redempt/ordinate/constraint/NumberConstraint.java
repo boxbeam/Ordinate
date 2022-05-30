@@ -26,7 +26,7 @@ public class NumberConstraint {
 				upperBound = n -> n.compareTo(upper) <= 0;
 			}
 			Predicate<V> range = lowerBound.and(upperBound);
-			return (ctx, val) -> range.test(val) ? null : error.apply(ctx.sender(), val.toString(), display);
+			return (ctx, val) -> range.test(val) ? null : error.apply(ctx.sender(), val.toString(), "Number outside range: " + display);
 		};
 	}
 
