@@ -5,6 +5,7 @@ import redempt.ordinate.dispatch.CommandDispatcher;
 import redempt.ordinate.parser.metadata.MethodHook;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.StringJoiner;
 
 public class ReflectiveCommandDispatcher<T> implements CommandDispatcher<T> {
 
@@ -23,6 +24,12 @@ public class ReflectiveCommandDispatcher<T> implements CommandDispatcher<T> {
 			throw new RuntimeException(e);
 		} catch (InvocationTargetException e) {
 			throw new RuntimeException(e);
+		} catch (IllegalArgumentException e) {
+			StringJoiner joiner = new StringJoiner(", ", "[", "]");
+			for (Object obj : parsed) {
+				joiner.add(obj == null ? "null" : obj.getClass().getName());
+			}
+			throw new IllegalStateException("Could not pass arguments to method hook " + hook.getMethod().getName() + ", types passed: " + joiner);
 		}
 	}
 

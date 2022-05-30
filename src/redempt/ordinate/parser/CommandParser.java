@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 public class CommandParser<T> {
 
-	private static  Lexer lexer;
+	private static Lexer lexer;
 
 	static {
 		InputStream inp = CommandParser.class.getClassLoader().getResourceAsStream("ordn.bnf");
@@ -138,7 +138,7 @@ public class CommandParser<T> {
 			}
 			Command<T> child = parseCommand(entry);
 			child.setParent(cmd);
-			pipeline.addComponent(parseCommand(entry));
+			pipeline.addComponent(child);
 		}
 		for (Map.Entry<String, List<String>> tag : tags.entrySet()) {
 			TagProcessor<T> tagProcessor = options.getTagProcessor(tag.getKey());

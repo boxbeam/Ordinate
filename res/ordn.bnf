@@ -1,7 +1,8 @@
 root ::= break? sep? ((comment | command) (break sep? | <eof>))*
-word ::= (!sep [^(){}:?*,=\[\]])+
+word ::= [^ \t\n(){}:?*,=]+
 sep ::= [ \t]+
-break ::= (sep? "\n")+
+newLine ::= "\n"
+break ::= (sep? newLine)+
 comment ::= "//" [^\n]*
 
 flag ::= "-" word ("," word)*
@@ -14,7 +15,7 @@ param ::= flag | arg
 paramList ::= (sep param)*
 
 tag ::= word (sep? "=" sep? [^{}\n]+) sep?
-entry ::= sep? (tag | command | comment) comment? break
+entry ::= sep? (tag | command | comment) comment? break sep?
 
 command ::= cmdName paramList break? sep? commandBody
-commandBody ::= "{" comment? break? entry* "}" break?
+commandBody ::= "{" comment? break? entry* "}"

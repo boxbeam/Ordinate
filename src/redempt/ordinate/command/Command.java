@@ -122,7 +122,7 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 		if (arg.isQuoted() || !names.contains(arg.getValue())) {
 			return success();
 		}
-		CommandContext<T> clone = context.clone(this, 1);
+		CommandContext<T> clone = context.clone(this, 1, pipeline.getParsingSlots());
 		CommandResult<T> result = pipeline.parse(clone);
 		if (!result.isSuccess()) {
 			result.uncomplete();
