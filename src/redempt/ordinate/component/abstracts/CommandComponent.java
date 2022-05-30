@@ -12,7 +12,7 @@ public abstract class CommandComponent<T> {
 	private CommandComponent<T> parent;
 	private int depth;
 	
-	protected void setParent(CommandComponent<T> parent) {
+	public void setParent(CommandComponent<T> parent) {
 		this.parent = parent;
 		depth = parent == null ? 0 : parent.depth + 1;
 	}

@@ -90,7 +90,11 @@ public class CommandContext<T> {
 	public Object getParsed(int pos) {
 		return parsed[pos + 1];
 	}
-	
+
+	public Object[] getAllParsed() {
+		return parsed;
+	}
+
 	public int getTotalParsingSlots() {
 		return parsed.length - 1;
 	}

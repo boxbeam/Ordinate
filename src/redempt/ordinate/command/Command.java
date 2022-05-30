@@ -45,6 +45,13 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 		return pipeline;
 	}
 
+	public void preparePipeline() {
+		pipeline.prepare();
+		for (CommandComponent<T> component : pipeline.getComponents()) {
+			component.setParent(this);
+		}
+	}
+
 	@Override
 	public int getMaxConsumedArgs() {
 		return pipeline.getMaxArgWidth();

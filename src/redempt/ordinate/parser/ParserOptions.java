@@ -56,6 +56,10 @@ public class ParserOptions<T> {
 		return argumentParser;
 	}
 
+	public void setArgumentParser(ArgumentParser<T> argumentParser) {
+		this.argumentParser = argumentParser;
+	}
+
 	private <V> V getOrError(Map<String, V> map, String key, Supplier<String> error) {
 		V value = map.get(key);
 		if (value == null) {

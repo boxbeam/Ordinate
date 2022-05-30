@@ -1,8 +1,11 @@
 package redempt.ordinate.parser;
 
+import redempt.ordinate.command.ArgType;
 import redempt.ordinate.command.Command;
 import redempt.ordinate.component.abstracts.CommandComponent;
+import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.dispatch.CommandManager;
+import redempt.ordinate.dispatch.DispatchComponent;
 import redempt.ordinate.processing.CommandParsingPipeline;
 import redempt.redlex.bnf.BNFParser;
 import redempt.redlex.data.Token;
@@ -10,10 +13,9 @@ import redempt.redlex.processing.CullStrategy;
 import redempt.redlex.processing.Lexer;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.*;
 
 public class CommandParser<T> {
 
@@ -31,6 +33,66 @@ public class CommandParser<T> {
 
 	private ParserOptions<T> options;
 	private CommandManager<T> manager;
+
+	public CommandParser(ParserOptions<T> options, CommandManager<T> manager) {
+		this.options = options;
+		this.manager = manager;
+	}
+
+	public CommandParser<T> setHookTargets(Object... hookTargets) {
+		Map<String, MethodHook> hooks = new HashMap<>();
+		for (Object obj : hookTargets) {
+			for (Method method : obj.getClass().getDeclaredMethods()) {
+				if (!Modifier.isPublic(method.getModifiers()) || Modifier.isStatic(method.getModifiers())) {
+					continue;
+				}
+				CommandHook hook = method.getAnnotation(CommandHook.class);
+				if (hook == null) {
+					continue;
+				}
+				hooks.put(hook.value(), new MethodHook(method, obj));
+			}
+		}
+		options.getTagProcessors().put("hook", TagProcessor.create("hook", (cmd, str) -> {
+			MethodHook hook = hooks.get(str);
+			if (hook == null) {
+				throw new IllegalStateException("No method hook found for command with hook name " + str);
+			}
+			cmd.getPipeline().addComponent(manager.getComponentFactory().createDispatch(new ReflectiveCommandDispatcher<>(hook)));
+			return cmd;
+		}));
+		return this;
+	}
+
+	public CommandParser<T> addArgTypes(ArgType<T, ?>... argTypes) {
+		for (ArgType<T, ?> argType : argTypes) {
+			options.getArgumentTypes().put(argType.getName(), argType);
+		}
+		return this;
+	}
+
+	public CommandParser<T> addContextProviders(ContextProvider<T, ?>... contextProviders) {
+		for (ContextProvider<T, ?> contextProvider : contextProviders) {
+			options.getContextProviders().put(contextProvider.getName(), contextProvider);
+		}
+		return this;
+	}
+
+	public CommandParser<T> addTagProcessors(TagProcessor<T>... tagProcessors) {
+		for (TagProcessor<T> tagProcessor : tagProcessors) {
+			options.getTagProcessors().put(tagProcessor.getName(), tagProcessor);
+		}
+		return this;
+	}
+
+	public CommandParser<T> setArgumentParser(ArgumentParser<T> argumentParser) {
+		options.setArgumentParser(argumentParser);
+		return this;
+	}
+
+	public ParserOptions<T> getOptions() {
+		return options;
+	}
 
 	private Command<T> parseCommand(Token commandToken) {
 		Token argList = getArgListToken(commandToken);
@@ -58,7 +120,7 @@ public class CommandParser<T> {
 				cmd = tagProcessor.apply(cmd, tagValue);
 			}
 		}
-		pipeline.prepare();
+		cmd.preparePipeline();
 		return cmd;
 	}
 
