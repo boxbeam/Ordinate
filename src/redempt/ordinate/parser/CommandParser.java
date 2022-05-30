@@ -10,11 +10,15 @@ import redempt.redlex.bnf.BNFParser;
 import redempt.redlex.data.Token;
 import redempt.redlex.processing.CullStrategy;
 import redempt.redlex.processing.Lexer;
+import redempt.redlex.processing.TraversalOrder;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CommandParser<T> {
 
@@ -36,6 +40,21 @@ public class CommandParser<T> {
 	public CommandParser(ParserOptions<T> options, CommandManager<T> manager) {
 		this.options = options;
 		this.manager = manager;
+	}
+
+	public CommandCollection<T> parse(String input) {
+		Token root = lexer.tokenize(input);
+		List<Token> tokens = root.allByName(TraversalOrder.SHALLOW, "command");
+		List<Command<T>> commands = new ArrayList<>();
+		for (Token commandToken : tokens) {
+			commands.add(parseCommand(commandToken));
+		}
+		return new CommandCollection<>(commands, manager);
+	}
+
+	public CommandCollection<T> parse(InputStream input) {
+		String contents = new BufferedReader(new InputStreamReader(input)).lines().collect(Collectors.joining("\n"));
+		return parse(contents);
 	}
 
 	public CommandParser<T> setHookTargets(Object... hookTargets) {
