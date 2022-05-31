@@ -133,7 +133,9 @@ public class CommandParser<T> {
 		for (Token entry : bodyToken.getChildren()) {
 			if (entry.getType().getName().equals("tag")) {
 				String[] split = entry.getValue().split("\\s*=\\s*", 2);
-				tags.computeIfAbsent(split[0], k -> new ArrayList<>()).add(split[1]);
+				String tagName = split[0];
+				String tagValue = split.length == 1 ? "" : split[1];
+				tags.computeIfAbsent(tagName, k -> new ArrayList<>()).add(tagValue);
 				continue;
 			}
 			Command<T> child = parseCommand(entry);
