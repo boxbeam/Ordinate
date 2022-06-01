@@ -14,7 +14,7 @@ cmdName ::= word ("," word)*
 param ::= flag | arg
 paramList ::= (sep param)*
 
-tag ::= word (sep? "=" sep? [^{}\n]+) sep?
+tag ::= word (sep? "=" sep? (!"//" [^{}\n])+) sep?
 entry ::= sep? (tag | command | comment) comment? break sep?
 
 command ::= cmdName paramList break? sep? commandBody

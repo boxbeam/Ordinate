@@ -134,7 +134,7 @@ public class CommandParser<T> {
 			if (entry.getType().getName().equals("tag")) {
 				String[] split = entry.getValue().split("\\s*=\\s*", 2);
 				String tagName = split[0];
-				String tagValue = split.length == 1 ? "" : split[1];
+				String tagValue = split.length == 1 ? "" : split[1].trim();
 				tags.computeIfAbsent(tagName, k -> new ArrayList<>()).add(tagValue);
 				continue;
 			}
