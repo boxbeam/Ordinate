@@ -20,6 +20,7 @@ public class ConsumingArgumentComponent<T, V> extends ArgumentComponent<T, V> {
 		this.optional = optional;
 	}
 
+	@Override
 	public boolean isOptional() {
 		return optional;
 	}

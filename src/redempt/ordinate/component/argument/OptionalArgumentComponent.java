@@ -17,6 +17,11 @@ public class OptionalArgumentComponent<T, V> extends ArgumentComponent<T, V> {
 	}
 
 	@Override
+	public boolean isOptional() {
+		return true;
+	}
+
+	@Override
 	public int getMinConsumedArgs() {
 		return 0;
 	}

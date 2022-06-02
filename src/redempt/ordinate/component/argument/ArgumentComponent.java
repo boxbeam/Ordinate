@@ -25,6 +25,10 @@ public class ArgumentComponent<T, V> extends CommandComponent<T> implements Name
 		this.invalidError = invalidError;
 	}
 
+	public boolean isOptional() {
+		return false;
+	}
+
 	public MessageFormatter<T> getInvalidError() {
 		return invalidError;
 	}

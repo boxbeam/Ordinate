@@ -19,6 +19,7 @@ public class VariableLengthArgumentComponent<T, V> extends ArgumentComponent<T, 
 		this.optional = optional;
 	}
 
+	@Override
 	public boolean isOptional() {
 		return optional;
 	}
