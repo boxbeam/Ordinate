@@ -129,9 +129,15 @@ public class CommandParser<T> {
 			parseArgumentTokens(argList.getChildren(), pipeline);
 		}
 		Token bodyToken = commandToken.getChildren()[commandToken.getChildren().length - 1];
+		Command<T> cmd = parseInternalEntries(new Command<>(manager.getCommandPrefix(), names, pipeline), bodyToken.getChildren());
+		pipeline.getComponents().forEach(c -> c.setParent(cmd));
+		cmd.preparePipeline();
+		return cmd;
+	}
+
+	private Command<T> parseInternalEntries(Command<T> cmd, Token[] entries) {
 		Map<String, List<String>> tags = new LinkedHashMap<>();
-		Command<T> cmd = new Command<>(manager.getCommandPrefix(), names, pipeline);
-		for (Token entry : bodyToken.getChildren()) {
+		for (Token entry : entries) {
 			if (entry.getType().getName().equals("tag")) {
 				String[] split = entry.getValue().split("\\s*=\\s*", 2);
 				String tagName = split[0];
@@ -139,7 +145,7 @@ public class CommandParser<T> {
 				tags.computeIfAbsent(tagName, k -> new ArrayList<>()).add(tagValue);
 				continue;
 			}
-			pipeline.addComponent(parseCommand(entry));
+			cmd.getPipeline().addComponent(parseCommand(entry));
 		}
 		for (Map.Entry<String, List<String>> tag : tags.entrySet()) {
 			TagProcessor<T> tagProcessor = options.getTagProcessor(tag.getKey());
@@ -147,10 +153,6 @@ public class CommandParser<T> {
 				cmd = tagProcessor.apply(cmd, tagValue);
 			}
 		}
-		for (CommandComponent<T> component : pipeline.getComponents()) {
-			component.setParent(cmd);
-		}
-		cmd.preparePipeline();
 		return cmd;
 	}
 
