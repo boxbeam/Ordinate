@@ -9,13 +9,18 @@ flag ::= "-" word ("," word)*
 escapeSequence ::= "\\" [^]
 constraint ::= "<" (escapeSequence | [^<>])* ">"
 defaultValue ::= "(" (escapeSequence | [^()])* ")"
-arg ::= word constraint? ("..." | "[]")? ":" word ("?" defaultValue?)?
-cmdName ::= word ("," word)*
+vararg ::= "[]"
+consuming ::= "..."
+optional ::= "?"
+name ::= word
+type ::= word
+arg ::= name constraint? (consuming | vararg)? ":" type (optional defaultValue?)?
 param ::= flag | arg
 paramList ::= (sep param)*
 
 tag ::= word (sep? "=" sep? (!"//" [^{}\n])+) sep?
 entry ::= sep? (tag | command | comment) comment? break sep?
 
+cmdName ::= word ("," word)*
 command ::= cmdName paramList break? sep? commandBody
 commandBody ::= "{" comment? break? entry* "}"

@@ -1,88 +1,65 @@
 package redempt.ordinate.parser.argument;
 
 import redempt.ordinate.command.ArgType;
-import redempt.ordinate.constraint.Constraint;
-import redempt.ordinate.constraint.ConstraintParser;
+import redempt.ordinate.component.BooleanFlagComponent;
 import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.creation.ComponentFactory;
 import redempt.ordinate.parser.metadata.ParserOptions;
 import redempt.ordinate.processing.CommandParsingPipeline;
+import redempt.redlex.data.Token;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class DefaultArgumentParser<T> implements ArgumentParser<T> {
 
 	@Override
-	public <V> void parseArgument(String argument, ParserOptions<T> options, ComponentFactory<T> componentFactory, CommandParsingPipeline<T> pipeline) {
-		if (argument.startsWith("-")) {
-			String[] split = argument.split(",");
-			if (Arrays.stream(split).anyMatch(s -> !s.startsWith("-"))) {
-				throw new IllegalArgumentException("All flag aliases must begin with a dash");
-			}
-			pipeline.addComponent(componentFactory.createBooleanFlag(split));
+	public <V> void parseArgument(Token argument, ParserOptions<T> options, ComponentFactory<T> componentFactory, CommandParsingPipeline<T> pipeline) {
+		if (argument.getBaseString().charAt(argument.getIndex()) == '-') {
+			pipeline.addComponent(parseBooleanFlag(argument.getValue(), componentFactory));
 			return;
 		}
-		boolean optional = false;
-		boolean consume = false;
-		boolean vararg = false;
-		ContextProvider<T, V> defaultValue = null;
-		Constraint<T, ?> constraint = null;
-		String constraintString = null;
-		String[] split = argument.split(":", 2);
-		String typeName = split[0];
-		if (typeName.endsWith("...")) {
-			consume = true;
-			typeName = typeName.substring(0, typeName.length() - 3);
+		ArgumentBuilder<T, V> builder = new ArgumentBuilder<>();
+		Map<String, List<Token>> tokens = argument.allByNames("name", "type", "optional", "vararg", "consuming", "constraint", "defaultValue");
+		String name = getOptional(tokens, "name").get().getValue();
+		builder.setName(name);
+		ArgType<T, ?> type = options.getArgType(getOptional(tokens, "type").get().getValue());
+		builder.setType(type);
+		getOptional(tokens, "optional").ifPresent(t -> builder.setOptional(true));
+		getOptional(tokens, "vararg").ifPresent(t -> builder.setVararg(true));
+		getOptional(tokens, "consuming").ifPresent(t -> builder.setConsuming(true));
+		getOptional(tokens, "constraint").map(this::trimToken).ifPresent(s -> builder.setConstraint(type.getConstraintParser().parse(s)));
+		getOptional(tokens, "defaultValue").map(this::trimToken).ifPresent(s -> builder.setDefaultValue(getDefaultValue(name, type, s, options)));
+		builder.build(componentFactory).forEach(pipeline::addComponent);
+	}
+
+	private BooleanFlagComponent<T> parseBooleanFlag(String value, ComponentFactory<T> componentFactory) {
+		String[] split = value.split(",");
+		if (Arrays.stream(split).anyMatch(s -> !s.startsWith("-"))) {
+			throw new IllegalArgumentException("All flag aliases must begin with a dash");
 		}
-		if (typeName.endsWith("[]")) {
-			vararg = true;
-			typeName = typeName.substring(0, typeName.length() - 2);
+		return componentFactory.createBooleanFlag(split);
+	}
+
+	private ContextProvider<T, ?> getDefaultValue(String name, ArgType<T, ?> type, String str, ParserOptions<T> options) {
+		if (str.startsWith("context ")) {
+			return options.getContextProvider(str.substring(8));
 		}
-		if (typeName.endsWith(">")) {
-			int begin = typeName.indexOf('<');
-			constraintString = typeName.substring(begin + 1, typeName.length() - 1);
-			typeName = typeName.substring(0, begin);
+		return ContextProvider.create(null, "Failed to parse default value for " + name, ctx -> type.convert(ctx, str));
+	}
+
+	private String trimToken(Token token) {
+		return token.getBaseString().substring(token.getStart() + 1, token.getEnd() - 1);
+	}
+
+	private static <T> Optional<T> getOptional(Map<String, List<T>> map, String key) {
+		List<T> list = map.get(key);
+		if (list == null || list.isEmpty()) {
+			return Optional.empty();
 		}
-		ArgType<T, V> type = (ArgType<T, V>) options.getArgType(typeName);
-		if (constraintString != null) {
-			ConstraintParser<T, V> constraintParser = type.getConstraintParser();
-			if (constraintParser == null) {
-				throw new IllegalArgumentException("No constraint parser for type " + typeName + ", cannot handle constraint value " + constraintString);
-			}
-			constraint = constraintParser.parse(constraintString);
-		}
-		String name = split[1];
-		if (name.endsWith("?")) {
-			optional = true;
-			name = name.substring(0, name.length() - 1);
-		}
-		if (name.endsWith(")")) {
-			optional = true;
-			int start = name.indexOf('(');
-			name = name.substring(0, start - 1);
-			String defaultString = name.substring(start + 1, name.length() - 1);
-			if (defaultString.startsWith("context ")) {
-				String contextName = defaultString.substring(8);
-				defaultValue = (ContextProvider<T, V>) options.getContextProvider(contextName);
-			} else {
-				defaultValue = ContextProvider.create(null, "Failed to parse default value for " + name, ctx -> type.convert(ctx, defaultString));
-			}
-		}
-		if (consume) {
-			pipeline.addComponent(componentFactory.createConsumingArgument(type, optional, defaultValue, name));
-		} else if (vararg) {
-			pipeline.addComponent(componentFactory.createVariableLengthArgument(type, optional, name));
-			if (constraint != null) {
-				constraint = Constraint.listConstraint(constraint);
-			}
-		} else if (optional) {
-			pipeline.addComponent(componentFactory.createOptionalArgument(type, defaultValue, name));
-		} else {
-			pipeline.addComponent(componentFactory.createArgument(type, name));
-		}
-		if (constraint != null) {
-			pipeline.addComponent(componentFactory.createConstraint(constraint, name));
-		}
+		return Optional.of(list.get(0));
 	}
 
 }

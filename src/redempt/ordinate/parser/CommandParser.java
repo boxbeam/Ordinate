@@ -123,7 +123,7 @@ public class CommandParser<T> {
 
 	private Command<T> parseCommand(Token commandToken) {
 		Token argList = getArgListToken(commandToken);
-		String[] names = commandToken.getChildren()[0].joinLeaves("").split(",");
+		String[] names = commandToken.getChildren()[0].getValue().split(",");
 		CommandParsingPipeline<T> pipeline = new CommandParsingPipeline<>();
 		if (argList != null) {
 			parseArgumentTokens(argList.getChildren(), pipeline);
@@ -139,12 +139,7 @@ public class CommandParser<T> {
 				tags.computeIfAbsent(tagName, k -> new ArrayList<>()).add(tagValue);
 				continue;
 			}
-			Command<T> child = parseCommand(entry);
-			child.setParent(cmd);
-			pipeline.addComponent(child);
-		}
-		for (CommandComponent<T> component : pipeline.getComponents()) {
-			component.setParent(cmd);
+			pipeline.addComponent(parseCommand(entry));
 		}
 		for (Map.Entry<String, List<String>> tag : tags.entrySet()) {
 			TagProcessor<T> tagProcessor = options.getTagProcessor(tag.getKey());
@@ -152,13 +147,16 @@ public class CommandParser<T> {
 				cmd = tagProcessor.apply(cmd, tagValue);
 			}
 		}
+		for (CommandComponent<T> component : pipeline.getComponents()) {
+			component.setParent(cmd);
+		}
 		cmd.preparePipeline();
 		return cmd;
 	}
 
 	private void parseArgumentTokens(Token[] arguments, CommandParsingPipeline<T> pipeline) {
 		for (Token arg : arguments) {
-			options.getArgumentParser().parseArgument(arg.getValue(), options, manager.getComponentFactory(), pipeline);
+			options.getArgumentParser().parseArgument(arg, options, manager.getComponentFactory(), pipeline);
 		}
 	}
 
