@@ -8,7 +8,6 @@ import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.data.Named;
 import redempt.ordinate.processing.MessageFormatter;
 import redempt.ordinate.help.HelpComponent;
-import redempt.ordinate.help.LiteralHelpComponent;
 
 import java.util.Set;
 
@@ -59,7 +58,7 @@ public class ArgumentComponent<T, V> extends CommandComponent<T> implements Name
 
 	@Override
 	public HelpComponent getHelpComponent() {
-		return new LiteralHelpComponent(this, 1, false, "<" + name + ">");
+		return new HelpComponent(this, 1, "<" + name + ">");
 	}
 
 	@Override
@@ -79,10 +78,10 @@ public class ArgumentComponent<T, V> extends CommandComponent<T> implements Name
 
 	@Override
 	public CommandResult<T> complete(CommandContext<T> context, Set<String> completions) {
-		if (context.getArguments().size() > 1) {
+		if (context.getArguments().size() != 1) {
 			return parse(context);
 		}
-		String partial = context.peekArg().getValue();
+		String partial = context.pollArg().getValue();
 		completions.addAll(type.complete(context, partial));
 		return success();
 	}

@@ -4,7 +4,6 @@ import redempt.ordinate.command.ArgType;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.help.HelpComponent;
-import redempt.ordinate.help.LiteralHelpComponent;
 import redempt.ordinate.processing.MessageFormatter;
 
 import java.util.ArrayList;
@@ -78,7 +77,7 @@ public class VariableLengthArgumentComponent<T, V> extends ArgumentComponent<T, 
 
 	@Override
 	public HelpComponent getHelpComponent() {
-		return new LiteralHelpComponent(this, 1, false, "<" + getName() + ">+");
+		return new HelpComponent(this, 1, "<" + getName() + ">+");
 	}
 
 }

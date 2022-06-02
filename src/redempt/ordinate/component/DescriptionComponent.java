@@ -5,7 +5,6 @@ import redempt.ordinate.component.abstracts.HelpProvider;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.help.HelpComponent;
-import redempt.ordinate.help.LiteralHelpComponent;
 
 public class DescriptionComponent<T> extends CommandComponent<T> implements HelpProvider {
 
@@ -32,7 +31,7 @@ public class DescriptionComponent<T> extends CommandComponent<T> implements Help
 
 	@Override
 	public HelpComponent getHelpComponent() {
-		return new LiteralHelpComponent(this, -10, false, ": " + description);
+		return new HelpComponent(this, -10, ": " + description);
 	}
 
 	@Override
