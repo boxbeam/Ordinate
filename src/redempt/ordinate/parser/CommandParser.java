@@ -2,6 +2,7 @@ package redempt.ordinate.parser;
 
 import redempt.ordinate.command.ArgType;
 import redempt.ordinate.command.Command;
+import redempt.ordinate.component.abstracts.CommandComponent;
 import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.dispatch.CommandManager;
 import redempt.ordinate.parser.argument.ArgumentParser;
@@ -141,6 +142,9 @@ public class CommandParser<T> {
 			Command<T> child = parseCommand(entry);
 			child.setParent(cmd);
 			pipeline.addComponent(child);
+		}
+		for (CommandComponent<T> component : pipeline.getComponents()) {
+			component.setParent(cmd);
 		}
 		for (Map.Entry<String, List<String>> tag : tags.entrySet()) {
 			TagProcessor<T> tagProcessor = options.getTagProcessor(tag.getKey());

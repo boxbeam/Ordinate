@@ -11,7 +11,6 @@ import java.util.*;
 
 public class Command<T> extends CommandComponent<T> implements Named, HelpProvider {
 
-	private Command<T> parent;
 	private String mainName;
 	private Set<String> names = new HashSet<>();
 	private CommandParsingPipeline<T> pipeline;
@@ -33,16 +32,8 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 		return new CommandContext<>(this, null, sender, args, pipeline.getParsingSlots());
 	}
 
-	public Command<T> getParent() {
-		return parent;
-	}
-
-	public void setParent(Command<T> parent) {
-		this.parent = parent;
-	}
-
 	public boolean isRoot() {
-		return parent == null;
+		return getParent() == null;
 	}
 
 	public CommandParsingPipeline<T> getPipeline() {
