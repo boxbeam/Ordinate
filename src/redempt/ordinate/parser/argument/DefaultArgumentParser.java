@@ -21,7 +21,6 @@ public class DefaultArgumentParser<T> implements ArgumentParser<T> {
 			pipeline.addComponent(parseBooleanFlag(argument.getValue(), componentFactory));
 			return;
 		}
-		System.out.println(argument);
 		ArgumentBuilder<T, V> builder = new ArgumentBuilder<>();
 		Map<String, List<Token>> tokens = argument.allByNames("name", "type", "optional", "vararg", "consuming", "constraint", "defaultValue");
 		String name = getOptional(tokens, "name").get().getValue();
