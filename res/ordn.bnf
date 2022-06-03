@@ -1,5 +1,5 @@
 root ::= break? sep? ((comment | command) (break sep? | <eof>))*
-word ::= [^ \t\n(){}:?*,=]+
+word ::= [^ \t\n(){}:?*,=.\[\]]+
 sep ::= [ \t]+
 newLine ::= "\n"
 break ::= (sep? newLine)+
@@ -14,7 +14,7 @@ consuming ::= "..."
 optional ::= "?"
 name ::= word
 type ::= word
-arg ::= name constraint? (consuming | vararg)? ":" type (optional defaultValue?)?
+arg ::= type constraint? (consuming | vararg)? ":" name (optional defaultValue?)?
 param ::= flag | arg
 paramList ::= (sep param)*
 

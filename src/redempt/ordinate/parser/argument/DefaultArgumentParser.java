@@ -17,10 +17,11 @@ public class DefaultArgumentParser<T> implements ArgumentParser<T> {
 
 	@Override
 	public <V> void parseArgument(Token argument, ParserOptions<T> options, ComponentFactory<T> componentFactory, CommandParsingPipeline<T> pipeline) {
-		if (argument.getBaseString().charAt(argument.getIndex()) == '-') {
+		if (argument.getBaseString().charAt(argument.getStart()) == '-') {
 			pipeline.addComponent(parseBooleanFlag(argument.getValue(), componentFactory));
 			return;
 		}
+		System.out.println(argument);
 		ArgumentBuilder<T, V> builder = new ArgumentBuilder<>();
 		Map<String, List<Token>> tokens = argument.allByNames("name", "type", "optional", "vararg", "consuming", "constraint", "defaultValue");
 		String name = getOptional(tokens, "name").get().getValue();
