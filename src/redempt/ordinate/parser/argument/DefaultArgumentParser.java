@@ -23,9 +23,9 @@ public class DefaultArgumentParser<T> implements ArgumentParser<T> {
 		}
 		ArgumentBuilder<T, V> builder = new ArgumentBuilder<>();
 		Map<String, List<Token>> tokens = argument.allByNames("name", "type", "optional", "vararg", "consuming", "constraint", "defaultValue");
-		String name = getOptional(tokens, "name").get().getValue();
+		String name = getDirect(tokens, "name").getValue();
 		builder.setName(name);
-		ArgType<T, ?> type = options.getArgType(getOptional(tokens, "type").get().getValue());
+		ArgType<T, ?> type = options.getArgType(getDirect(tokens, "type").getValue());
 		builder.setType(type);
 		getOptional(tokens, "optional").ifPresent(t -> builder.setOptional(true));
 		getOptional(tokens, "vararg").ifPresent(t -> builder.setVararg(true));
@@ -52,6 +52,10 @@ public class DefaultArgumentParser<T> implements ArgumentParser<T> {
 
 	private String trimToken(Token token) {
 		return token.getBaseString().substring(token.getStart() + 1, token.getEnd() - 1);
+	}
+
+	private static <T> T getDirect(Map<String, List<T>> map, String key) {
+		return map.get(key).get(0);
 	}
 
 	private static <T> Optional<T> getOptional(Map<String, List<T>> map, String key) {
