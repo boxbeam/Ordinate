@@ -3,6 +3,7 @@ package redempt.ordinate.component;
 import redempt.ordinate.component.abstracts.CommandComponent;
 import redempt.ordinate.component.abstracts.HelpProvider;
 import redempt.ordinate.data.*;
+import redempt.ordinate.help.HelpBuilder;
 import redempt.ordinate.help.HelpComponent;
 
 import java.util.Set;
@@ -43,8 +44,8 @@ public class BooleanFlagComponent<T> extends CommandComponent<T> implements Name
 	}
 
 	@Override
-	public HelpComponent getHelpComponent() {
-		return new HelpComponent(this, 5, '[' + mainName + ']');
+	public void addHelp(HelpBuilder help) {
+		help.addHelp(new HelpComponent(this, 5, '[' + mainName + ']'));
 	}
 
 	@Override

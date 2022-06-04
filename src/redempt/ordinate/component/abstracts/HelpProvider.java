@@ -1,9 +1,9 @@
 package redempt.ordinate.component.abstracts;
 
-import redempt.ordinate.help.HelpComponent;
+import redempt.ordinate.help.HelpBuilder;
 
 public interface HelpProvider {
 
-	public HelpComponent getHelpComponent();
+	public void addHelp(HelpBuilder help);
 
 }

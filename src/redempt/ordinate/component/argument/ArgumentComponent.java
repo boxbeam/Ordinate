@@ -6,6 +6,7 @@ import redempt.ordinate.component.abstracts.HelpProvider;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.data.Named;
+import redempt.ordinate.help.HelpBuilder;
 import redempt.ordinate.processing.MessageFormatter;
 import redempt.ordinate.help.HelpComponent;
 
@@ -61,8 +62,8 @@ public class ArgumentComponent<T, V> extends CommandComponent<T> implements Name
 	}
 
 	@Override
-	public HelpComponent getHelpComponent() {
-		return new HelpComponent(this, 1, "<" + name + ">");
+	public void addHelp(HelpBuilder help) {
+		help.addHelp(new HelpComponent(this, 1, "<" + name + ">"));
 	}
 
 	@Override

@@ -2,7 +2,7 @@ package redempt.ordinate.parser;
 
 import redempt.ordinate.command.ArgType;
 import redempt.ordinate.command.Command;
-import redempt.ordinate.component.abstracts.CommandComponent;
+import redempt.ordinate.component.SubcommandLookupComponent;
 import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.dispatch.CommandManager;
 import redempt.ordinate.parser.argument.ArgumentParser;
@@ -137,6 +137,7 @@ public class CommandParser<T> {
 
 	private Command<T> parseInternalEntries(Command<T> cmd, Token[] entries) {
 		Map<String, List<String>> tags = new LinkedHashMap<>();
+		List<Command<T>> subcommands = new ArrayList<>();
 		for (Token entry : entries) {
 			if (entry.getType().getName().equals("tag")) {
 				String[] split = entry.getValue().split("\\s*=\\s*", 2);
@@ -145,8 +146,11 @@ public class CommandParser<T> {
 				tags.computeIfAbsent(tagName, k -> new ArrayList<>()).add(tagValue);
 				continue;
 			}
-			cmd.getPipeline().addComponent(parseCommand(entry));
+			subcommands.add(parseCommand(entry));
 		}
+		SubcommandLookupComponent<T> lookup = manager.getComponentFactory().createLookupComponent(subcommands);
+		lookup.setParent(cmd);
+		cmd.getPipeline().addComponent(lookup);
 		for (Map.Entry<String, List<String>> tag : tags.entrySet()) {
 			TagProcessor<T> tagProcessor = options.getTagProcessor(tag.getKey());
 			for (String tagValue : tag.getValue()) {

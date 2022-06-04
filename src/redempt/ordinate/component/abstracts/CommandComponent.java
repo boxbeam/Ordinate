@@ -1,5 +1,6 @@
 package redempt.ordinate.component.abstracts;
 
+import redempt.ordinate.command.Command;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.help.HelpComponent;
@@ -9,12 +10,12 @@ import java.util.Set;
 public abstract class CommandComponent<T> {
 	
 	private int index;
-	private CommandComponent<T> parent;
+	private Command<T> parent;
 	private int depth;
 	
-	public void setParent(CommandComponent<T> parent) {
+	public void setParent(Command<T> parent) {
 		this.parent = parent;
-		depth = parent == null ? 0 : parent.depth + 1;
+		depth = parent == null ? 0 : parent.getDepth() + 1;
 	}
 	
 	public void setIndex(int index) {
@@ -29,7 +30,7 @@ public abstract class CommandComponent<T> {
 		return depth;
 	}
 	
-	public CommandComponent<T> getParent() {
+	public Command<T> getParent() {
 		return parent;
 	}
 	

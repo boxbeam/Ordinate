@@ -4,6 +4,7 @@ import redempt.ordinate.command.ArgType;
 import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
+import redempt.ordinate.help.HelpBuilder;
 import redempt.ordinate.help.HelpComponent;
 import redempt.ordinate.processing.MessageFormatter;
 
@@ -54,8 +55,8 @@ public class ConsumingArgumentComponent<T, V> extends ArgumentComponent<T, V> {
 	}
 
 	@Override
-	public HelpComponent getHelpComponent() {
-		return new HelpComponent(this, 1, "<" + getName() + ">+");
+	public void addHelp(HelpBuilder help) {
+		help.addHelp(new HelpComponent(this, 1, "<" + getName() + ">+"));
 	}
 
 }

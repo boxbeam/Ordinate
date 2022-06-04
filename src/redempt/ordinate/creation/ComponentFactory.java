@@ -1,7 +1,9 @@
 package redempt.ordinate.creation;
 
 import redempt.ordinate.command.ArgType;
+import redempt.ordinate.command.Command;
 import redempt.ordinate.component.BooleanFlagComponent;
+import redempt.ordinate.component.SubcommandLookupComponent;
 import redempt.ordinate.component.argument.ArgumentComponent;
 import redempt.ordinate.component.argument.ConsumingArgumentComponent;
 import redempt.ordinate.component.argument.OptionalArgumentComponent;
@@ -14,6 +16,7 @@ import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.dispatch.CommandDispatcher;
 import redempt.ordinate.dispatch.DispatchComponent;
 
+import java.util.List;
 import java.util.function.Function;
 
 public interface ComponentFactory<T> {
@@ -26,6 +29,7 @@ public interface ComponentFactory<T> {
 	public <V> ContextComponent<T, V> createContext(ContextProvider<T, V> provider, String name);
 	public DispatchComponent<T> createDispatch(CommandDispatcher<T> dispatcher);
 	public <V> ConstraintComponent<T, V> createConstraint(Constraint<T, V> constraint, String name);
+	public SubcommandLookupComponent<T> createLookupComponent(List<Command<T>> commands);
 	public <V extends Number & Comparable<V>> ConstraintParser<T, V> createNumberConstraintParser(Function<String, V> parseNumber);
 
 }

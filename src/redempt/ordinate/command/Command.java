@@ -3,6 +3,7 @@ package redempt.ordinate.command;
 import redempt.ordinate.component.abstracts.CommandComponent;
 import redempt.ordinate.component.abstracts.HelpProvider;
 import redempt.ordinate.data.*;
+import redempt.ordinate.help.HelpBuilder;
 import redempt.ordinate.help.HelpComponent;
 import redempt.ordinate.processing.ArgumentSplitter;
 import redempt.ordinate.processing.CommandParsingPipeline;
@@ -15,6 +16,7 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 	private Set<String> names = new HashSet<>();
 	private CommandParsingPipeline<T> pipeline;
 	private int priority = 20;
+	private boolean lookup = true;
 
 	public Command(String commandPrefix, String[] names, CommandParsingPipeline<T> pipeline) {
 		mainName = names[0];
@@ -30,6 +32,14 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 	public CommandContext<T> createContext(T sender, String input, boolean forCompletions) {
 		SplittableList<Argument> args = ArgumentSplitter.split(input, forCompletions);
 		return new CommandContext<>(this, null, sender, args, pipeline.getParsingSlots());
+	}
+
+	public boolean canLookup() {
+		return lookup;
+	}
+
+	public void setLookup(boolean lookup) {
+		this.lookup = lookup;
 	}
 
 	public boolean isRoot() {
@@ -62,10 +72,10 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 	public void setPriority(int priority) {
 		this.priority = priority;
 	}
-	
+
 	@Override
-	public HelpComponent getHelpComponent() {
-		return new HelpComponent(this, 5, getName());
+	public void addHelp(HelpBuilder help) {
+		help.addHelp(new HelpComponent(this, 5, getName()));
 	}
 
 	@Override
