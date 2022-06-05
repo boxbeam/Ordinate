@@ -1,2 +1,3 @@
 rootProject.name = 'Ordinate'
-
+include 'spigot'
+project(':spigot').setProjectDir(new File('modules/spigot'))

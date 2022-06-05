@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+repositories {
+    maven {url = 'https://redempt.dev/'}
+}
+compileJava {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+}
+dependencies {
+    implementation project(':')
+}
+sourceSets {
+    main {
+        java {
+            srcDir 'src'
+        }
+        resources {
+            srcDir 'res'
+        }
+    }
+}
