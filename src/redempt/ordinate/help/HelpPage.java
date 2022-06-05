@@ -8,8 +8,8 @@ public class HelpPage {
 
 	private Map<Command<?>, HelpEntry> entries;
 
-	public void add(HelpComponent component) {
-		
+	public HelpPage(Map<Command<?>, HelpEntry> entries) {
+		this.entries = entries;
 	}
 
 }

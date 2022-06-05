@@ -9,8 +9,9 @@ public class HelpEntry {
 	private List<HelpComponent> components;
 	private Command<?> owner;
 
-	public HelpEntry(Command<?> owner) {
+	public HelpEntry(Command<?> owner, List<HelpComponent> components) {
 		this.owner = owner;
+		this.components = components;
 	}
 
 	public Command<?> getOwner() {
