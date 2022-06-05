@@ -73,9 +73,13 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 		this.priority = priority;
 	}
 
+	public HelpComponent getHelpComponent() {
+		return new HelpComponent(this, 5, getName());
+	}
+
 	@Override
 	public void addHelp(HelpBuilder help) {
-		help.addHelp(new HelpComponent(this, 5, getName()));
+		help.addHelp(getHelpComponent());
 		for (CommandComponent<T> component : pipeline.getComponents()) {
 			if (component instanceof HelpProvider) {
 				((HelpProvider) component).addHelp(help);
