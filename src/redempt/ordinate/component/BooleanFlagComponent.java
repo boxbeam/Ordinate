@@ -52,15 +52,12 @@ public class BooleanFlagComponent<T> extends CommandComponent<T> implements Name
 	public CommandResult<T> parse(CommandContext<T> context) {
 		SplittableList<Argument> arguments = context.getArguments();
 		boolean parsed = false;
-
 		for (int i = 0; i < arguments.size(); i++) {
 			Argument arg = arguments.get(i);
 			String value = arg.getValue();
-
 			if (arg.isQuoted()) {
 				continue;
 			}
-
 			if (names.contains(value)) {
 				parsed = true;
 				context.removeArg(i, true);
@@ -68,6 +65,24 @@ public class BooleanFlagComponent<T> extends CommandComponent<T> implements Name
 			}
 		}
 		context.setParsed(getIndex(), parsed);
+		return success();
+	}
+
+	@Override
+	public CommandResult<T> complete(CommandContext<T> context, Set<String> completions) {
+		int oldSize = context.getArguments().size();
+		parse(context);
+		if (oldSize != context.getArguments().size()) {
+			return success();
+		}
+		if (context.getArguments().size() != 1) {
+			return success();
+		}
+		Argument arg = context.peekArg();
+		if (arg.isQuoted() || !arg.getValue().startsWith("-")) {
+			return success();
+		}
+		completions.add(getName());
 		return success();
 	}
 
