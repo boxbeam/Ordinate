@@ -11,7 +11,6 @@ public interface CommandManager<T> {
 	public MessageDispatcher<T> getMessageDispatcher();
 	public ComponentFactory<T> getComponentFactory();
 	public CommandParser<T> getCommandParser();
-	public void setComponentFactory(ComponentFactory<T> componentFactory);
 	public String getCommandPrefix();
 
 }
