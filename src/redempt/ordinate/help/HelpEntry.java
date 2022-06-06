@@ -3,6 +3,7 @@ package redempt.ordinate.help;
 import redempt.ordinate.command.Command;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class HelpEntry {
 
@@ -20,6 +21,11 @@ public class HelpEntry {
 
 	public List<HelpComponent> getComponents() {
 		return components;
+	}
+
+	@Override
+	public String toString() {
+		return components.stream().map(HelpComponent::getValue).collect(Collectors.joining(" "));
 	}
 
 }

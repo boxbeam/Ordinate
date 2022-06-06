@@ -12,4 +12,8 @@ public class HelpPage {
 		this.entries = entries;
 	}
 
+	public HelpEntry getHelp(Command<?> command) {
+		return entries.get(command);
+	}
+
 }
