@@ -148,9 +148,11 @@ public class CommandParser<T> {
 			}
 			subcommands.add(parseCommand(entry));
 		}
-		SubcommandLookupComponent<T> lookup = manager.getComponentFactory().createLookupComponent(subcommands);
-		lookup.setParent(cmd);
-		cmd.getPipeline().addComponent(lookup);
+		if (!subcommands.isEmpty()) {
+			SubcommandLookupComponent<T> lookup = manager.getComponentFactory().createLookupComponent(subcommands);
+			lookup.setParent(cmd);
+			cmd.getPipeline().addComponent(lookup);
+		}
 		for (Map.Entry<String, List<String>> tag : tags.entrySet()) {
 			TagProcessor<T> tagProcessor = options.getTagProcessor(tag.getKey());
 			for (String tagValue : tag.getValue()) {
