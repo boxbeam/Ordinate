@@ -1,6 +1,7 @@
 package redempt.ordinate.command;
 
 import redempt.ordinate.component.abstracts.CommandComponent;
+import redempt.ordinate.component.abstracts.CommandParent;
 import redempt.ordinate.component.abstracts.HelpProvider;
 import redempt.ordinate.data.*;
 import redempt.ordinate.help.HelpBuilder;
@@ -18,7 +19,7 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 	private int priority = 20;
 	private boolean lookup = true;
 
-	public Command(String commandPrefix, String[] names, CommandParsingPipeline<T> pipeline) {
+	public Command(String[] names, CommandParsingPipeline<T> pipeline) {
 		mainName = names[0];
 		Collections.addAll(this.names, names);
 		this.pipeline = pipeline;
@@ -138,5 +139,19 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 	public Set<String> getNames() {
 		return names;
 	}
-	
+
+	public Collection<Command<T>> getSubcommands() {
+		List<Command<T>> subcommands = new ArrayList<>();
+		for (CommandComponent<T> component : pipeline.getComponents()) {
+			if (component instanceof Command) {
+				subcommands.add((Command<T>) component);
+				continue;
+			}
+			if (component instanceof CommandParent) {
+				CommandParent<T> parent = (CommandParent<T>) component;
+				subcommands.addAll(parent.getSubcommands());
+			}
+		}
+		return subcommands;
+	}
 }

@@ -33,7 +33,7 @@ public class PropertiesComponentFactory<T> implements ComponentFactory<T> {
 		return props;
 	}
 
-	private MessageFormatter<T> formatter = (sender, msg) -> msg[0];
+	private MessageFormatter<T> formatter = (sender, msg) -> msg[0].split("\n");
 	private Map<String, MessageFormatter<T>> messages = new HashMap<>();
 
 	public PropertiesComponentFactory(Properties properties) {
@@ -49,8 +49,7 @@ public class PropertiesComponentFactory<T> implements ComponentFactory<T> {
 			for (int i = 0; i < placeholders.length; i++) {
 				msg = msg.replace("%" + (i + 1), placeholders[i]);
 			}
-			msg = formatter.apply(sender, msg);
-			return msg;
+			return formatter.apply(sender, msg);
 		};
 	}
 

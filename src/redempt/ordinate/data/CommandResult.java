@@ -1,5 +1,6 @@
 package redempt.ordinate.data;
 
+import redempt.ordinate.command.Command;
 import redempt.ordinate.component.abstracts.CommandComponent;
 
 public class CommandResult<T> {
@@ -25,6 +26,13 @@ public class CommandResult<T> {
 	
 	public CommandComponent<T> getComponent() {
 		return component;
+	}
+
+	public Command<T> getCommand() {
+		if (component instanceof Command) {
+			return (Command<T>) component;
+		}
+		return component.getParent();
 	}
 
 	public CommandResult<T> complete() {

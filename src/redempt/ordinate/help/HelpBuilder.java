@@ -18,7 +18,7 @@ public class HelpBuilder {
 			Command<?> cmd = component.getOwner() instanceof Command ? (Command<?>) component.getOwner() : component.getOwner().getParent();
 			map.computeIfAbsent(cmd, k -> new ArrayList<>()).add(component);
 		}
-		Map<Command<?>, HelpEntry> entries = new HashMap<>();
+		Map<Command<?>, HelpEntry> entries = new LinkedHashMap<>();
 		map.forEach((cmd, components) -> entries.put(cmd, createEntry(cmd, components)));
 		return new HelpPage(entries);
 	}
