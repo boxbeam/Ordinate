@@ -26,12 +26,12 @@ public class CommandBase<T> {
 		return wrapped;
 	}
 
-	public Collection<String> getCompletions(String[] args) {
+	public Collection<String> getCompletions(T sender, String[] args) {
 		// todo
 		return null;
 	}
 
-	public boolean execute(String[] args) {
+	public boolean execute(T sender, String[] args) {
 		// todo
 		return false;
 	}
