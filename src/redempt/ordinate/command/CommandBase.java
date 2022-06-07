@@ -4,12 +4,13 @@ import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.dispatch.CommandManager;
 import redempt.ordinate.help.HelpBuilder;
-import redempt.ordinate.help.HelpComponent;
 import redempt.ordinate.help.HelpEntry;
 import redempt.ordinate.help.HelpPage;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class CommandBase<T> {
 
@@ -38,8 +39,11 @@ public class CommandBase<T> {
 	}
 
 	public Collection<String> getCompletions(T sender, String args) {
-		// todo
-		return null;
+		Set<String> completions = new LinkedHashSet<>();
+		for (Command<T> cmd : wrapped) {
+
+		}
+		return completions;
 	}
 
 	public boolean execute(T sender, String[] args) {

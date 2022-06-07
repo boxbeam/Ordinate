@@ -140,7 +140,7 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 		return names;
 	}
 
-	public Collection<Command<T>> getSubcommands() {
+	public List<Command<T>> getSubcommands() {
 		List<Command<T>> subcommands = new ArrayList<>();
 		for (CommandComponent<T> component : pipeline.getComponents()) {
 			if (component instanceof Command) {

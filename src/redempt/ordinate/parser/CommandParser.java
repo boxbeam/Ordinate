@@ -129,7 +129,7 @@ public class CommandParser<T> {
 			parseArgumentTokens(argList.getChildren(), pipeline);
 		}
 		Token bodyToken = commandToken.getChildren()[commandToken.getChildren().length - 1];
-		Command<T> cmd = parseInternalEntries(new Command<>(manager.getCommandPrefix(), names, pipeline), bodyToken.getChildren());
+		Command<T> cmd = parseInternalEntries(new Command<>(names, pipeline), bodyToken.getChildren());
 		pipeline.getComponents().forEach(c -> c.setParent(cmd));
 		cmd.preparePipeline();
 		return cmd;
@@ -137,7 +137,6 @@ public class CommandParser<T> {
 
 	private Command<T> parseInternalEntries(Command<T> cmd, Token[] entries) {
 		Map<String, List<String>> tags = new LinkedHashMap<>();
-		List<Command<T>> subcommands = new ArrayList<>();
 		for (Token entry : entries) {
 			if (entry.getType().getName().equals("tag")) {
 				String[] split = entry.getValue().split("\\s*=\\s*", 2);
@@ -146,12 +145,7 @@ public class CommandParser<T> {
 				tags.computeIfAbsent(tagName, k -> new ArrayList<>()).add(tagValue);
 				continue;
 			}
-			subcommands.add(parseCommand(entry));
-		}
-		if (!subcommands.isEmpty()) {
-			SubcommandLookupComponent<T> lookup = manager.getComponentFactory().createLookupComponent(subcommands);
-			lookup.setParent(cmd);
-			cmd.getPipeline().addComponent(lookup);
+			cmd.getPipeline().addComponent(parseCommand(entry));
 		}
 		for (Map.Entry<String, List<String>> tag : tags.entrySet()) {
 			TagProcessor<T> tagProcessor = options.getTagProcessor(tag.getKey());
@@ -159,7 +153,18 @@ public class CommandParser<T> {
 				cmd = tagProcessor.apply(cmd, tagValue);
 			}
 		}
+		processLookup(cmd);
 		return cmd;
+	}
+
+	private void processLookup(Command<T> cmd) {
+		List<Command<T>> subcommands = cmd.getSubcommands();
+		subcommands.removeIf(c -> !c.canLookup());
+		if (!subcommands.isEmpty()) {
+			cmd.getPipeline().getComponents().removeAll(subcommands);
+			SubcommandLookupComponent<T> lookup = manager.getComponentFactory().createLookupComponent(subcommands);
+			cmd.getPipeline().addComponent(lookup);
+		}
 	}
 
 	private void parseArgumentTokens(Token[] arguments, CommandParsingPipeline<T> pipeline) {
