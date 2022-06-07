@@ -58,7 +58,12 @@ public class CommandBase<T> {
 		}
 		if (deepestError != null) {
 			manager.getMessageDispatcher().sendMessage(sender, deepestError.getError());
-			manager.getHelpDisplayer().display(sender, help.getHelp(deepestError.getCommand()));
+			if (deepestError.getComponent() instanceof Command) {
+
+				manager.getHelpDisplayer().display(sender, help.getHelpRecursive(deepestError.getCommand()));
+			} else {
+				manager.getHelpDisplayer().display(sender, help.getHelp(deepestError.getCommand()));
+			}
 			return false;
 		}
 		HelpEntry[] all = help.getAll().toArray(new HelpEntry[0]);

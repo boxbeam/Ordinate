@@ -128,7 +128,7 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 		}
  		context = context.clone(this, 1, pipeline.getParsingSlots());
 		completions.addAll(pipeline.completions(context));
-		return success();
+		return failure();
 	}
 
 	@Override

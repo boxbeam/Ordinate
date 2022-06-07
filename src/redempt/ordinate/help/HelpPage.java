@@ -16,7 +16,7 @@ public class HelpPage {
 		return entries.get(command);
 	}
 
-	public List<HelpEntry> getHelpRecursive(Command<?> command) {
+	public HelpEntry[] getHelpRecursive(Command<?> command) {
 		List<HelpEntry> entries = new ArrayList<>();
 		Deque<Command<?>> queue = new ArrayDeque<>();
 		queue.add(command);
@@ -25,7 +25,7 @@ public class HelpPage {
 			entries.add(getHelp(cmd));
 			queue.addAll(cmd.getSubcommands());
 		}
-		return entries;
+		return entries.toArray(new HelpEntry[0]);
 	}
 
 	public Collection<HelpEntry> getAll() {
