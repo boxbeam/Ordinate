@@ -1,16 +1,13 @@
 package redempt.ordinate.command;
 
-import redempt.ordinate.data.CommandContext;
-import redempt.ordinate.data.CommandResult;
+import redempt.ordinate.data.*;
 import redempt.ordinate.dispatch.CommandManager;
 import redempt.ordinate.help.HelpBuilder;
 import redempt.ordinate.help.HelpEntry;
 import redempt.ordinate.help.HelpPage;
+import redempt.ordinate.processing.ArgumentSplitter;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class CommandBase<T> {
 
@@ -34,45 +31,61 @@ public class CommandBase<T> {
 		return wrapped;
 	}
 
-	public Collection<String> getCompletions(T sender, String[] args) {
-		return getCompletions(sender, String.join(" ", args));
+	public CompletionResult<T> getCompletions(T sender, String[] args) {
+		return getCompletions(sender, ArgumentSplitter.split(args, true));
 	}
 
-	public Collection<String> getCompletions(T sender, String args) {
-		Set<String> completions = new LinkedHashSet<>();
-		for (Command<T> cmd : wrapped) {
+	public CompletionResult<T> getCompletions(T sender, String args) {
+		return getCompletions(sender, ArgumentSplitter.split(args, true));
+	}
 
+	public CompletionResult<T> getCompletions(T sender, SplittableList<Argument> args) {
+		if (args.size() == 0) {
+			return new CompletionResult<>(null, null, Collections.emptyList());
 		}
-		return completions;
+		Set<String> completions = new LinkedHashSet<>();
+		CommandResult<T> deepestError = null;
+		String last = args.get(args.size() - 1).getValue();
+		for (Command<T> cmd : wrapped) {
+			CommandContext<T> context = cmd.createContext(sender, args);
+			CommandResult<T> result = cmd.complete(context, completions);
+			if (!result.isSuccess()) {
+				deepestError = CommandResult.deepest(deepestError, result);
+			}
+		}
+		return new CompletionResult<>(last, deepestError, completions);
 	}
 
-	public boolean execute(T sender, String[] args) {
-		return execute(sender, String.join(" ", args));
+	public CommandResult<T> execute(T sender, String args) {
+		return execute(sender, ArgumentSplitter.split(args, false));
 	}
 
-	public boolean execute(T sender, String args) {
+	public CommandResult<T> execute(T sender, String[] args) {
+		return execute(sender, ArgumentSplitter.split(args, false));
+	}
+
+	public CommandResult<T> execute(T sender, SplittableList<Argument> args) {
 		CommandResult<T> deepestError = null;
 		for (Command<T> cmd : wrapped) {
-			CommandContext<T> context = cmd.createContext(sender, args, false);
+			CommandContext<T> context = cmd.createContext(sender, args);
 			CommandResult<T> result = cmd.parse(context);
 			if (result.isSuccess()) {
-				return true;
+				return result;
 			}
 			deepestError = CommandResult.deepest(deepestError, result);
 		}
 		if (deepestError != null) {
 			manager.getMessageDispatcher().sendMessage(sender, deepestError.getError());
 			if (deepestError.getComponent() instanceof Command) {
-
 				manager.getHelpDisplayer().display(sender, help.getHelpRecursive(deepestError.getCommand()));
 			} else {
 				manager.getHelpDisplayer().display(sender, help.getHelp(deepestError.getCommand()));
 			}
-			return false;
+			return deepestError;
 		}
 		HelpEntry[] all = help.getAll().toArray(new HelpEntry[0]);
 		manager.getHelpDisplayer().display(sender, all);
-		return false;
+		return null;
 	}
 
 }

@@ -25,13 +25,7 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 		this.pipeline = pipeline;
 	}
 
-	public CommandContext<T> createContext(T sender, String[] input, boolean forCompletions) {
-		SplittableList<Argument> args = ArgumentSplitter.split(input, forCompletions);
-		return new CommandContext<>(this, null, sender, args, pipeline.getParsingSlots());
-	}
-
-	public CommandContext<T> createContext(T sender, String input, boolean forCompletions) {
-		SplittableList<Argument> args = ArgumentSplitter.split(input, forCompletions);
+	public CommandContext<T> createContext(T sender, SplittableList<Argument> args) {
 		return new CommandContext<>(this, null, sender, args, pipeline.getParsingSlots());
 	}
 
