@@ -11,9 +11,17 @@ import redempt.ordinate.parser.metadata.ParserOptions;
 
 public class SpigotCommandManager implements CommandManager<CommandSender> {
 	
+	private String fallbackPrefix;
+	private CommandRegistrar<CommandSender> registrar;
+	
+	private SpigotCommandManager(String fallbackPrefix) {
+		this.fallbackPrefix = fallbackPrefix;
+		registrar = new SpigotCommandRegistrar(fallbackPrefix);
+	}
+	
 	@Override
 	public CommandRegistrar<CommandSender> getRegistrar() {
-		return null;
+		return registrar;
 	}
 	
 	@Override
@@ -40,6 +48,10 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 	@Override
 	public String getCommandPrefix() {
 		return "/";
+	}
+	
+	public String getFallbackPrefix() {
+		return fallbackPrefix;
 	}
 	
 }

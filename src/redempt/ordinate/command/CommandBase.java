@@ -8,8 +8,9 @@ import redempt.ordinate.help.HelpPage;
 import redempt.ordinate.processing.ArgumentSplitter;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class CommandBase<T> {
+public class CommandBase<T> implements Named {
 
 	private List<Command<T>> wrapped;
 	private HelpPage help;
@@ -31,6 +32,15 @@ public class CommandBase<T> {
 		return wrapped;
 	}
 
+	@Override
+	public String getName() {
+		return wrapped.get(0).getName();
+	}
+	
+	public List<String> getNames() {
+		return wrapped.stream().flatMap(c -> c.getNames().stream()).distinct().collect(Collectors.toList());
+	}
+	
 	public CompletionResult<T> getCompletions(T sender, String[] args) {
 		return getCompletions(sender, ArgumentSplitter.split(args, true));
 	}
