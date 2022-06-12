@@ -2,7 +2,9 @@ plugins {
     id 'java'
 }
 repositories {
-    maven {url = 'https://redempt.dev/'}
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url = 'https://redempt.dev/' }
 }
 compileJava {
     sourceCompatibility = '1.8'
@@ -10,6 +12,7 @@ compileJava {
 }
 dependencies {
     implementation project(':')
+    compileOnly 'org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT'
 }
 sourceSets {
     main {
