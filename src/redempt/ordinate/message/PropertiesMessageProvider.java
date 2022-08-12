@@ -1,5 +1,6 @@
 package redempt.ordinate.message;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.BiConsumer;
@@ -20,7 +21,7 @@ public class PropertiesMessageProvider<T> implements MessageProvider<T> {
 		return props;
 	}
 	
-	private Map<String, MessageFormatter<T>> formatters;
+	private Map<String, MessageFormatter<T>> formatters = new HashMap<>();
 	
 	public PropertiesMessageProvider(Properties properties, BiConsumer<T, String> send, UnaryOperator<String> format) {
 		properties.keySet().forEach(k -> {

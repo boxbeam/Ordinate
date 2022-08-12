@@ -7,6 +7,7 @@ import redempt.ordinate.dispatch.CommandManager;
 import redempt.ordinate.dispatch.CommandRegistrar;
 import redempt.ordinate.help.HelpDisplayer;
 import redempt.ordinate.message.MessageProvider;
+import redempt.ordinate.message.PropertiesMessageProvider;
 import redempt.ordinate.parser.CommandParser;
 import redempt.ordinate.parser.TagProcessor;
 import redempt.ordinate.parser.metadata.ParserOptions;
@@ -27,6 +28,15 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 		props.setProperty("invalidSubcommand", "&cInvalid subcommand: %1");
 		props.setProperty("noPermission", "&cYou do not have permission to do that (%1)");
 		return props;
+	}
+	
+	public static SpigotCommandManager getInstance(String fallbackPrefix, Properties messages) {
+		MessageProvider<CommandSender> messageProvider = new PropertiesMessageProvider<>(messages, CommandSender::sendMessage);
+		return new SpigotCommandManager(fallbackPrefix, messageProvider);
+	}
+	
+	public static SpigotCommandManager getInstance(String fallbackPrefix) {
+		return getInstance(fallbackPrefix, getDefaultMessages());
 	}
 	
 	private String fallbackPrefix;

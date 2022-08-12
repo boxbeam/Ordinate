@@ -7,6 +7,10 @@ repositories {
     maven { url = 'https://redempt.dev/' }
     mavenCentral()
 }
+jar {
+    from zipTree('../../build/libs/Ordinate.jar')
+    archiveBaseName.set("Ordinate-spigot")
+}
 compileJava {
     sourceCompatibility = '1.8'
     targetCompatibility = '1.8'
