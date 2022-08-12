@@ -63,7 +63,7 @@ public class SubcommandLookupComponent<T> extends CommandComponent<T> implements
 		List<Command<T>> subcommands = lookup.get(arg.getValue());
 		CommandResult<T> deepestError = null;
 		for (Command<T> command : subcommands) {
-			CommandResult<T> result = command.parse(context);
+			CommandResult<T> result = command.parse(context.clone(command, 1, command.getMaxParsedObjects()));
 			if (result.isSuccess() && result.isComplete()) {
 				return result;
 			}
@@ -83,7 +83,7 @@ public class SubcommandLookupComponent<T> extends CommandComponent<T> implements
 			}
 			List<Command<T>> subcommands = lookup.get(arg.getValue());
 			for (Command<T> command : subcommands) {
-				command.complete(context, completions);
+				command.complete(context.clone(command, 1, command.getMaxParsedObjects()), completions);
 			}
 			return success();
 		}
