@@ -4,10 +4,7 @@ import redempt.ordinate.component.abstracts.CommandComponent;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.data.Named;
-import redempt.ordinate.help.HelpComponent;
-import redempt.ordinate.processing.MessageFormatter;
-
-import java.util.function.Function;
+import redempt.ordinate.message.MessageFormatter;
 
 public class ContextComponent<T, V> extends CommandComponent<T> implements Named {
 	
@@ -49,7 +46,7 @@ public class ContextComponent<T, V> extends CommandComponent<T> implements Named
 			context.provide(value);
 			return success();
 		}
-		return failure(error.apply(context.sender(), contextProvider.getError())).complete();
+		return failure(error.format(context.sender(), contextProvider.getError())).complete();
 	}
 	
 }

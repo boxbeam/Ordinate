@@ -6,7 +6,7 @@ import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.help.HelpBuilder;
 import redempt.ordinate.help.HelpComponent;
-import redempt.ordinate.processing.MessageFormatter;
+import redempt.ordinate.message.MessageFormatter;
 
 public class OptionalArgumentComponent<T, V> extends ArgumentComponent<T, V> {
 
@@ -38,7 +38,7 @@ public class OptionalArgumentComponent<T, V> extends ArgumentComponent<T, V> {
 		String value = context.peekArg().getValue();
 		V parsed = getType().convert(context, value);
 		if (parsed == null) {
-			return failure(getInvalidError().apply(context.sender(), getName(), value)).complete();
+			return failure(getInvalidError().format(context.sender(), getName(), value)).complete();
 		}
 		context.pollArg();
 		context.setParsed(getIndex(), parsed);

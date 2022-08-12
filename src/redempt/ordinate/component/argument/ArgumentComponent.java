@@ -7,8 +7,8 @@ import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.data.Named;
 import redempt.ordinate.help.HelpBuilder;
-import redempt.ordinate.processing.MessageFormatter;
 import redempt.ordinate.help.HelpComponent;
+import redempt.ordinate.message.MessageFormatter;
 
 import java.util.Set;
 
@@ -69,7 +69,7 @@ public class ArgumentComponent<T, V> extends CommandComponent<T> implements Name
 	@Override
 	public CommandResult<T> parse(CommandContext<T> context) {
 		if (!context.hasArg()) {
-			return failure(missingError.apply(context.sender(), name)).complete();
+			return failure(missingError.format(context.sender(), name)).complete();
 		}
 		String arg = context.pollArg().getValue();
 		V val = type.convert(context, arg);
@@ -78,7 +78,7 @@ public class ArgumentComponent<T, V> extends CommandComponent<T> implements Name
 			context.provide(val);
 			return success();
 		}
-		return failure(invalidError.apply(context.sender(), name, arg)).complete();
+		return failure(invalidError.format(context.sender(), name, arg)).complete();
 	}
 
 	@Override

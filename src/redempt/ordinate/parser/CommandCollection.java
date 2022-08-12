@@ -17,7 +17,7 @@ public class CommandCollection<T> {
 	protected CommandCollection(List<Command<T>> commands, CommandManager<T> commandManager) {
 		Map<String, List<Command<T>>> commandsByName = new HashMap<>();
 		commands.forEach(cmd -> commandsByName.computeIfAbsent(cmd.getName(), k -> new ArrayList<>()).add(cmd));
-		commandsByName.forEach((name, cmds) -> this.commands.add(new CommandBase<>(cmds)));
+		commandsByName.forEach((name, cmds) -> this.commands.add(new CommandBase<>(cmds, commandManager)));
 		this.commandManager = commandManager;
 	}
 

@@ -6,7 +6,7 @@ import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.help.HelpBuilder;
 import redempt.ordinate.help.HelpComponent;
-import redempt.ordinate.processing.MessageFormatter;
+import redempt.ordinate.message.MessageFormatter;
 
 import java.util.StringJoiner;
 
@@ -34,7 +34,7 @@ public class ConsumingArgumentComponent<T, V> extends ArgumentComponent<T, V> {
 	@Override
 	public CommandResult<T> parse(CommandContext<T> context) {
 		if (!context.hasArg() && !optional) {
-			return failure(getMissingError().apply(context.sender(), getName())).complete();
+			return failure(getMissingError().format(context.sender(), getName())).complete();
 		}
 		if (!context.hasArg()) {
 			context.setParsed(getIndex(), defaultValue.provide(context));
@@ -47,7 +47,7 @@ public class ConsumingArgumentComponent<T, V> extends ArgumentComponent<T, V> {
 		String value = joiner.toString();
 		V parsed = getType().convert(context, value);
 		if (parsed == null) {
-			return failure(getInvalidError().apply(context.sender(), getName(), value)).complete();
+			return failure(getInvalidError().format(context.sender(), getName(), value)).complete();
 		}
 		context.setParsed(getIndex(), parsed);
 		context.provide(parsed);

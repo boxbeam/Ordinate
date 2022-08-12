@@ -2,6 +2,7 @@ package redempt.ordinate.data;
 
 import redempt.ordinate.command.Command;
 import redempt.ordinate.component.abstracts.CommandComponent;
+import redempt.ordinate.message.Message;
 
 public class CommandResult<T> {
 	
@@ -16,10 +17,10 @@ public class CommandResult<T> {
 	}
 	
 	private CommandComponent<T> component;
-	private String[] error;
+	private Message<T> error;
 	private boolean complete = false;
 	
-	public CommandResult(CommandComponent<T> component, String[] error) {
+	public CommandResult(CommandComponent<T> component, Message<T> error) {
 		this.component = component;
 		this.error = error;
 	}
@@ -53,13 +54,13 @@ public class CommandResult<T> {
 		return error == null;
 	}
 	
-	public String[] getError() {
+	public Message<T> getError() {
 		return error;
 	}
 
 	@Override
 	public String toString() {
-		return (complete ? "Complete " : "Incomplete ") + (isSuccess() ? "Success" : "Error: " + error[0]);
+		return (complete ? "Complete " : "Incomplete ") + (isSuccess() ? "Success" : "Error: " + error);
 	}
 	
 }

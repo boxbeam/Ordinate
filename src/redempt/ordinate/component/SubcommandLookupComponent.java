@@ -7,7 +7,7 @@ import redempt.ordinate.data.Argument;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.help.HelpBuilder;
-import redempt.ordinate.processing.MessageFormatter;
+import redempt.ordinate.message.MessageFormatter;
 
 import java.util.*;
 
@@ -71,7 +71,7 @@ public class SubcommandLookupComponent<T> extends CommandComponent<T> implements
 				deepestError = CommandResult.deepest(deepestError, result);
 			}
 		}
-		return deepestError == null ? failure(invalidSubcommand.apply(context.sender(), arg.getValue())) : deepestError;
+		return deepestError == null ? failure(invalidSubcommand.format(context.sender(), arg.getValue())) : deepestError;
 	}
 
 	@Override

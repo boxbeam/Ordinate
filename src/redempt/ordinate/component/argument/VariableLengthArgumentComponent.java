@@ -5,7 +5,7 @@ import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.help.HelpBuilder;
 import redempt.ordinate.help.HelpComponent;
-import redempt.ordinate.processing.MessageFormatter;
+import redempt.ordinate.message.MessageFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,9 +60,9 @@ public class VariableLengthArgumentComponent<T, V> extends ArgumentComponent<T, 
 		}
 		if (list.size() == 0 && !optional) {
 			if (hasNext) {
-				return failure(getInvalidError().apply(context.sender(), getName(), context.peekArg().getValue())).complete();
+				return failure(getInvalidError().format(context.sender(), getName(), context.peekArg().getValue())).complete();
 			}
-			return failure(getMissingError().apply(context.sender(), getName())).complete();
+			return failure(getMissingError().format(context.sender(), getName())).complete();
 		}
 		context.setParsed(getIndex(), list);
 		return success();

@@ -4,7 +4,8 @@ import redempt.ordinate.component.abstracts.CommandComponent;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.data.Named;
-import redempt.ordinate.processing.MessageFormatter;
+import redempt.ordinate.message.Message;
+import redempt.ordinate.message.MessageFormatter;
 
 public class ConstraintComponent<T, V> extends CommandComponent<T> implements Named {
 
@@ -26,9 +27,9 @@ public class ConstraintComponent<T, V> extends CommandComponent<T> implements Na
 	@Override
 	public CommandResult<T> parse(CommandContext<T> context) {
 		V val = (V) context.getParsed(getIndex());
-		String err = constraint.apply(context, val);
+		Message<T> err = constraint.apply(context, val);
 		if (err != null) {
-			return failure(errorGenerator.apply(context.sender(), name, err)).complete();
+			return failure(errorGenerator.format(context.sender(), name, err.toString())).complete();
 		}
 		return success();
 	}

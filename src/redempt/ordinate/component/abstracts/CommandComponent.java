@@ -4,6 +4,7 @@ import redempt.ordinate.command.Command;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.help.HelpComponent;
+import redempt.ordinate.message.Message;
 
 import java.util.Set;
 
@@ -38,7 +39,11 @@ public abstract class CommandComponent<T> {
 		return new CommandResult<>(this, null);
 	}
 	
-	public CommandResult<T> failure(String... error) {
+	public CommandResult<T> failure() {
+		return failure(k -> {});
+	}
+	
+	public CommandResult<T> failure(Message<T> error) {
 		return new CommandResult<>(this, error);
 	}
 	

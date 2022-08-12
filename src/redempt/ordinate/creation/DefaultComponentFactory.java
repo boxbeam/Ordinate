@@ -13,52 +13,22 @@ import redempt.ordinate.context.ContextComponent;
 import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.dispatch.CommandDispatcher;
 import redempt.ordinate.dispatch.DispatchComponent;
-import redempt.ordinate.processing.MessageFormatter;
+import redempt.ordinate.message.MessageFormatter;
+import redempt.ordinate.message.MessageProvider;
 
 import java.util.*;
 import java.util.function.Function;
 
-public class PropertiesComponentFactory<T> implements ComponentFactory<T> {
+public class DefaultComponentFactory<T> implements ComponentFactory<T> {
 
-	public static Properties getDefaultMessages() {
-		Properties props = new Properties();
-		props.setProperty("missingArgument", "Missing value for argument: %1");
-		props.setProperty("invalidArgumentValue", "Invalid value for argument %1: %2");
-		props.setProperty("executionFailed", "Command execution failed due to an unexpected error. Please report this to an administrator.");
-		props.setProperty("tooManyArguments", "Too many arguments: Extra %1 argument(s) provided");
-		props.setProperty("numberOutsideRange", "Number %1 outside range: %2");
-		props.setProperty("contextError", "%1");
-		props.setProperty("constraintError", "Constraint failed for %1: %2");
-		props.setProperty("invalidSubcommand", "Invalid subcommand: %1");
-		return props;
-	}
+	private MessageProvider<T> messages;
 
-	private MessageFormatter<T> formatter = (sender, msg) -> msg[0].split("\n");
-	private Map<String, MessageFormatter<T>> messages = new HashMap<>();
-
-	public PropertiesComponentFactory(Properties properties) {
-		for (Object key : properties.keySet()) {
-			String stringKey = key.toString();
-			messages.put(stringKey, createFormatter(properties.getProperty(stringKey)));
-		}
+	public DefaultComponentFactory(MessageProvider<T> messages) {
+		this.messages = messages;
 	}
 	
-	public MessageFormatter<T> createFormatter(String message) {
-		return (sender, placeholders) -> {
-			String msg = message;
-			for (int i = 0; i < placeholders.length; i++) {
-				msg = msg.replace("%" + (i + 1), placeholders[i]);
-			}
-			return formatter.apply(sender, msg);
-		};
-	}
-
-	private MessageFormatter<T> getMessage(String key) {
-		MessageFormatter<T> message = messages.get(key);
-		if (message == null) {
-			throw new IllegalArgumentException("No message with key " + key);
-		}
-		return message;
+	private MessageFormatter<T> getMessage(String name) {
+		return messages.getFormatter(name);
 	}
 	
 	@Override
