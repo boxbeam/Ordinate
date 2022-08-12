@@ -1,6 +1,8 @@
 package redempt.ordinate.spigot;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import redempt.ordinate.creation.ComponentFactory;
 import redempt.ordinate.creation.DefaultComponentFactory;
 import redempt.ordinate.dispatch.CommandManager;
@@ -27,16 +29,25 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 		props.setProperty("constraintError", "&cConstraint failed for %1: %2");
 		props.setProperty("invalidSubcommand", "&cInvalid subcommand: %1");
 		props.setProperty("noPermission", "&cYou do not have permission to do that (%1)");
+		props.setProperty("playerOnly", "&cThis command must be executed as a player");
 		return props;
 	}
 	
-	public static SpigotCommandManager getInstance(String fallbackPrefix, Properties messages) {
-		MessageProvider<CommandSender> messageProvider = new PropertiesMessageProvider<>(messages, CommandSender::sendMessage);
-		return new SpigotCommandManager(fallbackPrefix, messageProvider);
+	public static SpigotCommandManager getInstance(Plugin plugin, String fallbackPrefix, Properties messages) {
+		MessageProvider<CommandSender> messageProvider = new PropertiesMessageProvider<>(messages, CommandSender::sendMessage, FormatUtils::color);
+		return new SpigotCommandManager(plugin, fallbackPrefix, messageProvider);
 	}
 	
-	public static SpigotCommandManager getInstance(String fallbackPrefix) {
-		return getInstance(fallbackPrefix, getDefaultMessages());
+	public static SpigotCommandManager getInstance(Plugin plugin, String fallbackPrefix) {
+		return getInstance(plugin, fallbackPrefix, getDefaultMessages());
+	}
+	
+	public static SpigotCommandManager getInstance(Plugin plugin, Properties messages) {
+		return getInstance(plugin, plugin.getName().toLowerCase(), messages);
+	}
+	
+	public static SpigotCommandManager getInstance(Plugin plugin) {
+		return getInstance(plugin, plugin.getName().toLowerCase(), getDefaultMessages());
 	}
 	
 	private String fallbackPrefix;
@@ -44,10 +55,10 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 	private ComponentFactory<CommandSender> componentFactory;
 	private MessageProvider<CommandSender> messages;
 	
-	private SpigotCommandManager(String fallbackPrefix, MessageProvider<CommandSender> messages) {
+	private SpigotCommandManager(Plugin plugin, String fallbackPrefix, MessageProvider<CommandSender> messages) {
 		this.fallbackPrefix = fallbackPrefix;
 		this.messages = messages;
-		registrar = new SpigotCommandRegistrar(fallbackPrefix);
+		registrar = new SpigotCommandRegistrar(plugin, fallbackPrefix);
 		componentFactory = new DefaultComponentFactory<>(messages);
 	}
 	
@@ -58,7 +69,9 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 	
 	@Override
 	public HelpDisplayer<CommandSender> getHelpDisplayer() {
-		return (sender, entry) -> sender.sendMessage(entry.toString());
+		return (sender, entry) -> {
+			sender.sendMessage(getCommandPrefix() + entry.toString());
+		};
 	}
 	
 	@Override
@@ -70,17 +83,31 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 	public CommandParser<CommandSender> getCommandParser() {
 		ParserOptions<CommandSender> parserOptions = ParserOptions.getDefaults(getComponentFactory());
 		CommandParser<CommandSender> parser = new CommandParser<>(parserOptions, this);
-		parser.addTagProcessors(TagProcessor.create("permission", (command, arg) -> {
-			command.getPipeline().addComponent(new PermissionComponent(arg, messages.getFormatter("noPermission")));
-			return command;
-		}));
-		
+		applyTagProcessors(parser);
 		return parser;
+	}
+	
+	private void applyTagProcessors(CommandParser<CommandSender> parser) {
+		parser.addTagProcessors(
+				TagProcessor.create("permission", (command, arg) -> {
+					command.getPipeline().addComponent(new PermissionComponent(arg, messages.getFormatter("noPermission")));
+					return command;
+				}),
+				TagProcessor.create("playerOnly", (command, arg) -> {
+					command.getPipeline().addComponent(new PlayerOnlyComponent(messages.getFormatter("playerOnly")));
+					return command;
+				})
+		);
 	}
 	
 	@Override
 	public String getCommandPrefix() {
 		return "/";
+	}
+	
+	public SpigotCommandManager setFallbackPrefix(String fallbackPrefix) {
+		this.fallbackPrefix = fallbackPrefix;
+		return this;
 	}
 	
 	public String getFallbackPrefix() {

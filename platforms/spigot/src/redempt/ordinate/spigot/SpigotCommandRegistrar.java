@@ -5,10 +5,16 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.plugin.Plugin;
 import redempt.ordinate.command.CommandBase;
 import redempt.ordinate.dispatch.CommandRegistrar;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -17,10 +23,12 @@ class SpigotCommandRegistrar implements CommandRegistrar<CommandSender> {
 	private Map<String, Command> knownCommands;
 	private CommandMap commandMap;
 	private String fallbackPrefix;
+	private Plugin plugin;
 	
-	public SpigotCommandRegistrar(String fallbackPrefix) {
+	public SpigotCommandRegistrar(Plugin plugin, String fallbackPrefix) {
 		this.fallbackPrefix = fallbackPrefix;
 		initKnownCommands();
+		this.plugin = plugin;
 	}
 	
 	private void initKnownCommands() {
@@ -61,6 +69,7 @@ class SpigotCommandRegistrar implements CommandRegistrar<CommandSender> {
 	public void register(CommandBase<CommandSender> command) {
 		Command cmd = createSpigotCommand(command);
 		command.getCommands().forEach(c -> commandMap.register(fallbackPrefix, cmd));
+		Bukkit.getPluginManager().registerEvents(new UnregisterListener(plugin, () -> unregister(command)), plugin);
 	}
 	
 	@Override
@@ -69,6 +78,26 @@ class SpigotCommandRegistrar implements CommandRegistrar<CommandSender> {
 			knownCommands.remove(name);
 			knownCommands.remove(fallbackPrefix + ":" + name);
 		};
+	}
+	
+}
+class UnregisterListener implements Listener {
+	
+	private Plugin plugin;
+	private Runnable toRun;
+	
+	public UnregisterListener(Plugin plugin, Runnable toRun) {
+		this.plugin = plugin;
+		this.toRun = toRun;
+	}
+	
+	@EventHandler
+	public void onPluginDisable(PluginDisableEvent e) {
+		if (!e.getPlugin().equals(plugin)) {
+			return;
+		}
+		toRun.run();
+		HandlerList.unregisterAll(this);
 	}
 	
 }

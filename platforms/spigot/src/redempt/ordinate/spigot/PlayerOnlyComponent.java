@@ -1,19 +1,18 @@
 package redempt.ordinate.spigot;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import redempt.ordinate.component.abstracts.CommandComponent;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.message.MessageFormatter;
 
-public class PermissionComponent extends CommandComponent<CommandSender> {
+public class PlayerOnlyComponent extends CommandComponent<CommandSender> {
 	
-	private String permission;
-	private MessageFormatter<CommandSender> noPermissionError;
+	private MessageFormatter<CommandSender> error;
 	
-	public PermissionComponent(String permission, MessageFormatter<CommandSender> noPermissionError) {
-		this.permission = permission;
-		this.noPermissionError = noPermissionError;
+	public PlayerOnlyComponent(MessageFormatter<CommandSender> error) {
+		this.error = error;
 	}
 	
 	@Override
@@ -33,7 +32,10 @@ public class PermissionComponent extends CommandComponent<CommandSender> {
 	
 	@Override
 	public CommandResult<CommandSender> parse(CommandContext<CommandSender> context) {
-		return context.sender().hasPermission(permission) ? success() : failure(noPermissionError.format(context.sender(), permission)).complete();
+		if (context.sender() instanceof Player) {
+			return success();
+		}
+		return failure(error.format(context.sender())).complete();
 	}
 	
 }

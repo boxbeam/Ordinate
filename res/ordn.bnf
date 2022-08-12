@@ -18,7 +18,7 @@ arg ::= type constraint? (consuming | vararg)? ":" name (optional defaultValue?)
 param ::= flag | arg
 paramList ::= (sep param)*
 
-tag ::= word (sep? "=" sep? (!"//" [^{}\n])+) sep?
+tag ::= word (sep? (("=" sep? (!"//" [^{}\n])+) | sep? ![^\n])) sep?
 entry ::= sep? (tag | command | comment) comment? break sep?
 
 cmdName ::= word ("," word)*
