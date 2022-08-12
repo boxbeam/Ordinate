@@ -4,7 +4,7 @@ import org.bukkit.command.CommandSender;
 import redempt.ordinate.component.abstracts.CommandComponent;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
-import redempt.ordinate.processing.MessageFormatter;
+import redempt.ordinate.message.MessageFormatter;
 
 public class PermissionComponent extends CommandComponent<CommandSender> {
 	
@@ -33,7 +33,7 @@ public class PermissionComponent extends CommandComponent<CommandSender> {
 	
 	@Override
 	public CommandResult<CommandSender> parse(CommandContext<CommandSender> context) {
-		return context.sender().hasPermission(permission) ? success() : failure(noPermissionError.apply(context.sender(), permission));
+		return context.sender().hasPermission(permission) ? success() : failure(noPermissionError.format(context.sender(), permission));
 	}
 	
 }
