@@ -5,7 +5,7 @@ import redempt.ordinate.component.BooleanFlagComponent;
 import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.creation.ComponentFactory;
 import redempt.ordinate.parser.metadata.ParserOptions;
-import redempt.ordinate.processing.CommandParsingPipeline;
+import redempt.ordinate.processing.CommandPipeline;
 import redempt.redlex.data.Token;
 
 import java.util.Arrays;
@@ -16,7 +16,7 @@ import java.util.Optional;
 public class DefaultArgumentParser<T> implements ArgumentParser<T> {
 
 	@Override
-	public <V> void parseArgument(Token argument, ParserOptions<T> options, ComponentFactory<T> componentFactory, CommandParsingPipeline<T> pipeline) {
+	public <V> void parseArgument(Token argument, ParserOptions<T> options, ComponentFactory<T> componentFactory, CommandPipeline<T> pipeline) {
 		if (argument.getBaseString().charAt(argument.getStart()) == '-') {
 			pipeline.addComponent(parseBooleanFlag(argument.getValue(), componentFactory));
 			return;

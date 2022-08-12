@@ -9,7 +9,7 @@ import redempt.ordinate.parser.argument.ArgumentParser;
 import redempt.ordinate.parser.metadata.CommandHook;
 import redempt.ordinate.parser.metadata.MethodHook;
 import redempt.ordinate.parser.metadata.ParserOptions;
-import redempt.ordinate.processing.CommandParsingPipeline;
+import redempt.ordinate.processing.CommandPipeline;
 import redempt.redlex.bnf.BNFParser;
 import redempt.redlex.data.Token;
 import redempt.redlex.processing.CullStrategy;
@@ -124,7 +124,7 @@ public class CommandParser<T> {
 	private Command<T> parseCommand(Token commandToken) {
 		Token argList = getArgListToken(commandToken);
 		String[] names = commandToken.getChildren()[0].getValue().split(",");
-		CommandParsingPipeline<T> pipeline = new CommandParsingPipeline<>();
+		CommandPipeline<T> pipeline = new CommandPipeline<>();
 		if (argList != null) {
 			parseArgumentTokens(argList.getChildren(), pipeline);
 		}
@@ -167,7 +167,7 @@ public class CommandParser<T> {
 		}
 	}
 
-	private void parseArgumentTokens(Token[] arguments, CommandParsingPipeline<T> pipeline) {
+	private void parseArgumentTokens(Token[] arguments, CommandPipeline<T> pipeline) {
 		for (Token arg : arguments) {
 			options.getArgumentParser().parseArgument(arg, options, manager.getComponentFactory(), pipeline);
 		}

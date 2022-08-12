@@ -50,12 +50,8 @@ public class CommandBase<T> implements Named {
 	}
 
 	public CompletionResult<T> getCompletions(T sender, SplittableList<Argument> args) {
-		if (args.size() == 0) {
-			return new CompletionResult<>(null, null, Collections.emptyList());
-		}
 		Set<String> completions = new LinkedHashSet<>();
 		CommandResult<T> deepestError = null;
-		String last = args.get(args.size() - 1).getValue();
 		for (Command<T> cmd : wrapped) {
 			CommandContext<T> context = cmd.createContext(sender, args);
 			CommandResult<T> result = cmd.complete(context, completions);
@@ -63,7 +59,7 @@ public class CommandBase<T> implements Named {
 				deepestError = CommandResult.deepest(deepestError, result);
 			}
 		}
-		return new CompletionResult<>(last, deepestError, completions);
+		return new CompletionResult<>("", deepestError, completions);
 	}
 
 	public CommandResult<T> execute(T sender, String args) {

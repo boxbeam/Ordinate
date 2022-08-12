@@ -6,7 +6,7 @@ import redempt.ordinate.data.CommandResult;
 
 import java.util.*;
 
-public class CommandParsingPipeline<T> {
+public class CommandPipeline<T> {
 
 	private List<CommandComponent<T>> components = new ArrayList<>();
 	private Comparator<CommandComponent<T>> comparator;
@@ -15,11 +15,11 @@ public class CommandParsingPipeline<T> {
 	private int maxArgWidth;
 	private int minArgWidth;
 
-	public CommandParsingPipeline() {
+	public CommandPipeline() {
 		this(Collections.emptyList());
 	}
 
-	public CommandParsingPipeline(Collection<CommandComponent<T>> components) {
+	public CommandPipeline(Collection<CommandComponent<T>> components) {
 		this.components.addAll(components);
 		comparator = Comparator.comparingInt(CommandComponent::getPriority);
 		comparator = comparator.reversed().thenComparing(CommandComponent::getIndex);

@@ -6,8 +6,7 @@ import redempt.ordinate.component.abstracts.HelpProvider;
 import redempt.ordinate.data.*;
 import redempt.ordinate.help.HelpBuilder;
 import redempt.ordinate.help.HelpComponent;
-import redempt.ordinate.processing.ArgumentSplitter;
-import redempt.ordinate.processing.CommandParsingPipeline;
+import redempt.ordinate.processing.CommandPipeline;
 
 import java.util.*;
 
@@ -15,11 +14,11 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 
 	private String mainName;
 	private Set<String> names = new HashSet<>();
-	private CommandParsingPipeline<T> pipeline;
+	private CommandPipeline<T> pipeline;
 	private int priority = 20;
 	private boolean lookup = true;
 
-	public Command(String[] names, CommandParsingPipeline<T> pipeline) {
+	public Command(String[] names, CommandPipeline<T> pipeline) {
 		mainName = names[0];
 		Collections.addAll(this.names, names);
 		this.pipeline = pipeline;
@@ -41,7 +40,7 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 		return getParent() == null;
 	}
 
-	public CommandParsingPipeline<T> getPipeline() {
+	public CommandPipeline<T> getPipeline() {
 		return pipeline;
 	}
 
@@ -108,12 +107,9 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 			completions.addAll(pipeline.completions(context));
 			return success();
 		}
-		if (context.getArguments().size() == 1) {
+		if (!context.hasArg()) {
 			completions.addAll(names);
 			context.pollArg();
-			return success();
-		}
-		if (!context.hasArg()) {
 			return success();
 		}
 		Argument arg = context.peekArg();

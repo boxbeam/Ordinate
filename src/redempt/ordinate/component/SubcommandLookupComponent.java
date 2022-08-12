@@ -76,17 +76,18 @@ public class SubcommandLookupComponent<T> extends CommandComponent<T> implements
 
 	@Override
 	public CommandResult<T> complete(CommandContext<T> context, Set<String> completions) {
-		if (!context.hasArg()) {
+		if (context.getArguments().size() > 1) {
+			Argument arg = context.peekArg();
+			if (arg.isQuoted() || !lookup.containsKey(arg.getValue())) {
+				return success();
+			}
+			List<Command<T>> subcommands = lookup.get(arg.getValue());
+			for (Command<T> command : subcommands) {
+				command.complete(context, completions);
+			}
 			return success();
 		}
-		Argument arg = context.peekArg();
-		if (arg.isQuoted() || !lookup.containsKey(arg.getValue())) {
-			return success();
-		}
-		List<Command<T>> subcommands = lookup.get(arg.getValue());
-		for (Command<T> command : subcommands) {
-			command.complete(context, completions);
-		}
+		completions.addAll(lookup.keySet());
 		return success();
 	}
 
