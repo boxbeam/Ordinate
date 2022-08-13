@@ -61,6 +61,8 @@ public class ArgumentBuilder<T, V> {
 			}
 		} else if (optional) {
 			list.add(factory.createOptionalArgument(type, defaultValue, name));
+		} else {
+			list.add(factory.createArgument(type, name));
 		}
 		if (constraint != null) {
 			list.add(factory.createConstraint(constraint, name));
