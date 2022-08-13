@@ -26,7 +26,7 @@ public class ParserOptions<T> {
 		options.argumentTypes.put("float", numberArgType("float", Float::parseFloat, componentFactory));
 		options.argumentTypes.put("long", numberArgType("long", Long::parseLong, componentFactory));
 		options.argumentTypes.put("double", numberArgType("double", Double::parseDouble, componentFactory));
-		options.argumentTypes.put("boolean", new ArgType<>("boolean", (ctx, str) -> Boolean.parseBoolean(str), (ctx, str) -> Arrays.asList("true", "false")));
+		options.argumentTypes.put("boolean", new ArgType<>("boolean", (ctx, str) -> parseBoolean(str), (ctx, str) -> Arrays.asList("true", "false")));
 		options.tagProcessors.put("help", TagProcessor.create("help", (cmd, str) -> {
 			cmd.getPipeline().addComponent(new DescriptionComponent<>(str));
 			return cmd;
@@ -40,6 +40,17 @@ public class ParserOptions<T> {
 			return cmd;
 		}));
 		return options;
+	}
+	
+	private static Boolean parseBoolean(String str) {
+		switch (str) {
+			case "true":
+				return true;
+			case "false":
+				return false;
+			default:
+				return null;
+		}
 	}
 
 	private static <T, V extends Number & Comparable<V>> ArgType<T, V> numberArgType(String name, Function<String, V> numberParser, ComponentFactory<T> componentFactory) {

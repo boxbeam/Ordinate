@@ -16,13 +16,18 @@ public class HelpPage {
 		return entries.get(command);
 	}
 
-	public HelpEntry[] getHelpRecursive(Command<?> command) {
+	public HelpEntry[] getHelpRecursive(Command<?> command, boolean filterDescriptionless) {
 		List<HelpEntry> entries = new ArrayList<>();
 		Deque<Command<?>> queue = new ArrayDeque<>();
 		queue.add(command);
 		while (!queue.isEmpty()) {
 			Command<?> cmd = queue.pollLast();
-			entries.add(getHelp(cmd));
+			System.out.println("Help: " + cmd.getName());
+			HelpEntry entry = getHelp(cmd);
+			if (!filterDescriptionless || entry.getDescription() != null) {
+				entries.add(entry);
+			}
+			System.out.println("Subcommands: " + cmd.getSubcommands());
 			queue.addAll(cmd.getSubcommands());
 		}
 		return entries.toArray(new HelpEntry[0]);

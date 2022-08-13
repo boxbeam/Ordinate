@@ -59,7 +59,11 @@ public class CommandBase<T> implements Named {
 				deepestError = CommandResult.deepest(deepestError, result);
 			}
 		}
-		return new CompletionResult<>("", deepestError, completions);
+		String last = args.hasNext() ? args.get(args.size() - 1).getValue() : "";
+		List<String> fixed = completions.stream()
+				.filter(s -> s.regionMatches(true, 0, last, 0, last.length()))
+				.map(s -> s.contains(" ") ? '"' + s.replace("\"", "\\\"") + '"' : s).collect(Collectors.toList());
+		return new CompletionResult<>(deepestError, fixed);
 	}
 
 	public CommandResult<T> execute(T sender, String args) {
@@ -80,19 +84,13 @@ public class CommandBase<T> implements Named {
 			}
 			deepestError = CommandResult.deepest(deepestError, result);
 		}
-		if (deepestError != null) {
-			
-			deepestError.getError().send(sender);
-			if (deepestError.getComponent() instanceof Command) {
-				manager.getHelpDisplayer().display(sender, help.getHelpRecursive(deepestError.getCommand()));
-			} else {
-				manager.getHelpDisplayer().display(sender, help.getHelp(deepestError.getCommand()));
-			}
-			return deepestError;
+		deepestError.getError().send(sender);
+		if (deepestError.getComponent() instanceof Command) {
+			manager.getHelpDisplayer().display(sender, help.getHelpRecursive(deepestError.getCommand(), true));
+		} else {
+			manager.getHelpDisplayer().display(sender, help.getHelp(deepestError.getCommand()));
 		}
-		HelpEntry[] all = help.getAll().toArray(new HelpEntry[0]);
-		manager.getHelpDisplayer().display(sender, all);
-		return null;
+		return deepestError;
 	}
 
 }

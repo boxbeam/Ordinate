@@ -5,6 +5,7 @@ import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 public class CommandPipeline<T> {
 
@@ -71,7 +72,7 @@ public class CommandPipeline<T> {
 		components = Collections.unmodifiableList(components);
 	}
 
-	public CommandResult<T> parse(CommandContext<T> context) {
+	public CommandResult<T> parse(CommandContext<T> context, Supplier<CommandResult<T>> defaultResult) {
 		CommandResult<T> deepestError = null;
 		for (CommandComponent<T> component : components) {
 			CommandResult<T> result = component.parse(context);
@@ -82,7 +83,7 @@ public class CommandPipeline<T> {
 				deepestError = CommandResult.deepest(deepestError, result);
 			}
 		}
-		return deepestError;
+		return deepestError == null ? defaultResult.get() : deepestError;
 	}
 
 	public Set<String> completions(CommandContext<T> context) {

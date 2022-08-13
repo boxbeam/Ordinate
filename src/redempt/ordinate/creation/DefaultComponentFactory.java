@@ -38,7 +38,7 @@ public class DefaultComponentFactory<T> implements ComponentFactory<T> {
 
 	@Override
 	public <V> OptionalArgumentComponent<T, V> createOptionalArgument(ArgType<T, V> type, ContextProvider<T, V> defaultValue, String name) {
-		return new OptionalArgumentComponent<>(name, type, defaultValue, getMessage("invalidArgument"));
+		return new OptionalArgumentComponent<>(name, type, defaultValue, getMessage("invalidArgumentValue"));
 	}
 
 	@Override

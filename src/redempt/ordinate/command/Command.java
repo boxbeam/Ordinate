@@ -84,7 +84,7 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 	@Override
 	public CommandResult<T> parse(CommandContext<T> context) {
 		if (isRoot()) {
-			return pipeline.parse(context);
+			return pipeline.parse(context, this::failure);
 		}
 		if (!context.hasArg()) {
 			return success();
@@ -94,7 +94,7 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 			return success();
 		}
 		CommandContext<T> clone = context.clone(this, 1, pipeline.getParsingSlots());
-		CommandResult<T> result = pipeline.parse(clone);
+		CommandResult<T> result = pipeline.parse(clone, this::failure);
 		if (!result.isSuccess()) {
 			result.uncomplete();
 		}
@@ -104,6 +104,7 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 	@Override
 	public CommandResult<T> complete(CommandContext<T> context, Set<String> completions) {
 		if (isRoot()) {
+			System.out.println("Am root, " + pipeline.getComponents());
 			completions.addAll(pipeline.completions(context));
 			return success();
 		}

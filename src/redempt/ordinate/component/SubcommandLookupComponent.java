@@ -2,6 +2,7 @@ package redempt.ordinate.component;
 
 import redempt.ordinate.command.Command;
 import redempt.ordinate.component.abstracts.CommandComponent;
+import redempt.ordinate.component.abstracts.CommandParent;
 import redempt.ordinate.component.abstracts.HelpProvider;
 import redempt.ordinate.data.Argument;
 import redempt.ordinate.data.CommandContext;
@@ -11,7 +12,7 @@ import redempt.ordinate.message.MessageFormatter;
 
 import java.util.*;
 
-public class SubcommandLookupComponent<T> extends CommandComponent<T> implements HelpProvider {
+public class SubcommandLookupComponent<T> extends CommandComponent<T> implements HelpProvider, CommandParent<T> {
 
 	private List<Command<T>> commands;
 	private Map<String, List<Command<T>>> lookup = new HashMap<>();
@@ -95,4 +96,10 @@ public class SubcommandLookupComponent<T> extends CommandComponent<T> implements
 	public void addHelp(HelpBuilder help) {
 		commands.forEach(c -> c.addHelp(help));
 	}
+	
+	@Override
+	public Collection<Command<T>> getSubcommands() {
+		return commands;
+	}
+	
 }

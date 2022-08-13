@@ -3,6 +3,7 @@ package redempt.ordinate.spigot;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import redempt.ordinate.command.Command;
 import redempt.ordinate.creation.ComponentFactory;
 import redempt.ordinate.creation.DefaultComponentFactory;
 import redempt.ordinate.dispatch.CommandManager;
@@ -30,6 +31,7 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 		props.setProperty("invalidSubcommand", "&cInvalid subcommand: %1");
 		props.setProperty("noPermission", "&cYou do not have permission to do that (%1)");
 		props.setProperty("playerOnly", "&cThis command must be executed as a player");
+		props.setProperty("helpFormat", "&9%1 &7%2");
 		return props;
 	}
 	
@@ -54,12 +56,14 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 	private CommandRegistrar<CommandSender> registrar;
 	private ComponentFactory<CommandSender> componentFactory;
 	private MessageProvider<CommandSender> messages;
+	private HelpDisplayer<CommandSender> helpDisplayer;
 	
 	private SpigotCommandManager(Plugin plugin, String fallbackPrefix, MessageProvider<CommandSender> messages) {
 		this.fallbackPrefix = fallbackPrefix;
 		this.messages = messages;
 		registrar = new SpigotCommandRegistrar(plugin, fallbackPrefix);
 		componentFactory = new DefaultComponentFactory<>(messages);
+		helpDisplayer = new SpigotHelpDisplayer(getCommandPrefix(), messages);
 	}
 	
 	@Override
@@ -69,9 +73,7 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 	
 	@Override
 	public HelpDisplayer<CommandSender> getHelpDisplayer() {
-		return (sender, entry) -> {
-			sender.sendMessage(getCommandPrefix() + entry.toString());
-		};
+		return helpDisplayer;
 	}
 	
 	@Override
