@@ -130,6 +130,13 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 	public Set<String> getNames() {
 		return names;
 	}
+	
+	public void getParentPrefix(List<String> parts) {
+		if (getParent() != null) {
+			getParent().getParentPrefix(parts);
+		}
+		parts.add(getName());
+	}
 
 	public List<Command<T>> getSubcommands() {
 		List<Command<T>> subcommands = new ArrayList<>();

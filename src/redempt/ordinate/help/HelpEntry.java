@@ -3,11 +3,9 @@ package redempt.ordinate.help;
 import redempt.ordinate.command.Command;
 import redempt.ordinate.component.DescriptionComponent;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
-import java.util.stream.Collectors;
 
 public class HelpEntry {
 
@@ -27,14 +25,11 @@ public class HelpEntry {
 		return components;
 	}
 	
-	public String getOwnerPrefix() {
-		Deque<String> out = new ArrayDeque<>();
-		Command<?> parent = owner.getParent();
-		while (parent != null) {
-			out.addFirst(parent.getName());
-			parent = parent.getParent();
-		}
-		return String.join(" ", out);
+	public String getParentPrefix() {
+		List<String> parentPrefix = new ArrayList<>();
+		owner.getParentPrefix(parentPrefix);
+		parentPrefix.remove(parentPrefix.size() - 1);
+		return String.join(" ", parentPrefix);
 	}
 	
 	private boolean isDescription(HelpComponent c) {

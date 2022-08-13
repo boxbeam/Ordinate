@@ -1,8 +1,12 @@
 package redempt.ordinate.spigot;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import redempt.ordinate.command.ArgType;
 import redempt.ordinate.command.Command;
 import redempt.ordinate.creation.ComponentFactory;
 import redempt.ordinate.creation.DefaultComponentFactory;
@@ -15,6 +19,7 @@ import redempt.ordinate.parser.CommandParser;
 import redempt.ordinate.parser.TagProcessor;
 import redempt.ordinate.parser.metadata.ParserOptions;
 
+import java.util.Arrays;
 import java.util.Properties;
 
 public class SpigotCommandManager implements CommandManager<CommandSender> {
@@ -86,6 +91,7 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 		ParserOptions<CommandSender> parserOptions = ParserOptions.getDefaults(getComponentFactory());
 		CommandParser<CommandSender> parser = new CommandParser<>(parserOptions, this);
 		applyTagProcessors(parser);
+		applyArgTypes(parser);
 		return parser;
 	}
 	
@@ -100,6 +106,12 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 					return command;
 				})
 		);
+	}
+	
+	private void applyArgTypes(CommandParser<CommandSender> parser) {
+		parser.addArgTypes(new ArgType<>("player", Bukkit::getPlayerExact).completerStream((ctx, val) -> Bukkit.getOnlinePlayers().stream().map(Player::getName)));
+		parser.addArgTypes(new ArgType<>("world", Bukkit::getWorld).completerStream((ctx, val) -> Bukkit.getWorlds().stream().map(World::getName)));
+		parser.addArgTypes(new ArgType<>("material", s -> Material.getMaterial(s)).completerStream((ctx, val) -> Arrays.stream(Material.values()).map(Material::name)));
 	}
 	
 	@Override

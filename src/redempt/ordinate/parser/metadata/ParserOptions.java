@@ -20,13 +20,14 @@ public class ParserOptions<T> {
 
 	public static <T> ParserOptions<T> getDefaults(ComponentFactory<T> componentFactory) {
 		ParserOptions<T> options = new ParserOptions<>(new DefaultArgumentParser<>());
-		options.contextProviders.put("self", ContextProvider.create("self", null, CommandContext::sender));
-		options.argumentTypes.put("string", new ArgType<>("string", (ctx, str) -> str, (ctx, str) -> Collections.emptyList()));
-		options.argumentTypes.put("int", numberArgType("int", Integer::parseInt, componentFactory));
-		options.argumentTypes.put("float", numberArgType("float", Float::parseFloat, componentFactory));
-		options.argumentTypes.put("long", numberArgType("long", Long::parseLong, componentFactory));
-		options.argumentTypes.put("double", numberArgType("double", Double::parseDouble, componentFactory));
-		options.argumentTypes.put("boolean", new ArgType<>("boolean", (ctx, str) -> parseBoolean(str), (ctx, str) -> Arrays.asList("true", "false")));
+		
+		options.insert(ContextProvider.create("self", null, CommandContext::sender));
+		options.insert(new ArgType<>("string", (ctx, str) -> str));
+		options.insert(numberArgType("int", Integer::parseInt, componentFactory));
+		options.insert(numberArgType("float", Float::parseFloat, componentFactory));
+		options.insert(numberArgType("long", Long::parseLong, componentFactory));
+		options.insert(numberArgType("double", Double::parseDouble, componentFactory));
+		options.insert(new ArgType<>("boolean", (ctx, str) -> parseBoolean(str)).completer((ctx, str) -> Arrays.asList("true", "false")));
 		options.tagProcessors.put("help", TagProcessor.create("help", (cmd, str) -> {
 			cmd.getPipeline().addComponent(new DescriptionComponent<>(str));
 			return cmd;
@@ -54,7 +55,7 @@ public class ParserOptions<T> {
 	}
 
 	private static <T, V extends Number & Comparable<V>> ArgType<T, V> numberArgType(String name, Function<String, V> numberParser, ComponentFactory<T> componentFactory) {
-		return new ArgType<T, V>(name, (ctx, str) -> numberParser.apply(str), (ctx, str) -> Collections.emptyList())
+		return new ArgType<T, V>(name, (ctx, str) -> numberParser.apply(str))
 				.constraint(componentFactory.createNumberConstraintParser(numberParser));
 	}
 
@@ -67,6 +68,14 @@ public class ParserOptions<T> {
 		this.argumentParser = argumentParser;
 	}
 
+	private void insert(ArgType<?, ?> argType) {
+		argumentTypes.put(argType.getName(), (ArgType<T, ?>) argType);
+	}
+	
+	private void insert(ContextProvider<?, ?> provider) {
+		contextProviders.put(provider.getName(), (ContextProvider<T, ?>) provider);
+	}
+	
 	public ArgumentParser<T> getArgumentParser() {
 		return argumentParser;
 	}

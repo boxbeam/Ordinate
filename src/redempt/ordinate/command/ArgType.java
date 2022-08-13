@@ -4,27 +4,30 @@ import redempt.ordinate.constraint.ConstraintParser;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.Named;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ArgType<T, V> implements Named {
 
+	public static <T, V> ArgType<T, V> of(String name, Map<String, V> map) {
+		return new ArgType<T, V>(name, (ctx, val) -> map.get(val)).completer((ctx, val) -> map.keySet());
+	}
+	
 	private String name;
 	private BiFunction<CommandContext<T>, String, V> converter;
-	private BiFunction<CommandContext<T>, String, List<String>> completer;
+	private BiFunction<CommandContext<T>, String, Collection<String>> completer;
 	private ConstraintParser<T, V> constraintParser;
 
-	public ArgType(String name, BiFunction<CommandContext<T>, String, V> converter, BiFunction<CommandContext<T>, String, List<String>> completer) {
+	public ArgType(String name, BiFunction<CommandContext<T>, String, V> converter) {
 		this.name = name;
 		this.converter = converter;
-		this.completer = completer;
 	}
-
-	public ArgType(String name, BiFunction<CommandContext<T>, String, V> converter) {
-		this(name, converter, (ctx, str) -> Collections.emptyList());
+	
+	public ArgType(String name, Function<String, V> converter) {
+		this(name, (ctx, val) -> converter.apply(val));
 	}
 	
 	@Override
@@ -40,7 +43,7 @@ public class ArgType<T, V> implements Named {
 		}
 	}
 
-	public List<String> complete(CommandContext<T> context, String partial) {
+	public Collection<String> complete(CommandContext<T> context, String partial) {
 		return completer.apply(context, partial);
 	}
 
@@ -49,7 +52,7 @@ public class ArgType<T, V> implements Named {
 		return this;
 	}
 
-	public ArgType<T, V> completer(BiFunction<CommandContext<T>, String, List<String>> completer) {
+	public ArgType<T, V> completer(BiFunction<CommandContext<T>, String, Collection<String>> completer) {
 		this.completer = completer;
 		return this;
 	}

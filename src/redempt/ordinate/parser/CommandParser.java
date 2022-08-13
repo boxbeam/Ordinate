@@ -91,9 +91,9 @@ public class CommandParser<T> {
 		return this;
 	}
 
-	public CommandParser<T> addArgTypes(ArgType<T, ?>... argTypes) {
-		for (ArgType<T, ?> argType : argTypes) {
-			options.getArgumentTypes().put(argType.getName(), argType);
+	public CommandParser<T> addArgTypes(ArgType<?, ?>... argTypes) {
+		for (ArgType<?, ?> argType : argTypes) {
+			options.getArgumentTypes().put(argType.getName(), (ArgType<T, ?>) argType);
 		}
 		return this;
 	}
