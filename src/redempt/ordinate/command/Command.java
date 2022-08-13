@@ -104,7 +104,6 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 	@Override
 	public CommandResult<T> complete(CommandContext<T> context, Set<String> completions) {
 		if (isRoot()) {
-			System.out.println("Am root, " + pipeline.getComponents());
 			completions.addAll(pipeline.completions(context));
 			return success();
 		}

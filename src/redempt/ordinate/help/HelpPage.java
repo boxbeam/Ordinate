@@ -22,12 +22,10 @@ public class HelpPage {
 		queue.add(command);
 		while (!queue.isEmpty()) {
 			Command<?> cmd = queue.pollLast();
-			System.out.println("Help: " + cmd.getName());
 			HelpEntry entry = getHelp(cmd);
 			if (!filterDescriptionless || entry.getDescription() != null) {
 				entries.add(entry);
 			}
-			System.out.println("Subcommands: " + cmd.getSubcommands());
 			queue.addAll(cmd.getSubcommands());
 		}
 		return entries.toArray(new HelpEntry[0]);
