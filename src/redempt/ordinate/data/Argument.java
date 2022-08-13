@@ -18,4 +18,8 @@ public class Argument {
 		return quoted;
 	}
 	
+	public String toString() {
+		return quoted ? '"' + value + '"' : value;
+	}
+	
 }

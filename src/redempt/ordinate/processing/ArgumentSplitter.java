@@ -4,6 +4,7 @@ import redempt.ordinate.data.Argument;
 import redempt.ordinate.data.SplittableList;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ArgumentSplitter {
@@ -23,22 +24,24 @@ public class ArgumentSplitter {
 				buffer.append('"');
 				continue;
 			}
-			if (c == '"') {
+			if (c == '"' && (quoted || i == 0 || command.charAt(i - 1) == ' ')) {
 				quoted = !quoted;
-				if (!quoted) {
+				if (!quoted && buffer.length() > 0) {
 					args.add(new Argument(buffer.toString(), true));
 					buffer.setLength(0);
 				}
 				continue;
 			}
-			if (c == ' ' && !quoted && buffer.length() > 0) {
-				args.add(new Argument(buffer.toString(), false));
-				buffer.setLength(0);
+			if (c == ' ') {
+				if (!quoted && buffer.length() > 0) {
+					args.add(new Argument(buffer.toString(), false));
+					buffer.setLength(0);
+				}
 				continue;
 			}
 			buffer.append(c);
 		}
-		if (buffer.length() > 0) {
+		if (buffer.length() > 0 || forCompletions) {
 			String last = buffer.toString();
 			last = (quoted ? "\"" : "") + last;
 			String[] split = last.split(" ", forCompletions ? -1 : 0);

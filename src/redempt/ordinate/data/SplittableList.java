@@ -1,5 +1,7 @@
 package redempt.ordinate.data;
 
+import java.util.Arrays;
+
 public class SplittableList<T> {
 
 	private Object[] array;
@@ -64,4 +66,9 @@ public class SplittableList<T> {
 		return new SplittableList(array, start + newStart);
 	}
 
+	@Override
+	public String toString() {
+		return Arrays.toString(Arrays.copyOfRange(array, start, array.length));
+	}
+	
 }
