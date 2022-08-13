@@ -11,10 +11,13 @@ import redempt.ordinate.message.MessageFormatter;
 public class OptionalArgumentComponent<T, V> extends ArgumentComponent<T, V> {
 
 	private ContextProvider<T, V> defaultValue;
+	private MessageFormatter<T> contextError;
 
-	public OptionalArgumentComponent(String name, ArgType<T, V> type, ContextProvider<T, V> defaultValue, MessageFormatter<T> invalidError) {
+	public OptionalArgumentComponent(String name, ArgType<T, V> type, ContextProvider<T, V> defaultValue,
+	                                 MessageFormatter<T> invalidError, MessageFormatter<T> contextError) {
 		super(name, type, null, invalidError);
 		this.defaultValue = defaultValue;
+		this.contextError = contextError;
 	}
 
 	@Override
@@ -32,7 +35,12 @@ public class OptionalArgumentComponent<T, V> extends ArgumentComponent<T, V> {
 		int minWidth = context.getCommand().getPipeline().getMinArgWidth();
 		int providedArgs = context.initialArgCount();
 		if (!context.hasArg() || providedArgs <= minWidth) {
-			context.setParsed(getIndex(), defaultValue.provide(context));
+			V value = defaultValue.provide(context);
+			if (value == null) {
+				return failure(contextError.format(context.sender(), defaultValue.getError())).complete();
+			}
+			context.setParsed(getIndex(), value);
+			context.provide(value);
 			return success();
 		}
 		String value = context.peekArg().getValue();

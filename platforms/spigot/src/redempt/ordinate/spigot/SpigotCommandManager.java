@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import redempt.ordinate.command.ArgType;
 import redempt.ordinate.command.Command;
+import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.creation.ComponentFactory;
 import redempt.ordinate.creation.DefaultComponentFactory;
 import redempt.ordinate.dispatch.CommandManager;
@@ -21,6 +22,8 @@ import redempt.ordinate.parser.metadata.ParserOptions;
 
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class SpigotCommandManager implements CommandManager<CommandSender> {
 	
@@ -38,6 +41,15 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 		props.setProperty("playerOnly", "&cThis command must be executed as a player");
 		props.setProperty("helpFormat", "&e%1 &7%2");
 		return props;
+	}
+	
+	public static <V> ContextProvider<CommandSender, V> playerContext(String name, String error, Function<Player, V> provider) {
+		return ContextProvider.create(name, error, ctx -> {
+			if (!(ctx.sender() instanceof Player)) {
+				return null;
+			}
+			return provider.apply((Player) ctx.sender());
+		});
 	}
 	
 	public static SpigotCommandManager getInstance(Plugin plugin, String fallbackPrefix, Properties messages) {
@@ -92,6 +104,7 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 		CommandParser<CommandSender> parser = new CommandParser<>(parserOptions, this);
 		applyTagProcessors(parser);
 		applyArgTypes(parser);
+		applyContextProviders(parser);
 		return parser;
 	}
 	
@@ -112,6 +125,10 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 		parser.addArgTypes(new ArgType<>("player", Bukkit::getPlayerExact).completerStream((ctx, val) -> Bukkit.getOnlinePlayers().stream().map(Player::getName)));
 		parser.addArgTypes(new ArgType<>("world", Bukkit::getWorld).completerStream((ctx, val) -> Bukkit.getWorlds().stream().map(World::getName)));
 		parser.addArgTypes(new ArgType<>("material", s -> Material.getMaterial(s)).completerStream((ctx, val) -> Arrays.stream(Material.values()).map(Material::name)));
+	}
+	
+	private void applyContextProviders(CommandParser<CommandSender> parser) {
+		parser.addContextProviders(playerContext("self", messages.getFormatter("playerOnly").format(null).toString(), p -> p));
 	}
 	
 	@Override

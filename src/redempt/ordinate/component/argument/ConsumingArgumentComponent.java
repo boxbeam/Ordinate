@@ -14,11 +14,14 @@ public class ConsumingArgumentComponent<T, V> extends ArgumentComponent<T, V> {
 
 	private boolean optional;
 	private ContextProvider<T, V> defaultValue;
+	private MessageFormatter<T> contextError;
 
-	public ConsumingArgumentComponent(String name, ArgType<T, V> type, boolean optional, ContextProvider<T, V> defaultValue, MessageFormatter<T> missingError, MessageFormatter<T> invalidError) {
+	public ConsumingArgumentComponent(String name, ArgType<T, V> type, boolean optional, ContextProvider<T, V> defaultValue,
+	                                  MessageFormatter<T> missingError, MessageFormatter<T> invalidError, MessageFormatter<T> contextError) {
 		super(name, type, missingError, invalidError);
 		this.defaultValue = defaultValue;
 		this.optional = optional;
+		this.contextError = contextError;
 	}
 
 	@Override
@@ -37,8 +40,12 @@ public class ConsumingArgumentComponent<T, V> extends ArgumentComponent<T, V> {
 			return failure(getMissingError().format(context.sender(), getName())).complete();
 		}
 		if (!context.hasArg()) {
-			context.setParsed(getIndex(), defaultValue.provide(context));
-			context.provide(defaultValue);
+			V value = defaultValue.provide(context);
+			if (value == null) {
+				return failure(contextError.format(context.sender(), defaultValue.getError())).complete();
+			}
+			context.setParsed(getIndex(), value);
+			context.provide(value);
 		}
 		StringJoiner joiner = new StringJoiner(" ");
 		while (context.hasArg()) {

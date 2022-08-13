@@ -2,6 +2,7 @@ package redempt.ordinate.parser.metadata;
 
 import redempt.ordinate.command.ArgType;
 import redempt.ordinate.component.DescriptionComponent;
+import redempt.ordinate.component.HelpSubcommandComponent;
 import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.creation.ComponentFactory;
 import redempt.ordinate.data.CommandContext;
@@ -40,6 +41,10 @@ public class ParserOptions<T> {
 			}
 			return cmd;
 		}));
+		options.tagProcessors.put("noHelpSubcommand", TagProcessor.create("noHelpSubcommand", (cmd, str) -> {
+			cmd.getPipeline().getComponents().removeIf(c -> c instanceof HelpSubcommandComponent);
+			return cmd;
+		}));
 		return options;
 	}
 	
@@ -63,6 +68,7 @@ public class ParserOptions<T> {
 	private Map<String, TagProcessor<T>> tagProcessors = new HashMap<>();
 	private Map<String, ArgType<T, ?>> argumentTypes = new HashMap<>();
 	private Map<String, ContextProvider<T, ?>> contextProviders = new HashMap<>();
+	private boolean autoHelp = true;
 
 	public ParserOptions(ArgumentParser<T> argumentParser) {
 		this.argumentParser = argumentParser;
@@ -112,6 +118,14 @@ public class ParserOptions<T> {
 		return argumentTypes;
 	}
 
+	public boolean getAutoHelp() {
+		return autoHelp;
+	}
+	
+	public void setAutoHelp(boolean autoHelp) {
+		this.autoHelp = autoHelp;
+	}
+	
 	public Map<String, ContextProvider<T, ?>> getContextProviders() {
 		return contextProviders;
 	}

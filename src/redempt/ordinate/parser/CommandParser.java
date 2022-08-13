@@ -2,6 +2,7 @@ package redempt.ordinate.parser;
 
 import redempt.ordinate.command.ArgType;
 import redempt.ordinate.command.Command;
+import redempt.ordinate.component.HelpSubcommandComponent;
 import redempt.ordinate.component.SubcommandLookupComponent;
 import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.dispatch.CommandManager;
@@ -120,11 +121,19 @@ public class CommandParser<T> {
 	public ParserOptions<T> getOptions() {
 		return options;
 	}
+	
+	public CommandParser<T> setAutoHelpSubcommand(boolean autoHelp) {
+		options.setAutoHelp(autoHelp);
+		return this;
+	}
 
 	private Command<T> parseCommand(Token commandToken) {
 		Token argList = getArgListToken(commandToken);
 		String[] names = commandToken.getChildren()[0].getValue().split(",");
 		CommandPipeline<T> pipeline = new CommandPipeline<>();
+		if (options.getAutoHelp()) {
+			pipeline.addComponent(new HelpSubcommandComponent<>());
+		}
 		if (argList != null) {
 			parseArgumentTokens(argList.getChildren(), pipeline);
 		}

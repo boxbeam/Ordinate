@@ -49,7 +49,7 @@ public class SubcommandLookupComponent<T> extends CommandComponent<T> implements
 
 	@Override
 	public int getPriority() {
-		return 0;
+		return 20;
 	}
 
 	@Override

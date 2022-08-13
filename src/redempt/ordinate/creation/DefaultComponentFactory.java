@@ -38,12 +38,12 @@ public class DefaultComponentFactory<T> implements ComponentFactory<T> {
 
 	@Override
 	public <V> OptionalArgumentComponent<T, V> createOptionalArgument(ArgType<T, V> type, ContextProvider<T, V> defaultValue, String name) {
-		return new OptionalArgumentComponent<>(name, type, defaultValue, getMessage("invalidArgumentValue"));
+		return new OptionalArgumentComponent<>(name, type, defaultValue, getMessage("invalidArgumentValue"), getMessage("contextError"));
 	}
 
 	@Override
 	public <V> ConsumingArgumentComponent<T, V> createConsumingArgument(ArgType<T, V> type, boolean optional, ContextProvider<T, V> defaultValue, String name) {
-		return new ConsumingArgumentComponent<>(name, type, optional, defaultValue, getMessage("missingArgument"), getMessage("invalidArgumentValue"));
+		return new ConsumingArgumentComponent<>(name, type, optional, defaultValue, getMessage("missingArgument"), getMessage("invalidArgumentValue"), getMessage("contextError"));
 	}
 
 	@Override
