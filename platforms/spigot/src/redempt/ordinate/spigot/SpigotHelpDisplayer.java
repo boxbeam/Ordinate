@@ -18,7 +18,11 @@ public class SpigotHelpDisplayer implements HelpDisplayer<CommandSender> {
 	
 	@Override
 	public void display(CommandSender sender, HelpEntry entry) {
-		String fullUsage = commandPrefix + entry.getParentPrefix() + " " + entry.getUsage();
+		String parentPrefix = entry.getParentPrefix();
+		if (parentPrefix.length() != 0) {
+			parentPrefix += " ";
+		}
+		String fullUsage = commandPrefix + parentPrefix + entry.getUsage();
 		String description = entry.getDescription();
 		helpMessage.format(sender, fullUsage, description).send(sender);
 	}

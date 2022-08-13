@@ -26,7 +26,7 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 	
 	public static Properties getDefaultMessages() {
 		Properties props = new Properties();
-		props.setProperty("missingArgument", "&cMissing value for argument: %1");
+		props.setProperty("missingArgument", "&cMissing required argument: %1");
 		props.setProperty("invalidArgumentValue", "&cInvalid value for argument %1: %2");
 		props.setProperty("executionFailed", "&cCommand execution failed due to an unexpected error. Please report this to an administrator.");
 		props.setProperty("tooManyArguments", "&cToo many arguments: Extra %1 argument(s) provided");
@@ -36,7 +36,7 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 		props.setProperty("invalidSubcommand", "&cInvalid subcommand: %1");
 		props.setProperty("noPermission", "&cYou do not have permission to do that (%1)");
 		props.setProperty("playerOnly", "&cThis command must be executed as a player");
-		props.setProperty("helpFormat", "&9%1 &7%2");
+		props.setProperty("helpFormat", "&e%1 &7%2");
 		return props;
 	}
 	

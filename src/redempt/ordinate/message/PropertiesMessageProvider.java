@@ -11,7 +11,7 @@ public class PropertiesMessageProvider<T> implements MessageProvider<T> {
 	
 	public static Properties getDefaultMessages() {
 		Properties props = new Properties();
-		props.setProperty("missingArgument", "Missing value for argument: %1");
+		props.setProperty("missingArgument", "Missing required argument: %1");
 		props.setProperty("invalidArgumentValue", "Invalid value for argument %1: %2");
 		props.setProperty("executionFailed", "Command execution failed due to an unexpected error. Please report this to an administrator.");
 		props.setProperty("tooManyArguments", "Too many arguments: Extra %1 argument(s) provided");
