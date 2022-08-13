@@ -68,7 +68,7 @@ public class ParserOptions<T> {
 	private Map<String, TagProcessor<T>> tagProcessors = new HashMap<>();
 	private Map<String, ArgType<T, ?>> argumentTypes = new HashMap<>();
 	private Map<String, ContextProvider<T, ?>> contextProviders = new HashMap<>();
-	private boolean autoHelp = true;
+	private String helpSubcommandName = "help";
 
 	public ParserOptions(ArgumentParser<T> argumentParser) {
 		this.argumentParser = argumentParser;
@@ -118,12 +118,12 @@ public class ParserOptions<T> {
 		return argumentTypes;
 	}
 
-	public boolean getAutoHelp() {
-		return autoHelp;
+	public String getHelpSubcommandName() {
+		return helpSubcommandName;
 	}
 	
-	public void setAutoHelp(boolean autoHelp) {
-		this.autoHelp = autoHelp;
+	public void setHelpSubcommandName(String helpSubcommandName) {
+		this.helpSubcommandName = helpSubcommandName;
 	}
 	
 	public Map<String, ContextProvider<T, ?>> getContextProviders() {

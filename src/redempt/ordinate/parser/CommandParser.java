@@ -122,8 +122,8 @@ public class CommandParser<T> {
 		return options;
 	}
 	
-	public CommandParser<T> setAutoHelpSubcommand(boolean autoHelp) {
-		options.setAutoHelp(autoHelp);
+	public CommandParser<T> setHelpSubcommandName(String helpSubcommandName) {
+		options.setHelpSubcommandName(helpSubcommandName);
 		return this;
 	}
 
@@ -131,8 +131,8 @@ public class CommandParser<T> {
 		Token argList = getArgListToken(commandToken);
 		String[] names = commandToken.getChildren()[0].getValue().split(",");
 		CommandPipeline<T> pipeline = new CommandPipeline<>();
-		if (options.getAutoHelp()) {
-			pipeline.addComponent(new HelpSubcommandComponent<>());
+		if (options.getHelpSubcommandName() != null) {
+			pipeline.addComponent(new HelpSubcommandComponent<>(options.getHelpSubcommandName()));
 		}
 		if (argList != null) {
 			parseArgumentTokens(argList.getChildren(), pipeline);

@@ -6,6 +6,12 @@ import redempt.ordinate.data.CommandResult;
 
 public class HelpSubcommandComponent<T> extends CommandComponent<T> {
 	
+	private String name;
+	
+	public HelpSubcommandComponent(String name) {
+		this.name = name;
+	}
+	
 	@Override
 	public int getMaxConsumedArgs() {
 		return 0;
@@ -26,7 +32,7 @@ public class HelpSubcommandComponent<T> extends CommandComponent<T> {
 		if (!context.hasArg() || context.peekArg().isQuoted()) {
 			return success();
 		}
-		if (context.peekArg().getValue().equals("help")) {
+		if (context.peekArg().getValue().equals(name)) {
 			return failure().complete();
 		}
 		return success();
