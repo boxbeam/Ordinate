@@ -1,12 +1,16 @@
 package redempt.ordinate.spigot;
 
 import org.bukkit.command.CommandSender;
+import redempt.ordinate.command.Command;
 import redempt.ordinate.component.abstracts.CommandComponent;
 import redempt.ordinate.component.abstracts.HelpProvider;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.help.HelpBuilder;
 import redempt.ordinate.message.MessageFormatter;
+
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 public class PermissionComponent extends CommandComponent<CommandSender> implements HelpProvider<CommandSender> {
 	
@@ -40,7 +44,13 @@ public class PermissionComponent extends CommandComponent<CommandSender> impleme
 	
 	@Override
 	public void addHelp(HelpBuilder<CommandSender> help) {
-		help.addFilter(getParent(), p -> p.hasPermission(permission));
+		Queue<Command<CommandSender>> toExplore = new ArrayDeque<>();
+		toExplore.add(getParent());
+		while (!toExplore.isEmpty()) {
+			Command<CommandSender> cmd = toExplore.poll();
+			help.addFilter(cmd, p -> p.hasPermission(permission));
+			toExplore.addAll(cmd.getSubcommands());
+		}
 	}
 	
 }
