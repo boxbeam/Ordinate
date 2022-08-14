@@ -93,6 +93,10 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 		return loadMessages(plugin.getDataFolder().toPath().resolve("command-messages.properties"));
 	}
 	
+	public MessageProvider<CommandSender> getMessages() {
+		return messages;
+	}
+	
 	public SpigotCommandManager loadMessages(Path path) {
 		Properties loaded = getDefaultMessages();
 		try {

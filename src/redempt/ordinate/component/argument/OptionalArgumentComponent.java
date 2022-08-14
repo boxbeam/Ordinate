@@ -35,6 +35,9 @@ public class OptionalArgumentComponent<T, V> extends ArgumentComponent<T, V> {
 		int minWidth = context.getCommand().getPipeline().getMinArgWidth();
 		int providedArgs = context.initialArgCount();
 		if (!context.hasArg() || providedArgs <= minWidth) {
+			if (defaultValue == null) {
+				return success();
+			}
 			V value = defaultValue.provide(context);
 			if (value == null) {
 				return failure(contextError.format(context.sender(), defaultValue.getError())).complete();
