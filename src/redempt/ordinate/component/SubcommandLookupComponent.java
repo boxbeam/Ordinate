@@ -12,7 +12,7 @@ import redempt.ordinate.message.MessageFormatter;
 
 import java.util.*;
 
-public class SubcommandLookupComponent<T> extends CommandComponent<T> implements HelpProvider, CommandParent<T> {
+public class SubcommandLookupComponent<T> extends CommandComponent<T> implements HelpProvider<T>, CommandParent<T> {
 
 	private List<Command<T>> commands;
 	private Map<String, List<Command<T>>> lookup = new HashMap<>();
@@ -93,7 +93,7 @@ public class SubcommandLookupComponent<T> extends CommandComponent<T> implements
 	}
 
 	@Override
-	public void addHelp(HelpBuilder help) {
+	public void addHelp(HelpBuilder<T> help) {
 		commands.forEach(c -> c.addHelp(help));
 	}
 	

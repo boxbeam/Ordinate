@@ -1,5 +1,6 @@
 package redempt.ordinate.command;
 
+import redempt.ordinate.component.HelpSubcommandComponent;
 import redempt.ordinate.data.*;
 import redempt.ordinate.dispatch.CommandManager;
 import redempt.ordinate.help.HelpBuilder;
@@ -13,18 +14,18 @@ import java.util.stream.Collectors;
 public class CommandBase<T> implements Named {
 
 	private List<Command<T>> wrapped;
-	private HelpPage help;
+	private HelpPage<T> help;
 	private CommandManager<T> manager;
 
 	public CommandBase(List<Command<T>> wrapped, CommandManager<T> manager) {
 		this.wrapped = wrapped;
-		HelpBuilder helpBuilder = new HelpBuilder();
+		HelpBuilder<T> helpBuilder = new HelpBuilder<>();
 		wrapped.forEach(cmd -> cmd.addHelp(helpBuilder));
 		help = helpBuilder.build();
 		this.manager = manager;
 	}
 
-	public HelpPage getHelpPage() {
+	public HelpPage<T> getHelpPage() {
 		return help;
 	}
 
@@ -85,7 +86,7 @@ public class CommandBase<T> implements Named {
 			deepestError = CommandResult.deepest(deepestError, result);
 		}
 		deepestError.getError().send(sender);
-		if (deepestError.getComponent() instanceof Command) {
+		if (deepestError.getComponent() instanceof Command || deepestError.getComponent() instanceof HelpSubcommandComponent) {
 			manager.getHelpDisplayer().display(sender, help.getHelpRecursive(deepestError.getCommand(), true));
 		} else {
 			manager.getHelpDisplayer().display(sender, help.getHelp(deepestError.getCommand()));

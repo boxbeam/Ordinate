@@ -10,7 +10,7 @@ import redempt.ordinate.processing.CommandPipeline;
 
 import java.util.*;
 
-public class Command<T> extends CommandComponent<T> implements Named, HelpProvider {
+public class Command<T> extends CommandComponent<T> implements Named, HelpProvider<T> {
 
 	private String mainName;
 	private Set<String> names = new HashSet<>();
@@ -72,11 +72,11 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 	}
 
 	@Override
-	public void addHelp(HelpBuilder help) {
+	public void addHelp(HelpBuilder<T> help) {
 		help.addHelp(getHelpComponent());
 		for (CommandComponent<T> component : pipeline.getComponents()) {
 			if (component instanceof HelpProvider) {
-				((HelpProvider) component).addHelp(help);
+				((HelpProvider<T>) component).addHelp(help);
 			}
 		}
 	}

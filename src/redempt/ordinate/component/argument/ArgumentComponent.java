@@ -12,7 +12,7 @@ import redempt.ordinate.message.MessageFormatter;
 
 import java.util.Set;
 
-public class ArgumentComponent<T, V> extends CommandComponent<T> implements Named, HelpProvider {
+public class ArgumentComponent<T, V> extends CommandComponent<T> implements Named, HelpProvider<T> {
 
 	private String name;
 	private ArgType<T, V> type;
@@ -62,7 +62,7 @@ public class ArgumentComponent<T, V> extends CommandComponent<T> implements Name
 	}
 
 	@Override
-	public void addHelp(HelpBuilder help) {
+	public void addHelp(HelpBuilder<T> help) {
 		help.addHelp(new HelpComponent(this, 1, "<" + name + ">"));
 	}
 

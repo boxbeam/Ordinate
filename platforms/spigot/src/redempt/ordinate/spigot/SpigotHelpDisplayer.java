@@ -17,13 +17,17 @@ public class SpigotHelpDisplayer implements HelpDisplayer<CommandSender> {
 	}
 	
 	@Override
-	public void display(CommandSender sender, HelpEntry entry) {
+	public void display(CommandSender sender, HelpEntry<CommandSender> entry) {
+		if (!entry.isVisibleTo(sender)) {
+			return;
+		}
 		String parentPrefix = entry.getParentPrefix();
 		if (parentPrefix.length() != 0) {
 			parentPrefix += " ";
 		}
 		String fullUsage = commandPrefix + parentPrefix + entry.getUsage();
 		String description = entry.getDescription();
+		description = description == null ? "" : description;
 		helpMessage.format(sender, fullUsage, description).send(sender);
 	}
 	

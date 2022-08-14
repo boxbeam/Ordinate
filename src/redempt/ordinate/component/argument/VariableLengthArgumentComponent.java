@@ -78,7 +78,7 @@ public class VariableLengthArgumentComponent<T, V> extends ArgumentComponent<T, 
 	}
 
 	@Override
-	public void addHelp(HelpBuilder help) {
+	public void addHelp(HelpBuilder<T> help) {
 		help.addHelp(new HelpComponent(this, 1, "<" + getName() + ">+"));
 	}
 

@@ -8,7 +8,7 @@ import redempt.ordinate.help.HelpComponent;
 
 import java.util.Set;
 
-public class BooleanFlagComponent<T> extends CommandComponent<T> implements Named, HelpProvider {
+public class BooleanFlagComponent<T> extends CommandComponent<T> implements Named, HelpProvider<T> {
 
 	private final Set<String> names;
 	private final String mainName;
@@ -44,7 +44,7 @@ public class BooleanFlagComponent<T> extends CommandComponent<T> implements Name
 	}
 
 	@Override
-	public void addHelp(HelpBuilder help) {
+	public void addHelp(HelpBuilder<T> help) {
 		help.addHelp(new HelpComponent(this, 5, '[' + mainName + ']'));
 	}
 

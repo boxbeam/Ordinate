@@ -4,25 +4,25 @@ import redempt.ordinate.command.Command;
 
 import java.util.*;
 
-public class HelpPage {
+public class HelpPage<T> {
 
-	private Map<Command<?>, HelpEntry> entries;
+	private Map<Command<T>, HelpEntry<T>> entries;
 
-	public HelpPage(Map<Command<?>, HelpEntry> entries) {
+	public HelpPage(Map<Command<T>, HelpEntry<T>> entries) {
 		this.entries = entries;
 	}
 
-	public HelpEntry getHelp(Command<?> command) {
+	public HelpEntry<T> getHelp(Command<T> command) {
 		return entries.get(command);
 	}
 
-	public HelpEntry[] getHelpRecursive(Command<?> command, boolean filterDescriptionless) {
-		List<HelpEntry> entries = new ArrayList<>();
-		Deque<Command<?>> queue = new ArrayDeque<>();
+	public HelpEntry<T>[] getHelpRecursive(Command<T> command, boolean filterDescriptionless) {
+		List<HelpEntry<T>> entries = new ArrayList<>();
+		Deque<Command<T>> queue = new ArrayDeque<>();
 		queue.add(command);
 		while (!queue.isEmpty()) {
-			Command<?> cmd = queue.pollLast();
-			HelpEntry entry = getHelp(cmd);
+			Command<T> cmd = queue.pollLast();
+			HelpEntry<T> entry = getHelp(cmd);
 			if (!filterDescriptionless || entry.getDescription() != null) {
 				entries.add(entry);
 			}
@@ -31,7 +31,7 @@ public class HelpPage {
 		return entries.toArray(new HelpEntry[0]);
 	}
 
-	public Collection<HelpEntry> getAll() {
+	public Collection<HelpEntry<T>> getAll() {
 		return entries.values();
 	}
 

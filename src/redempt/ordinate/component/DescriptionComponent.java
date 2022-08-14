@@ -10,7 +10,7 @@ import redempt.ordinate.help.HelpComponent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DescriptionComponent<T> extends CommandComponent<T> implements HelpProvider {
+public class DescriptionComponent<T> extends CommandComponent<T> implements HelpProvider<T> {
 
 	private final List<String> description = new ArrayList<>();
 
@@ -38,7 +38,7 @@ public class DescriptionComponent<T> extends CommandComponent<T> implements Help
 	}
 
 	@Override
-	public void addHelp(HelpBuilder help) {
+	public void addHelp(HelpBuilder<T> help) {
 		help.addHelp(new HelpComponent(this, -10, String.join("\n", description)));
 	}
 
