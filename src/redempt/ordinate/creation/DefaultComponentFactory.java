@@ -66,7 +66,7 @@ public class DefaultComponentFactory<T> implements ComponentFactory<T> {
 
 	@Override
 	public DispatchComponent<T> createDispatch(CommandDispatcher<T> dispatcher) {
-		return new DispatchComponent<>(dispatcher, getMessage("executionFailed"), getMessage("tooManyArguments"));
+		return new DispatchComponent<>(dispatcher, getMessage("tooManyArguments"));
 	}
 
 	@Override

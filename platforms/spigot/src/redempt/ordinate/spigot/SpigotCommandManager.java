@@ -147,11 +147,9 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 		parser.addTagProcessors(
 				TagProcessor.create("permission", (command, arg) -> {
 					command.getPipeline().addComponent(new PermissionComponent(arg, messages.getFormatter("noPermission")));
-					return command;
 				}),
 				TagProcessor.create("playerOnly", (command, arg) -> {
 					command.getPipeline().addComponent(new PlayerOnlyComponent(messages.getFormatter("playerOnly")));
-					return command;
 				})
 		);
 	}

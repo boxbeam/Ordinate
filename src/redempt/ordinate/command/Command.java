@@ -1,9 +1,12 @@
 package redempt.ordinate.command;
 
+import redempt.ordinate.component.SubcommandLookupComponent;
 import redempt.ordinate.component.abstracts.CommandComponent;
 import redempt.ordinate.component.abstracts.CommandParent;
 import redempt.ordinate.component.abstracts.HelpProvider;
 import redempt.ordinate.data.*;
+import redempt.ordinate.dispatch.CommandManager;
+import redempt.ordinate.dispatch.DispatchComponent;
 import redempt.ordinate.help.HelpBuilder;
 import redempt.ordinate.help.HelpComponent;
 import redempt.ordinate.processing.CommandPipeline;
@@ -28,12 +31,21 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 		return new CommandContext<>(this, null, sender, args, pipeline.getParsingSlots());
 	}
 
+	public void setPostArgument() {
+		lookup = false;
+		priority = -50;
+	}
+	
+	public boolean isPostArgument() {
+		return priority == -50;
+	}
+	
+	public boolean hasDispatch() {
+		return pipeline.getComponents().stream().anyMatch(c -> c instanceof DispatchComponent);
+	}
+	
 	public boolean canLookup() {
 		return lookup;
-	}
-
-	public void setLookup(boolean lookup) {
-		this.lookup = lookup;
 	}
 
 	public boolean isRoot() {
@@ -44,8 +56,20 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 		return pipeline;
 	}
 
-	public void preparePipeline() {
+	public void preparePipeline(CommandManager<T> manager) {
+		processLookup(manager);
+		pipeline.getComponents().forEach(c -> c.setParent(this));
 		pipeline.prepare();
+	}
+	
+	private void processLookup(CommandManager<T> manager) {
+		List<Command<T>> subcommands = getSubcommands();
+		subcommands.removeIf(c -> !c.canLookup());
+		if (!subcommands.isEmpty()) {
+			getPipeline().getComponents().removeAll(subcommands);
+			SubcommandLookupComponent<T> lookup = manager.getComponentFactory().createLookupComponent(subcommands);
+			getPipeline().addComponent(lookup);
+		}
 	}
 
 	@Override
@@ -57,18 +81,14 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 	public int getMaxParsedObjects() {
 		return pipeline.getParsingSlots();
 	}
-
+	
 	@Override
 	public int getPriority() {
 		return priority;
 	}
 
-	public void setPriority(int priority) {
-		this.priority = priority;
-	}
-
 	public HelpComponent getHelpComponent() {
-		return new HelpComponent(this, 5, getName());
+		return new HelpComponent(this, 10, getName());
 	}
 
 	@Override
@@ -93,7 +113,7 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 		if (arg.isQuoted() || !names.contains(arg.getValue())) {
 			return success();
 		}
-		CommandContext<T> clone = context.clone(this, 1, pipeline.getParsingSlots());
+		CommandContext<T> clone = context.clone(this, 1, pipeline.getParsingSlots()).setParent(context);
 		CommandResult<T> result = pipeline.parse(clone, this::failure);
 		if (!result.isSuccess()) {
 			result.uncomplete();
@@ -107,7 +127,10 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 			completions.addAll(pipeline.completions(context));
 			return success();
 		}
-		if (!context.hasArg()) {
+		if (!postArgumentCompleteChecks(context)) {
+			return success();
+		}
+		if (context.getArguments().size() == 1) {
 			completions.addAll(names);
 			context.pollArg();
 			return success();
@@ -119,6 +142,17 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
  		context = context.clone(this, 1, pipeline.getParsingSlots());
 		completions.addAll(pipeline.completions(context));
 		return failure();
+	}
+	
+	private boolean postArgumentCompleteChecks(CommandContext<T> context) {
+		if (!isPostArgument()) {
+			return true;
+		}
+		Object[] parentParsed = context.getAllParsed();
+		if (Arrays.stream(parentParsed).anyMatch(Objects::isNull)) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override

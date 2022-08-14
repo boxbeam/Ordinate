@@ -10,12 +10,10 @@ import java.util.Set;
 public class DispatchComponent<T> extends CommandComponent<T> {
 
 	private CommandDispatcher<T> dispatcher;
-	private MessageFormatter<T> error;
 	private MessageFormatter<T> tooManyArgsError;
 
-	public DispatchComponent(CommandDispatcher<T> dispatcher, MessageFormatter<T> error, MessageFormatter<T> tooManyArgsError) {
+	public DispatchComponent(CommandDispatcher<T> dispatcher, MessageFormatter<T> tooManyArgsError) {
 		this.dispatcher = dispatcher;
-		this.error = error;
 		this.tooManyArgsError = tooManyArgsError;
 	}
 
@@ -34,6 +32,10 @@ public class DispatchComponent<T> extends CommandComponent<T> {
 		return Integer.MIN_VALUE;
 	}
 
+	private <T extends Throwable> void sneakyThrow(Throwable t) throws T {
+		throw (T) t;
+	}
+	
 	@Override
 	public CommandResult<T> parse(CommandContext<T> context) {
 		if (context.getArguments().size() > 0) {
@@ -43,8 +45,8 @@ public class DispatchComponent<T> extends CommandComponent<T> {
 			dispatcher.dispatch(context);
 			return success().complete();
 		} catch (Exception e) {
-			e.printStackTrace();
-			return failure(error.format(context.sender())).complete();
+			sneakyThrow(e);
+			return failure().complete();
 		}
 	}
 

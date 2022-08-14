@@ -51,10 +51,28 @@ public class CommandParser<T> {
 		Token root = lexer.tokenize(input);
 		List<Token> tokens = root.allByName(TraversalOrder.SHALLOW, "command");
 		List<Command<T>> commands = new ArrayList<>();
+		Map<Command<T>, List<String>> tags = new HashMap<>();
 		for (Token commandToken : tokens) {
-			commands.add(parseCommand(commandToken));
+			commands.add(parseCommand(commandToken, tags));
 		}
+		tags.forEach((cmd, tagList) -> tagList.forEach(tag -> {
+			String[] split = tag.split("=", 2);
+			String name = split[0].trim();
+			String value = split.length == 1 ? "" : split[1].trim();
+			options.getTagProcessor(name).apply(cmd, value);
+		}));
+		commands.forEach(this::prepare);
 		return new CommandCollection<>(commands, manager);
+	}
+	
+	private void prepare(Command<T> cmd) {
+		Queue<Command<T>> queue = new ArrayDeque<>();
+		queue.add(cmd);
+		while (!queue.isEmpty()) {
+			Command<T> next = queue.poll();
+			next.preparePipeline(manager);
+			queue.addAll(next.getSubcommands());
+		}
 	}
 
 	public CommandCollection<T> parse(InputStream input) {
@@ -82,7 +100,6 @@ public class CommandParser<T> {
 				throw new IllegalStateException("No method hook found for command with hook name " + str);
 			}
 			cmd.getPipeline().addComponent(manager.getComponentFactory().createDispatch(new ReflectiveCommandDispatcher<>(hook)));
-			return cmd;
 		}));
 		return this;
 	}
@@ -127,7 +144,7 @@ public class CommandParser<T> {
 		return this;
 	}
 
-	private Command<T> parseCommand(Token commandToken) {
+	private Command<T> parseCommand(Token commandToken, Map<Command<T>, List<String>> tags) {
 		Token argList = getArgListToken(commandToken);
 		String[] names = commandToken.getChildren()[0].getValue().split(",");
 		CommandPipeline<T> pipeline = new CommandPipeline<>();
@@ -138,42 +155,21 @@ public class CommandParser<T> {
 			parseArgumentTokens(argList.getChildren(), pipeline);
 		}
 		Token bodyToken = commandToken.getChildren()[commandToken.getChildren().length - 1];
-		Command<T> cmd = parseInternalEntries(new Command<>(names, pipeline), bodyToken.getChildren());
-		pipeline.getComponents().forEach(c -> c.setParent(cmd));
-		cmd.preparePipeline();
+		Command<T> cmd = parseInternalEntries(new Command<>(names, pipeline), bodyToken.getChildren(), tags);
 		return cmd;
 	}
 
-	private Command<T> parseInternalEntries(Command<T> cmd, Token[] entries) {
-		Map<String, List<String>> tags = new LinkedHashMap<>();
+	private Command<T> parseInternalEntries(Command<T> cmd, Token[] entries, Map<Command<T>, List<String>> tags) {
 		for (Token entry : entries) {
 			if (entry.getType().getName().equals("tag")) {
-				String[] split = entry.getValue().split("\\s*=\\s*", 2);
-				String tagName = split[0];
-				String tagValue = split.length == 1 ? "" : split[1].trim();
-				tags.computeIfAbsent(tagName, k -> new ArrayList<>()).add(tagValue);
+				tags.computeIfAbsent(cmd, k -> new ArrayList<>()).add(entry.getValue());
 				continue;
 			}
-			cmd.getPipeline().addComponent(parseCommand(entry));
+			Command<T> subcommand = parseCommand(entry, tags);
+			subcommand.setParent(cmd);
+			cmd.getPipeline().addComponent(subcommand);
 		}
-		for (Map.Entry<String, List<String>> tag : tags.entrySet()) {
-			TagProcessor<T> tagProcessor = options.getTagProcessor(tag.getKey());
-			for (String tagValue : tag.getValue()) {
-				cmd = tagProcessor.apply(cmd, tagValue);
-			}
-		}
-		processLookup(cmd);
 		return cmd;
-	}
-
-	private void processLookup(Command<T> cmd) {
-		List<Command<T>> subcommands = cmd.getSubcommands();
-		subcommands.removeIf(c -> !c.canLookup());
-		if (!subcommands.isEmpty()) {
-			cmd.getPipeline().getComponents().removeAll(subcommands);
-			SubcommandLookupComponent<T> lookup = manager.getComponentFactory().createLookupComponent(subcommands);
-			cmd.getPipeline().addComponent(lookup);
-		}
 	}
 
 	private void parseArgumentTokens(Token[] arguments, CommandPipeline<T> pipeline) {

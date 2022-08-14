@@ -8,11 +8,11 @@ import java.util.function.BiFunction;
 
 public interface TagProcessor<T> extends Named {
 
-	public static <T> TagProcessor<T> create(String name, BiFunction<Command<T>, String, Command<T>> processor) {
+	public static <T> TagProcessor<T> create(String name, BiConsumer<Command<T>, String> processor) {
 		return new TagProcessor<T>() {
 			@Override
-			public Command<T> apply(Command<T> cmd, String value) {
-				return processor.apply(cmd, value);
+			public void apply(Command<T> cmd, String value) {
+				processor.accept(cmd, value);
 			}
 
 			@Override
@@ -22,6 +22,6 @@ public interface TagProcessor<T> extends Named {
 		};
 	}
 
-	public Command<T> apply(Command<T> cmd, String value);
+	public void apply(Command<T> cmd, String value);
 
 }

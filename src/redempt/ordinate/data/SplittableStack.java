@@ -29,6 +29,10 @@ public class SplittableStack<T> {
 		head = head.next;
 		return val;
 	}
+	
+	public T peek() {
+		return head == null ? null : head.data;
+	}
 
 	public int size() {
 		return size;

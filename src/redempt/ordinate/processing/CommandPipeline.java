@@ -39,13 +39,7 @@ public class CommandPipeline<T> {
 	}
 
 	public boolean removeComponent(CommandComponent<T> component) {
-		if (!components.remove(component)) {
-			return false;
-		}
-		parsingSlots -= component.getMaxParsedObjects();
-		maxArgWidth -= component.getMaxConsumedArgs();
-		minArgWidth -= component.getMinConsumedArgs();
-		return true;
+		return components.remove(component);
 	}
 
 	public void addComponent(CommandComponent<T> component) {
@@ -53,9 +47,6 @@ public class CommandPipeline<T> {
 			throw new IllegalStateException("Pipeline already finalized, cannot add more components");
 		}
 		components.add(component);
-		parsingSlots += component.getMaxParsedObjects();
-		maxArgWidth += component.getMaxConsumedArgs();
-		minArgWidth += component.getMinConsumedArgs();
 	}
 
 	public void prepare() {
@@ -66,6 +57,9 @@ public class CommandPipeline<T> {
 		components.sort(comparator);
 		int index = 0;
 		for (CommandComponent<T> component : components) {
+			parsingSlots += component.getMaxParsedObjects();
+			minArgWidth += component.getMinConsumedArgs();
+			maxArgWidth += component.getMaxConsumedArgs();
 			component.setIndex(index);
 			index += component.getMaxParsedObjects();
 		}

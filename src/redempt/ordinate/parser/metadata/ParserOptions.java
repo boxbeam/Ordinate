@@ -1,17 +1,20 @@
 package redempt.ordinate.parser.metadata;
 
 import redempt.ordinate.command.ArgType;
+import redempt.ordinate.command.postarg.PostArgumentSubcommand;
 import redempt.ordinate.component.DescriptionComponent;
 import redempt.ordinate.component.HelpSubcommandComponent;
 import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.creation.ComponentFactory;
 import redempt.ordinate.data.CommandContext;
-import redempt.ordinate.help.HelpComponent;
 import redempt.ordinate.parser.TagProcessor;
 import redempt.ordinate.parser.argument.ArgumentParser;
 import redempt.ordinate.parser.argument.DefaultArgumentParser;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -19,7 +22,6 @@ public class ParserOptions<T> {
 
 	public static <T> ParserOptions<T> getDefaults(ComponentFactory<T> componentFactory) {
 		ParserOptions<T> options = new ParserOptions<>(new DefaultArgumentParser<>());
-		
 		options.insert(ContextProvider.create("self", null, CommandContext::sender));
 		options.insert(new ArgType<>("string", (ctx, str) -> str));
 		options.insert(numberArgType("int", Integer::parseInt, componentFactory));
@@ -35,7 +37,6 @@ public class ParserOptions<T> {
 			if (!optionalDescription.isPresent()) {
 				cmd.getPipeline().addComponent(new DescriptionComponent<>(str));
 			}
-			return cmd;
 		}));
 		options.tagProcessors.put("context", TagProcessor.create("context", (cmd, str) -> {
 			String[] split = str.split(" ");
@@ -43,11 +44,12 @@ public class ParserOptions<T> {
 				ContextProvider<T, ?> provider = options.getContextProvider(name);
 				cmd.getPipeline().addComponent(componentFactory.createContext(provider, name));
 			}
-			return cmd;
 		}));
 		options.tagProcessors.put("noHelpSubcommand", TagProcessor.create("noHelpSubcommand", (cmd, str) -> {
 			cmd.getPipeline().getComponents().removeIf(c -> c instanceof HelpSubcommandComponent);
-			return cmd;
+		}));
+		options.tagProcessors.put("postArgument", TagProcessor.create("postArgument", (cmd, str) -> {
+			PostArgumentSubcommand.makePostArgument(cmd);
 		}));
 		return options;
 	}

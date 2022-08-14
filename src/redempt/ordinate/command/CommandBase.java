@@ -86,7 +86,9 @@ public class CommandBase<T> implements Named {
 			deepestError = CommandResult.deepest(deepestError, result);
 		}
 		deepestError.getError().send(sender);
-		if (deepestError.getComponent() instanceof Command || deepestError.getComponent() instanceof HelpSubcommandComponent) {
+		if (deepestError.getComponent() instanceof Command
+				|| deepestError.getComponent() instanceof HelpSubcommandComponent
+				|| !deepestError.getComponent().getParent().hasDispatch()) {
 			manager.getHelpDisplayer().display(sender, help.getHelpRecursive(deepestError.getCommand(), true));
 		} else {
 			manager.getHelpDisplayer().display(sender, help.getHelp(deepestError.getCommand()));

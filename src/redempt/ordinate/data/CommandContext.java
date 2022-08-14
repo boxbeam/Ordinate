@@ -33,12 +33,20 @@ public class CommandContext<T> {
 		dependables.computeIfAbsent(clazz, k -> new SplittableStack<>()).push(dependable);
 	}
 
-	public <V> V request(Class<V> clazz) {
+	public <V> V request(Class<V> clazz, boolean remove) {
 		SplittableStack<V> stack = (SplittableStack<V>) dependables.get(clazz);
 		if (stack == null || stack.size() == 0) {
 			throw new IllegalStateException("Unable to provide dependency value of type " + clazz.getName());
 		}
-		return stack.pop();
+		return remove ? stack.pop() : stack.peek();
+	}
+	
+	public <V> V request(Class<V> clazz) {
+		return request(clazz, true);
+	}
+	
+	public boolean hasDependable(Class<?> clazz) {
+		return dependables.containsKey(clazz);
 	}
 
 	public Command<T> getCommand() {
@@ -101,6 +109,11 @@ public class CommandContext<T> {
 	
 	public CommandContext<T> getParent() {
 		return parent;
+	}
+	
+	public CommandContext<T> setParent(CommandContext<T> parent) {
+		this.parent = parent;
+		return this;
 	}
 	
 	public CommandContext<T> clone(Command<T> command, int argsSplit, int parsingSlots) {
