@@ -13,7 +13,7 @@ compileJava {
 
 repositories {
     mavenCentral()
-    maven {url = "https://redempt.dev/"}
+    maven {url = 'https://redempt.dev/'}
 }
 
 jar.configure {
@@ -26,25 +26,41 @@ shadowJar {
 }
 
 dependencies {
-    implementation "com.github.Redempt:RedLex:1.3.4"
+    implementation 'com.github.Redempt:RedLex:1.3.4'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
+}
+
+test {
+    useJUnitPlatform()
+    workingDir = 'test'
 }
 
 sourceSets {
     main {
         java {
-            srcDir "src"
+            srcDir 'src'
         }
         resources {
-            srcDir "res"
+            srcDir 'res'
+        }
+    }
+    test {
+        java {
+            srcDir 'test'
+        }
+        resources {
+            srcDir 'test/res'
         }
     }
 }
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
             groupId = 'com.github.Redempt'
             artifactId = rootProject.name
-            version = System.env.BUILD_VERSION ?: "1.0"
+            version = System.env.BUILD_VERSION ?: '1.0'
             from components.java
         }
     }

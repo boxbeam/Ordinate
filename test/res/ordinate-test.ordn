@@ -1,0 +1,6 @@
+noArg {
+	hook
+}
+oneStringArg string:arg {
+	hook
+}
