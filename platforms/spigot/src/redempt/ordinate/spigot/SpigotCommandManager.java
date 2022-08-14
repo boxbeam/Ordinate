@@ -94,7 +94,7 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 	}
 	
 	public SpigotCommandManager loadMessages(Path path) {
-		Properties loaded = new Properties(getDefaultMessages());
+		Properties loaded = getDefaultMessages();
 		try {
 			if (!Files.exists(path)) {
 				Files.createDirectories(path.getParent());

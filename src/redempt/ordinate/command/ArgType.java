@@ -18,7 +18,7 @@ public class ArgType<T, V> implements Named {
 	
 	private String name;
 	private BiFunction<CommandContext<T>, String, V> converter;
-	private BiFunction<CommandContext<T>, String, Collection<String>> completer;
+	private BiFunction<CommandContext<T>, String, Collection<String>> completer = (ctx, s) -> Collections.emptyList();
 	private ConstraintParser<T, V> constraintParser;
 
 	public ArgType(String name, BiFunction<CommandContext<T>, String, V> converter) {
