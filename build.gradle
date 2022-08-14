@@ -39,15 +39,15 @@ test {
 sourceSets {
     main {
         java {
-            srcDir 'src'
+            srcDir 'base/src'
         }
         resources {
-            srcDir 'res'
+            srcDir 'base/res'
         }
     }
     test {
         java {
-            srcDir 'test'
+            srcDir 'test/src'
         }
         resources {
             srcDir 'test/res'
