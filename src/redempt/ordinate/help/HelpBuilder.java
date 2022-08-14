@@ -22,7 +22,7 @@ public class HelpBuilder<T> {
 	public HelpPage<T> build() {
 		Map<Command<T>, HelpEntry<T>> entries = new LinkedHashMap<>();
 		map.forEach((cmd, components) -> entries.put(cmd, createEntry(cmd, components)));
-		return new HelpPage(entries);
+		return new HelpPage<>(entries);
 	}
 
 	public HelpEntry<T> getPartialEntry(Command<T> cmd) {

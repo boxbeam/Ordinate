@@ -10,6 +10,7 @@ public class HelpPage<T> {
 
 	public HelpPage(Map<Command<T>, HelpEntry<T>> entries) {
 		this.entries = entries;
+		entries.values().forEach(entry -> entry.page = this);
 	}
 
 	public HelpEntry<T> getHelp(Command<T> command) {

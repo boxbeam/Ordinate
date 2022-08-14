@@ -9,6 +9,7 @@ import redempt.ordinate.dispatch.CommandManager;
 import redempt.ordinate.dispatch.DispatchComponent;
 import redempt.ordinate.help.HelpBuilder;
 import redempt.ordinate.help.HelpComponent;
+import redempt.ordinate.help.HelpPage;
 import redempt.ordinate.processing.CommandPipeline;
 
 import java.util.*;
@@ -164,9 +165,12 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 		return names;
 	}
 	
-	public void getParentPrefix(List<String> parts) {
+	public void getParentPrefix(HelpPage<T> page, List<String> parts) {
 		if (getParent() != null) {
-			getParent().getParentPrefix(parts);
+			getParent().getParentPrefix(page, parts);
+		}
+		if (isPostArgument()) {
+			parts.add(page.getHelp(getParent()).getUsage().split(" ", 2)[1]);
 		}
 		parts.add(getName());
 	}

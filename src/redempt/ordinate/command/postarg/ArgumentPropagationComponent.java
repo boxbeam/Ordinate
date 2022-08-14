@@ -1,14 +1,10 @@
 package redempt.ordinate.command.postarg;
 
 import redempt.ordinate.component.abstracts.CommandComponent;
-import redempt.ordinate.component.abstracts.HelpProvider;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
-import redempt.ordinate.help.HelpBuilder;
-import redempt.ordinate.help.HelpComponent;
-import redempt.ordinate.help.HelpEntry;
 
-public class ArgumentPropagationComponent<T> extends CommandComponent<T> implements HelpProvider<T> {
+public class ArgumentPropagationComponent<T> extends CommandComponent<T> {
 	
 	private int pull;
 	
@@ -44,14 +40,6 @@ public class ArgumentPropagationComponent<T> extends CommandComponent<T> impleme
 		}
 		System.arraycopy(parent, 1, parsed, 1, pull);
 		return success();
-	}
-	
-	@Override
-	public void addHelp(HelpBuilder<T> help) {
-		HelpEntry<T> parentEntry = help.getPartialEntry(getParent().getParent());
-		String usage = parentEntry.getUsage();
-		String[] split = usage.split(" ", 2);
-		help.addHelp(new HelpComponent(this, 50, split[1]));
 	}
 	
 }

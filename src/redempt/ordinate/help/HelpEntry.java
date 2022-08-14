@@ -13,10 +13,15 @@ public class HelpEntry<T> {
 	private List<HelpComponent> components;
 	private List<Predicate<T>> constraints = new ArrayList<>();
 	private Command<T> owner;
+	protected HelpPage<T> page;
 
 	public HelpEntry(Command<T> owner, List<HelpComponent> components) {
 		this.owner = owner;
 		this.components = components;
+	}
+	
+	public HelpPage<T> getPage() {
+		return page;
 	}
 
 	public Command<T> getOwner() {
@@ -37,7 +42,7 @@ public class HelpEntry<T> {
 	
 	public String getParentPrefix() {
 		List<String> parentPrefix = new ArrayList<>();
-		owner.getParentPrefix(parentPrefix);
+		owner.getParentPrefix(getPage(), parentPrefix);
 		parentPrefix.remove(parentPrefix.size() - 1);
 		return String.join(" ", parentPrefix);
 	}
