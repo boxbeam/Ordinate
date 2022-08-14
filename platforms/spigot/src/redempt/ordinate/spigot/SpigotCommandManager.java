@@ -7,7 +7,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import redempt.ordinate.command.ArgType;
-import redempt.ordinate.command.Command;
 import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.creation.ComponentFactory;
 import redempt.ordinate.creation.DefaultComponentFactory;
@@ -20,9 +19,14 @@ import redempt.ordinate.parser.CommandParser;
 import redempt.ordinate.parser.TagProcessor;
 import redempt.ordinate.parser.metadata.ParserOptions;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Properties;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class SpigotCommandManager implements CommandManager<CommandSender> {
@@ -74,6 +78,7 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 	private ComponentFactory<CommandSender> componentFactory;
 	private MessageProvider<CommandSender> messages;
 	private HelpDisplayer<CommandSender> helpDisplayer;
+	private Plugin plugin;
 	
 	private SpigotCommandManager(Plugin plugin, String fallbackPrefix, MessageProvider<CommandSender> messages) {
 		this.fallbackPrefix = fallbackPrefix;
@@ -81,6 +86,32 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 		registrar = new SpigotCommandRegistrar(plugin, fallbackPrefix);
 		componentFactory = new DefaultComponentFactory<>(messages);
 		helpDisplayer = new SpigotHelpDisplayer(getCommandPrefix(), messages);
+		this.plugin = plugin;
+	}
+	
+	public SpigotCommandManager loadMessages() {
+		return loadMessages(plugin.getDataFolder().toPath().resolve("command-messages.properties"));
+	}
+	
+	public SpigotCommandManager loadMessages(Path path) {
+		Properties loaded = new Properties(getDefaultMessages());
+		try {
+			if (!Files.exists(path)) {
+				Files.createDirectories(path.getParent());
+				Writer writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE);
+				loaded.store(writer, null);
+				writer.close();
+			}
+			Reader reader = Files.newBufferedReader(path);
+			loaded.load(reader);
+			reader.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		messages = new PropertiesMessageProvider<>(loaded, CommandSender::sendMessage, FormatUtils::color);
+		componentFactory = new DefaultComponentFactory<>(messages);
+		helpDisplayer = new SpigotHelpDisplayer(getCommandPrefix(), messages);
+		return this;
 	}
 	
 	@Override
