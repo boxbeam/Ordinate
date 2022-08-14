@@ -37,8 +37,7 @@ public class ReflectiveCommandDispatcher<T> implements CommandDispatcher<T> {
 			Object arr = Array.newInstance(componentType, collection.size());
 			int i = 0;
 			for (T val : collection) {
-				Array.set(arr, i, val);
-				i++;
+				Array.set(arr, i++, val);
 			}
 			array[slot] = arr;
 		};
