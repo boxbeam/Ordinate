@@ -6,6 +6,7 @@ import redempt.ordinate.dispatch.CommandManager;
 import redempt.ordinate.dispatch.CommandRegistrar;
 import redempt.ordinate.help.HelpDisplayer;
 import redempt.ordinate.message.MessageProvider;
+import redempt.ordinate.message.PropertiesMessageProvider;
 import redempt.ordinate.parser.CommandParser;
 import redempt.ordinate.parser.metadata.ParserOptions;
 
@@ -14,7 +15,7 @@ public class TestCommandManager implements CommandManager<Void> {
 	private ComponentFactory<Void> factory;
 	
 	public TestCommandManager() {
-		MessageProvider<Void> messages = s -> (m, f) -> c -> {};
+		MessageProvider<Void> messages = new PropertiesMessageProvider<>(PropertiesMessageProvider.getDefaultMessages(), (c, s) -> {});
 		factory = new DefaultComponentFactory<>(messages);
 	}
 	

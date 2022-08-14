@@ -18,6 +18,7 @@ import redempt.ordinate.message.MessageProvider;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class DefaultComponentFactory<T> implements ComponentFactory<T> {
 
@@ -70,8 +71,8 @@ public class DefaultComponentFactory<T> implements ComponentFactory<T> {
 	}
 
 	@Override
-	public <V> ConstraintComponent<T, V> createConstraint(Constraint<T, V> constraint, String name) {
-		return new ConstraintComponent<>(constraint, name, getMessage("constraintError"));
+	public <V> ConstraintComponent<T, V> createConstraint(Constraint<T, V> constraint, Supplier<Integer> index, String name) {
+		return new ConstraintComponent<>(constraint, index, name, getMessage("constraintError"));
 	}
 
 	@Override

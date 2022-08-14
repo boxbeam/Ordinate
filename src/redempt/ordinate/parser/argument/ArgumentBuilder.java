@@ -65,7 +65,8 @@ public class ArgumentBuilder<T, V> {
 			list.add(factory.createArgument(type, name));
 		}
 		if (constraint != null) {
-			list.add(factory.createConstraint(constraint, name));
+			CommandComponent<T> component = list.get(0);
+			list.add(factory.createConstraint(constraint, component::getIndex, name));
 		}
 		return list;
 	}

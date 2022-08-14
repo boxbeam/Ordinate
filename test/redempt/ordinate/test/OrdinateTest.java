@@ -19,8 +19,43 @@ public class OrdinateTest {
 	
 	@Test
 	public void oneStringArgTest() {
-		tester.expect("oneStringArg abc", "abc");
-		tester.expectFailure("oneStringArg");
+		tester.expect("stringArg abc", "abc");
+		tester.expect("stringArg \"a b c d e f\"", "a b c d e f");
+		tester.expectFailure("stringArg");
+	}
+	
+	@Test
+	public void twoStringArgTest() {
+		tester.expect("stringArg a b", "a", "b");
+		tester.expect("stringArg \"a b\" c", "a b", "c");
+		tester.expectFailure("stringArg a b c");
+	}
+	
+	@Test
+	public void boolArgTest() {
+		tester.expect("boolArg true", true);
+		tester.expect("boolArg false", false);
+		tester.expectFailure("boolArg");
+		tester.expectFailure("boolArg abc");
+		tester.expectCompletions("boolArg", "true", "false");
+		tester.expectCompletions("boolArg ", "true", "false");
+		tester.expectCompletions("boolArg t", "true");
+	}
+	
+	@Test
+	public void subcommandCompletionTest() {
+		tester.expectCompletions("emptyCommand", "emptySubcommand");
+		tester.expectCompletions("emptyCommand ", "emptySubcommand");
+		tester.expectCompletions("emptyCommand a");
+	}
+	
+	@Test
+	public void intArgConstraintTest() {
+		tester.expect("intArgConstraint 1", 1);
+		tester.expect("intArgConstraint 0", 0);
+		tester.expect("intArgConstraint 100", 100);
+		tester.expectFailure("intArgConstraint 101");
+		tester.expectFailure("intArgConstraint -1");
 	}
 
 }

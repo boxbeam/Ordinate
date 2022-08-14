@@ -39,7 +39,10 @@ public class CommandTester {
 	
 	public void expect(String command, Object... output) {
 		this.output = null;
-		run(command);
+		CommandResult<Void> result = run(command);
+		if (!result.isSuccess()) {
+			throw new IllegalStateException(result.getError().toString());
+		}
 		assertArrayEquals(output, this.output);
 	}
 	
@@ -53,7 +56,7 @@ public class CommandTester {
 		String args = split.length == 1 ? "" : split[1];
 		CommandBase<Void> commandBase = commands.get(name);
 		assertNotNull(commandBase);
-		CompletionResult<Void> result = commandBase.getCompletions(null, command);
+		CompletionResult<Void> result = commandBase.getCompletions(null, args);
 		Set<String> actualCompletions = new HashSet<>(result.getCompletions());
 		Set<String> expectedCompletions = new HashSet<>();
 		Collections.addAll(expectedCompletions, completions);

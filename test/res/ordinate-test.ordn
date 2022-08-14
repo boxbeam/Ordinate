@@ -1,6 +1,19 @@
+emptyCommand {
+	emptySubcommand {
+	}
+}
 noArg {
 	hook
 }
-oneStringArg string:arg {
+stringArg string:arg {
+	hook
+}
+stringArg string:arg1 string:arg2 {
+	hook
+}
+boolArg boolean:arg {
+	hook
+}
+intArgConstraint int<0,100>:num {
 	hook
 }

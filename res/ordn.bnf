@@ -1,5 +1,5 @@
 root ::= break? sep? ((comment | command) (break sep? | <eof>))*
-word ::= [^ \t\n(){}:?*,=.\[\]]+
+word ::= [^ \t\n(){}:?*,=.\[\]<>]+
 sep ::= [ \t]+
 newLine ::= "\n"
 break ::= (sep? newLine)+
@@ -23,4 +23,4 @@ entry ::= sep? (tag | command | comment) comment? break sep?
 
 cmdName ::= word ("," word)*
 command ::= cmdName paramList break? sep? commandBody
-commandBody ::= "{" comment? break? entry* "}"
+commandBody ::= "{" comment? break? entry* break? sep? "}"

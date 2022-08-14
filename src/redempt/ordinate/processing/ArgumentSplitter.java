@@ -32,8 +32,8 @@ public class ArgumentSplitter {
 				}
 				continue;
 			}
-			if (c == ' ') {
-				if (!quoted && buffer.length() > 0) {
+			if (c == ' ' && !quoted) {
+				if (buffer.length() > 0) {
 					args.add(new Argument(buffer.toString(), false));
 					buffer.setLength(0);
 				}

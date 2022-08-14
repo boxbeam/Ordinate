@@ -54,7 +54,7 @@ public class CommandBase<T> implements Named {
 		Set<String> completions = new LinkedHashSet<>();
 		CommandResult<T> deepestError = null;
 		for (Command<T> cmd : wrapped) {
-			CommandContext<T> context = cmd.createContext(sender, args);
+			CommandContext<T> context = cmd.createContext(sender, args.split(0));
 			CommandResult<T> result = cmd.complete(context, completions);
 			if (!result.isSuccess()) {
 				deepestError = CommandResult.deepest(deepestError, result);
@@ -78,7 +78,7 @@ public class CommandBase<T> implements Named {
 	public CommandResult<T> execute(T sender, SplittableList<Argument> args) {
 		CommandResult<T> deepestError = null;
 		for (Command<T> cmd : wrapped) {
-			CommandContext<T> context = cmd.createContext(sender, args);
+			CommandContext<T> context = cmd.createContext(sender, args.split(0));
 			CommandResult<T> result = cmd.parse(context);
 			if (result.isSuccess()) {
 				return result;

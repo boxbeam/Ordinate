@@ -18,6 +18,7 @@ import redempt.ordinate.dispatch.DispatchComponent;
 
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public interface ComponentFactory<T> {
 
@@ -28,7 +29,7 @@ public interface ComponentFactory<T> {
 	public BooleanFlagComponent<T> createBooleanFlag(String... names);
 	public <V> ContextComponent<T, V> createContext(ContextProvider<T, V> provider, String name);
 	public DispatchComponent<T> createDispatch(CommandDispatcher<T> dispatcher);
-	public <V> ConstraintComponent<T, V> createConstraint(Constraint<T, V> constraint, String name);
+	public <V> ConstraintComponent<T, V> createConstraint(Constraint<T, V> constraint, Supplier<Integer> index, String name);
 	public SubcommandLookupComponent<T> createLookupComponent(List<Command<T>> commands);
 	public <V extends Number & Comparable<V>> ConstraintParser<T, V> createNumberConstraintParser(Function<String, V> parseNumber);
 
