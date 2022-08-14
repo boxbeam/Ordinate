@@ -56,9 +56,19 @@ public class ArgType<T, V> implements Named {
 		this.completer = completer;
 		return this;
 	}
+	
+	public ArgType<T, V> completer(Function<CommandContext<T>, Collection<String>> completer) {
+		this.completer = (c, s) -> completer.apply(c);
+		return this;
+	}
 
 	public ArgType<T, V> completerStream(BiFunction<CommandContext<T>, String, Stream<String>> completer) {
 		this.completer = (ctx, str) -> completer.apply(ctx, str).collect(Collectors.toList());
+		return this;
+	}
+	
+	public ArgType<T, V> completerStream(Function<CommandContext<T>, Stream<String>> completer) {
+		this.completer = (ctx, str) -> completer.apply(ctx).collect(Collectors.toList());
 		return this;
 	}
 

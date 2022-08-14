@@ -6,14 +6,12 @@ import redempt.ordinate.component.HelpSubcommandComponent;
 import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.creation.ComponentFactory;
 import redempt.ordinate.data.CommandContext;
+import redempt.ordinate.help.HelpComponent;
 import redempt.ordinate.parser.TagProcessor;
 import redempt.ordinate.parser.argument.ArgumentParser;
 import redempt.ordinate.parser.argument.DefaultArgumentParser;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -30,7 +28,13 @@ public class ParserOptions<T> {
 		options.insert(numberArgType("double", Double::parseDouble, componentFactory));
 		options.insert(new ArgType<>("boolean", (ctx, str) -> parseBoolean(str)).completer((ctx, str) -> Arrays.asList("true", "false")));
 		options.tagProcessors.put("help", TagProcessor.create("help", (cmd, str) -> {
-			cmd.getPipeline().addComponent(new DescriptionComponent<>(str));
+			Optional<DescriptionComponent<?>> optionalDescription =
+					cmd.getPipeline().getComponents().stream()
+					.filter(c -> c instanceof DescriptionComponent).findFirst().map(c -> (DescriptionComponent<?>) c);
+			optionalDescription.ifPresent(c -> c.addLine(str));
+			if (!optionalDescription.isPresent()) {
+				cmd.getPipeline().addComponent(new DescriptionComponent<>(str));
+			}
 			return cmd;
 		}));
 		options.tagProcessors.put("context", TagProcessor.create("context", (cmd, str) -> {

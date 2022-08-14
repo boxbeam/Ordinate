@@ -7,14 +7,21 @@ import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.help.HelpBuilder;
 import redempt.ordinate.help.HelpComponent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DescriptionComponent<T> extends CommandComponent<T> implements HelpProvider {
 
-	private final String description;
+	private final List<String> description = new ArrayList<>();
 
 	public DescriptionComponent(String description) {
-		this.description = description;
+		this.description.add(description);
 	}
 
+	public void addLine(String line) {
+		description.add(line);
+	}
+	
 	@Override
 	public int getMaxParsedObjects() {
 		return 0;
@@ -32,7 +39,7 @@ public class DescriptionComponent<T> extends CommandComponent<T> implements Help
 
 	@Override
 	public void addHelp(HelpBuilder help) {
-		help.addHelp(new HelpComponent(this, -10, description));
+		help.addHelp(new HelpComponent(this, -10, String.join("\n", description)));
 	}
 
 	@Override
