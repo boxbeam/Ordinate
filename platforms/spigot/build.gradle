@@ -5,6 +5,7 @@ plugins {
 repositories {
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url = 'https://redempt.dev/' }
     mavenCentral()
 }
 jar {
@@ -12,8 +13,8 @@ jar {
     archiveBaseName.set('Ordinate-spigot')
 }
 compileJava {
-    sourceCompatibility = 8
-    targetCompatibility = 8
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
 }
 dependencies {
     implementation project(':')
