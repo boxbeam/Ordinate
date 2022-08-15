@@ -40,6 +40,9 @@ public class ConsumingArgumentComponent<T, V> extends ArgumentComponent<T, V> {
 			return failure(getMissingError().format(context.sender(), getName())).complete();
 		}
 		if (!context.hasArg()) {
+			if (defaultValue == null) {
+				return success();
+			}
 			V value = defaultValue.provide(context);
 			if (value == null) {
 				return failure(contextError.format(context.sender(), defaultValue.getError())).complete();

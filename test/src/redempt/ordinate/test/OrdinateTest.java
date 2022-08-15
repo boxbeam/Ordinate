@@ -3,6 +3,9 @@ package redempt.ordinate.test;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 public class OrdinateTest {
 
 	private static CommandTester tester;
@@ -62,6 +65,7 @@ public class OrdinateTest {
 	public void booleanFlagTest() {
 		tester.expect("boolFlag", false);
 		tester.expect("boolFlag --flag", true);
+		tester.expect("boolFlag -f", true);
 		tester.expectCompletions("boolFlag");
 		tester.expectCompletions("boolFlag -", "--flag");
 	}
@@ -89,6 +93,22 @@ public class OrdinateTest {
 		tester.expect("defaultConstrainedFlag --flag 10", 10);
 		tester.expectFailure("defaultConstrainedFlag --flag -1");
 		tester.expectFailure("defaultConstrainedFlag --flag 101");
+	}
+	
+	@Test
+	public void testConsuming() {
+		tester.expect("consuming a b c", "a b c");
+		tester.expectFailure("consuming");
+		tester.expect("optionalConsuming a b c", "a b c");
+		tester.expect("optionalConsuming", new Object[] {null});
+	}
+	
+	@Test
+	public void testVararg() {
+		tester.expect("vararg 1 2 3", Arrays.asList(1, 2, 3));
+		tester.expectFailure("vararg");
+		tester.expect("optionalVararg 1 2 3", Arrays.asList(1, 2, 3));
+		tester.expect("optionalVararg", Collections.emptyList());
 	}
 	
 }

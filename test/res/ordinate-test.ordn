@@ -17,7 +17,7 @@ boolArg boolean:arg {
 intArgConstraint int<0,100>:num {
 	hook
 }
-boolFlag --flag {
+boolFlag --flag,-f {
 	hook
 }
 baseWithPostArgSub string:message {
@@ -37,5 +37,17 @@ switchFlag boolean:--flag,-f {
 	hook
 }
 defaultConstrainedFlag int<0,100>:--flag(4) {
+	hook
+}
+consuming string...:arg {
+	hook
+}
+optionalConsuming string...:arg? {
+	hook
+}
+vararg int[]:nums {
+	hook
+}
+optionalVararg int[]:nums? {
 	hook
 }
