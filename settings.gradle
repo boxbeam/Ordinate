@@ -1,3 +1,5 @@
 rootProject.name = 'Ordinate'
 include 'spigot'
 project(':spigot').setProjectDir(new File('platforms/spigot'))
+include 'brigadier'
+project(':brigadier').setProjectDir(new File('platforms/brigadier'))
