@@ -33,3 +33,9 @@ baseWithPostArgSub string:message {
 		}
 	}
 }
+switchFlag boolean:--flag,-f {
+	hook
+}
+defaultConstrainedFlag int<0,100>:--flag(4) {
+	hook
+}

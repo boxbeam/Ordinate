@@ -1,7 +1,7 @@
 package redempt.ordinate.parser.argument;
 
 import redempt.ordinate.command.ArgType;
-import redempt.ordinate.component.BooleanFlagComponent;
+import redempt.ordinate.component.flag.BooleanFlagComponent;
 import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.creation.ComponentFactory;
 import redempt.ordinate.parser.metadata.ParserOptions;
@@ -17,8 +17,8 @@ public class DefaultArgumentParser<T> implements ArgumentParser<T> {
 
 	@Override
 	public <V> void parseArgument(Token argument, ParserOptions<T> options, ComponentFactory<T> componentFactory, CommandPipeline<T> pipeline) {
-		if (argument.getBaseString().charAt(argument.getStart()) == '-') {
-			pipeline.addComponent(parseBooleanFlag(argument.getValue(), componentFactory));
+		if (argument.getType().getName().equals("flag")) {
+			parseFlag(argument, options, componentFactory, pipeline);
 			return;
 		}
 		ArgumentBuilder<T, V> builder = new ArgumentBuilder<>();
@@ -34,7 +34,23 @@ public class DefaultArgumentParser<T> implements ArgumentParser<T> {
 		getOptional(tokens, "defaultValue").map(this::trimToken).ifPresent(s -> builder.setDefaultValue(getDefaultValue(name, type, s, options)));
 		builder.build(componentFactory).forEach(pipeline::addComponent);
 	}
-
+	
+	private <V> void parseFlag(Token flag, ParserOptions<T> options, ComponentFactory<T> componentFactory, CommandPipeline<T> pipeline) {
+		if (flag.getBaseString().charAt(flag.getStart()) == '-') {
+			pipeline.addComponent(parseBooleanFlag(flag.getValue(), componentFactory));
+			return;
+		}
+		Map<String, List<Token>> tokens = flag.allByNames("type", "name", "constraint", "defaultValue");
+		String[] names = tokens.get("name").stream().map(Token::getValue).toArray(String[]::new);
+		names[0] = "-" + names[0];
+		FlagBuilder<T, V> builder = new FlagBuilder<>(names);
+		ArgType<T, ?> type = options.getArgType(getDirect(tokens, "type").getValue());
+		builder.setType(type);
+		getOptional(tokens, "constraint").map(this::trimToken).ifPresent(s -> builder.setConstraint(type.getConstraintParser().parse(s)));
+		getOptional(tokens, "defaultValue").map(this::trimToken).ifPresent(s -> builder.setDefaultValue(getDefaultValue(names[0], type, s, options)));
+		builder.build(componentFactory).forEach(pipeline::addComponent);
+	}
+	
 	private BooleanFlagComponent<T> parseBooleanFlag(String value, ComponentFactory<T> componentFactory) {
 		String[] split = value.split(",");
 		if (Arrays.stream(split).anyMatch(s -> !s.startsWith("-"))) {

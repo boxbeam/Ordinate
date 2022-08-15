@@ -2,9 +2,10 @@ package redempt.ordinate.creation;
 
 import redempt.ordinate.command.ArgType;
 import redempt.ordinate.command.Command;
-import redempt.ordinate.component.BooleanFlagComponent;
+import redempt.ordinate.component.flag.BooleanFlagComponent;
 import redempt.ordinate.component.SubcommandLookupComponent;
 import redempt.ordinate.component.argument.*;
+import redempt.ordinate.component.flag.FlagComponent;
 import redempt.ordinate.constraint.Constraint;
 import redempt.ordinate.constraint.ConstraintComponent;
 import redempt.ordinate.constraint.ConstraintParser;
@@ -59,7 +60,15 @@ public class DefaultComponentFactory<T> implements ComponentFactory<T> {
 		Collections.addAll(allNames, names);
 		return new BooleanFlagComponent<>(primaryName, allNames);
 	}
-
+	
+	@Override
+	public <V> FlagComponent<T, V> createFlag(String[] names, ArgType<T, V> type, ContextProvider<T, V> defaultValue) {
+		String primaryName = names[0];
+		Set<String> allNames = new HashSet<>();
+		Collections.addAll(allNames, names);
+		return new FlagComponent<>(primaryName, allNames, type, defaultValue, getMessage("invalidArgumentValue"), getMessage("contextError"), getMessage("missingArgument"));
+	}
+	
 	@Override
 	public <V> ContextComponent<T, V> createContext(ContextProvider<T, V> provider, String name) {
 		return new ContextComponent<>(name, provider, getMessage("contextError"));

@@ -74,4 +74,21 @@ public class OrdinateTest {
 		tester.expectCompletions("baseWithPostArgSub a ", "sub", "subWithPostArgSub");
 	}
 	
+	@Test
+	public void intFlagTest() {
+		tester.expect("switchFlag --flag true", true);
+		tester.expect("switchFlag", new Object[] {null});
+		tester.expect("switchFlag -f true", true);
+		tester.expectCompletions("switchFlag -", "--flag");
+		tester.expectCompletions("switchFlag --flag ", "true", "false");
+	}
+	
+	@Test
+	public void defaultConstrainedFlagTest() {
+		tester.expect("defaultConstrainedFlag", 4);
+		tester.expect("defaultConstrainedFlag --flag 10", 10);
+		tester.expectFailure("defaultConstrainedFlag --flag -1");
+		tester.expectFailure("defaultConstrainedFlag --flag 101");
+	}
+	
 }

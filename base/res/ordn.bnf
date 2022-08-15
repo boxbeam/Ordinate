@@ -5,7 +5,7 @@ newLine ::= "\n"
 break ::= (sep? newLine)+
 comment ::= "//" [^\n]*
 
-flag ::= "-" word ("," word)*
+flag ::= (type constraint? ":")? "-" name ("," name)* defaultValue?
 escapeSequence ::= "\\" [^]
 constraint ::= "<" (escapeSequence | [^<>])* ">"
 defaultValue ::= "(" (escapeSequence | [^()])* ")"

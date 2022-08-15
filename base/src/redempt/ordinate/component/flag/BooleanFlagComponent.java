@@ -1,4 +1,4 @@
-package redempt.ordinate.component;
+package redempt.ordinate.component.flag;
 
 import redempt.ordinate.component.abstracts.CommandComponent;
 import redempt.ordinate.component.abstracts.HelpProvider;
