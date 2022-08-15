@@ -7,7 +7,7 @@ import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.message.MessageFormatter;
 
-public class PlayerOnlyComponent extends CommandComponent<CommandSender> {
+class PlayerOnlyComponent extends CommandComponent<CommandSender> {
 	
 	private MessageFormatter<CommandSender> error;
 	

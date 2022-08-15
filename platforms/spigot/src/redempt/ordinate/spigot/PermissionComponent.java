@@ -12,7 +12,7 @@ import redempt.ordinate.message.MessageFormatter;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
-public class PermissionComponent extends CommandComponent<CommandSender> implements HelpProvider<CommandSender> {
+class PermissionComponent extends CommandComponent<CommandSender> implements HelpProvider<CommandSender> {
 	
 	private String permission;
 	private MessageFormatter<CommandSender> noPermissionError;

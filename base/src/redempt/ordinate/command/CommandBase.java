@@ -11,6 +11,11 @@ import redempt.ordinate.processing.ArgumentSplitter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Represents an executable command which can be registered
+ * @param <T> The sender type
+ * @author Redempt
+ */
 public class CommandBase<T> implements Named {
 
 	private List<Command<T>> wrapped;
@@ -24,11 +29,17 @@ public class CommandBase<T> implements Named {
 		help = helpBuilder.build();
 		this.manager = manager;
 	}
-
+	
+	/**
+	 * @return The help page for this command
+	 */
 	public HelpPage<T> getHelpPage() {
 		return help;
 	}
-
+	
+	/**
+	 * @return The individual commands which might be executed when this command is run
+	 */
 	public List<Command<T>> getCommands() {
 		return wrapped;
 	}
@@ -38,18 +49,39 @@ public class CommandBase<T> implements Named {
 		return wrapped.get(0).getName();
 	}
 	
+	/**
+	 * @return All aliases of this command
+	 */
 	public List<String> getNames() {
 		return wrapped.stream().flatMap(c -> c.getNames().stream()).distinct().collect(Collectors.toList());
 	}
 	
+	/**
+	 * Calculate completions for a given input
+	 * @param sender The sender of the command
+	 * @param args The arguments, including partials
+	 * @return The completions
+	 */
 	public CompletionResult<T> getCompletions(T sender, String[] args) {
 		return getCompletions(sender, ArgumentSplitter.split(args, true));
 	}
-
+	
+	/**
+	 * Calculate completions for a given input
+	 * @param sender The sender of the command
+	 * @param args The arguments, including partials
+	 * @return The completions
+	 */
 	public CompletionResult<T> getCompletions(T sender, String args) {
 		return getCompletions(sender, ArgumentSplitter.split(args, true));
 	}
-
+	
+	/**
+	 * Calculate completions for a given input
+	 * @param sender The sender of the command
+	 * @param args The arguments, including partials
+	 * @return The completions
+	 */
 	public CompletionResult<T> getCompletions(T sender, SplittableList<Argument> args) {
 		Set<String> completions = new LinkedHashSet<>();
 		CommandResult<T> deepestError = null;
@@ -66,15 +98,33 @@ public class CommandBase<T> implements Named {
 				.map(s -> s.contains(" ") ? '"' + s.replace("\"", "\\\"") + '"' : s).collect(Collectors.toList());
 		return new CompletionResult<>(deepestError, fixed);
 	}
-
+	
+	/**
+	 * Execute a command
+	 * @param sender The sender of the command
+	 * @param args The arguments
+	 * @return The result of the command's execution
+	 */
 	public CommandResult<T> execute(T sender, String args) {
 		return execute(sender, ArgumentSplitter.split(args, false));
 	}
-
+	
+	/**
+	 * Execute a command
+	 * @param sender The sender of the command
+	 * @param args The arguments
+	 * @return The result of the command's execution
+	 */
 	public CommandResult<T> execute(T sender, String[] args) {
 		return execute(sender, ArgumentSplitter.split(args, false));
 	}
-
+	
+	/**
+	 * Execute a command
+	 * @param sender The sender of the command
+	 * @param args The arguments
+	 * @return The result of the command's execution
+	 */
 	public CommandResult<T> execute(T sender, SplittableList<Argument> args) {
 		CommandResult<T> deepestError = null;
 		for (Command<T> cmd : wrapped) {

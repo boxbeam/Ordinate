@@ -6,7 +6,7 @@ import redempt.ordinate.help.HelpEntry;
 import redempt.ordinate.message.MessageFormatter;
 import redempt.ordinate.message.MessageProvider;
 
-public class SpigotHelpDisplayer implements HelpDisplayer<CommandSender> {
+class SpigotHelpDisplayer implements HelpDisplayer<CommandSender> {
 	
 	private MessageFormatter<CommandSender> helpMessage;
 	private String commandPrefix;

@@ -17,6 +17,12 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+/**
+ * Builds a command, provided by {@link CommandManager}
+ * @param <T> The sender type
+ * @param <B> The type of the builder itself
+ * @author Redempt
+ */
 public class CommandBuilder<T, B extends CommandBuilder<T, B>> {
 
 	protected CommandPipeline<T> pipeline = new CommandPipeline<>();
@@ -39,11 +45,22 @@ public class CommandBuilder<T, B extends CommandBuilder<T, B>> {
 		}
 	}
 	
+	/**
+	 * Sets the help message of the command
+	 * @param help The help message
+	 * @return Itself
+	 */
 	public B help(String help) {
 		pipeline.addComponent(new DescriptionComponent<>(help));
 		return (B) this;
 	}
 	
+	/**
+	 * Adds a new argument to the command
+	 * @param type The type of the argument
+	 * @param name The name of the argument
+	 * @return Itself
+	 */
 	public B arg(Class<?> type, String name) {
 		if (type.isArray()) {
 			pipeline.addComponent(componentFactory.createVariableLengthArgument(options.getType(type.getComponentType()), false, name));
@@ -53,16 +70,40 @@ public class CommandBuilder<T, B extends CommandBuilder<T, B>> {
 		return (B) this;
 	}
 	
+	/**
+	 * Adds a new consuming argument to the command. Consuming arguments take all the remaining arguments in the command and parse them as a single string.
+	 * @param type The type of the argument
+	 * @param name The name of the argument
+	 * @param optional Whether the argument should be optional
+	 * @param defaultValue The default value if no value is provided
+	 * @return Itself
+	 * @param <V> The argument type
+	 */
 	public <V> B consumingArg(Class<V> type, String name, boolean optional, Function<CommandContext<T>, V> defaultValue) {
 		ContextProvider<T, V> context = defaultValue == null ? null : ContextProvider.create(null, "Failed to get default value for " + name, defaultValue);
 		pipeline.addComponent(componentFactory.createConsumingArgument((ArgType<T, V>) options.getType(type), optional, context, name));
 		return (B) this;
 	}
 	
+	/**
+	 * Adds a new consuming argument to the command. Consuming arguments take all the remaining arguments in the command and parse them as a single string.
+	 * @param type The type of the argument
+	 * @param name The name of the argument
+	 * @return Itself
+	 * @param <V> The argument type
+	 */
 	public <V> B consumingArg(Class<V> type, String name) {
 		return consumingArg(type, name, false, ctx -> null);
 	}
 	
+	/**
+	 * Adds a new optional argument to the command
+	 * @param type The type of the argument
+	 * @param name The name of the argument
+	 * @param defaultValue The default value of the argument, pass null for no default
+	 * @return Itself
+	 * @param <V> The argument type
+	 */
 	public <V> B optionalArg(Class<V> type, String name, Function<CommandContext<T>, V> defaultValue) {
 		ContextProvider<T, V> context = defaultValue == null ? null : ContextProvider.create(null, "Failed to get default value for " + name, defaultValue);
 		if (type.isArray()) {
@@ -73,6 +114,12 @@ public class CommandBuilder<T, B extends CommandBuilder<T, B>> {
 		return (B) this;
 	}
 	
+	/**
+	 * Creates a subcommand for the command
+	 * @param names The names of the subcommand
+	 * @param consumer A function which will mutate the created builder, after which its command will be added as a child of this one
+	 * @return Itself
+	 */
 	public B subcommand(String[] names, Consumer<B> consumer) {
 		B builder = builderFactory.create(names, manager, options);
 		((CommandBuilder<T, B>) builder).deferred = deferred;
@@ -81,31 +128,56 @@ public class CommandBuilder<T, B extends CommandBuilder<T, B>> {
 		return (B) this;
 	}
 	
+	/**
+	 * Creates a subcommand for the command
+	 * @param name The names of the subcommand
+	 * @param consumer A function which will mutate the created builder, after which its command will be added as a child of this one
+	 * @return Itself
+	 */
+	public B subcommand(String name, Consumer<B> consumer) {
+		return subcommand(new String[] {name}, consumer);
+	}
+	
+	
+	/**
+	 * Removes the auto-generated help subcommand
+	 * @return Itself
+	 */
 	public B noHelpSubcommand() {
 		pipeline.getComponents().removeIf(c -> c instanceof HelpSubcommandComponent);
 		return (B) this;
 	}
 	
-	public B subcommand(String name, Consumer<B> consumer) {
-		return subcommand(new String[] {name}, consumer);
-	}
-	
+	/**
+	 * Assigns a handler that will be run when the command is executed
+	 * @param handler The handler
+	 * @return Itself
+	 */
 	public B handler(Consumer<CommandArguments<T>> handler) {
 		pipeline.addComponent(componentFactory.createDispatch(new BuilderDispatcher<>(handler)));
 		return (B) this;
 	}
 	
+	/**
+	 * Adds a new boolean flag to the command, which will be passed as true if present in the command when run and false otherwise
+	 * @param names The names of the flag, must all start with a dash
+	 * @return Itself
+	 */
 	public B boolFlag(String... names) {
 		pipeline.addComponent(componentFactory.createBooleanFlag(names));
 		return (B) this;
 	}
 	
+	/**
+	 * Marks the command as post-argument, meaning it will be positioned after the arguments of its parent and will be able to access those arguments
+	 * @return Itself
+	 */
 	public B postArgument() {
 		postArg = true;
 		return (B) this;
 	}
 	
-	public Command<T> build() {
+	protected Command<T> build() {
 		Command<T> cmd = new Command<>(names, pipeline);
 		cmd.getPipeline().getComponents().forEach(c -> c.setParent(cmd));
 		if (postArg) {
@@ -114,6 +186,9 @@ public class CommandBuilder<T, B extends CommandBuilder<T, B>> {
 		return cmd;
 	}
 	
+	/**
+	 * Registers the command. Do not call on subcommands.
+	 */
 	public void register() {
 		Command<T> command = build();
 		Queue<Command<T>> queue = new ArrayDeque<>();

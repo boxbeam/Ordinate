@@ -81,6 +81,7 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 	private ComponentFactory<CommandSender> componentFactory;
 	private MessageProvider<CommandSender> messages;
 	private HelpDisplayer<CommandSender> helpDisplayer;
+	private BuilderOptions<CommandSender> builderOptions = BuilderOptions.getDefaults();
 	private Plugin plugin;
 	
 	private SpigotCommandManager(Plugin plugin, String fallbackPrefix, MessageProvider<CommandSender> messages) {
@@ -90,6 +91,7 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 		componentFactory = new DefaultComponentFactory<>(messages);
 		helpDisplayer = new SpigotHelpDisplayer(getCommandPrefix(), messages);
 		this.plugin = plugin;
+		applyBuilderTypes();
 	}
 	
 	public SpigotCommandManager loadMessages() {
@@ -136,6 +138,10 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 		return componentFactory;
 	}
 	
+	public BuilderOptions<CommandSender> getBuilderOptions() {
+		return builderOptions;
+	}
+	
 	@Override
 	public CommandParser<CommandSender> getParser() {
 		ParserOptions<CommandSender> parserOptions = ParserOptions.getDefaults(getComponentFactory());
@@ -148,10 +154,7 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 	
 	@Override
 	public CommandBuilder<CommandSender, ?> builder(String... names) {
-		BuilderOptions<CommandSender> options = BuilderOptions.getDefaults();
-		options.addType(Player.class, Bukkit::getPlayerExact).completerStream(ctx -> Bukkit.getOnlinePlayers().stream().map(Player::getName));
-		options.addType(Material.class, s -> Material.getMaterial(s)).completerStream((ctx, val) -> Arrays.stream(Material.values()).map(Material::name).map(String::toLowerCase));
-		return new SpigotCommandBuilder(names, this, options);
+		return new SpigotCommandBuilder(names, this, builderOptions);
 	}
 	
 	private void applyTagProcessors(CommandParser<CommandSender> parser) {
@@ -163,6 +166,11 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 					command.getPipeline().addComponent(new PlayerOnlyComponent(messages.getFormatter("playerOnly")));
 				})
 		);
+	}
+	
+	private void applyBuilderTypes() {
+		builderOptions.addType(Player.class, Bukkit::getPlayerExact).completerStream(ctx -> Bukkit.getOnlinePlayers().stream().map(Player::getName));
+		builderOptions.addType(Material.class, s -> Material.getMaterial(s)).completerStream((ctx, val) -> Arrays.stream(Material.values()).map(Material::name).map(String::toLowerCase));
 	}
 	
 	private void applyArgTypes(CommandParser<CommandSender> parser) {

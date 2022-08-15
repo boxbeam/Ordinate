@@ -5,6 +5,11 @@ import redempt.ordinate.command.Command;
 import java.util.*;
 import java.util.function.Predicate;
 
+/**
+ * A builder which assembles {@link HelpPage}s
+ * @param <T> The sender type
+ * @author Redempt
+ */
 public class HelpBuilder<T> {
 	
 	Map<Command<T>, List<HelpComponent>> map = new HashMap<>();
