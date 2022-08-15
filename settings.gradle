@@ -3,3 +3,5 @@ include 'spigot'
 project(':spigot').setProjectDir(new File('platforms/spigot'))
 include 'brigadier'
 project(':brigadier').setProjectDir(new File('platforms/brigadier'))
+include 'paper'
+project(':paper').setProjectDir(new File('platforms/paper'))

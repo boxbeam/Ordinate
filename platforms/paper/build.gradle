@@ -4,11 +4,13 @@ plugins {
 }
 repositories {
     maven { url = 'https://libraries.minecraft.net' }
+    maven { url = 'https://redempt.dev/' }
+    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
     mavenCentral()
 }
 jar {
     from zipTree('../../build/libs/Ordinate.jar')
-    archiveBaseName.set('Ordinate-brigadier')
+    archiveBaseName.set('Ordinate-paper')
 }
 compileJava {
     sourceCompatibility = 8
@@ -16,7 +18,10 @@ compileJava {
 }
 dependencies {
     implementation project(':')
-    compileOnly 'com.mojang:brigadier:1.0.18'
+    implementation project(':brigadier')
+    implementation project(':spigot')
+    compileOnly 'io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT'
+    compileOnly 'io.papermc.paper:paper-mojangapi:1.19.2-R0.1-SNAPSHOT'
 }
 sourceSets {
     main {

@@ -84,7 +84,7 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 	private BuilderOptions<CommandSender> builderOptions = BuilderOptions.getDefaults();
 	private Plugin plugin;
 	
-	private SpigotCommandManager(Plugin plugin, String fallbackPrefix, MessageProvider<CommandSender> messages) {
+	protected SpigotCommandManager(Plugin plugin, String fallbackPrefix, MessageProvider<CommandSender> messages) {
 		this.fallbackPrefix = fallbackPrefix;
 		this.messages = messages;
 		registrar = new SpigotCommandRegistrar(plugin, fallbackPrefix);
