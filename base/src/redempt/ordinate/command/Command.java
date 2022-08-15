@@ -133,7 +133,6 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 		}
 		if (context.getArguments().size() == 1) {
 			completions.addAll(names);
-			context.pollArg();
 			return success();
 		}
 		Argument arg = context.peekArg();
@@ -150,7 +149,7 @@ public class Command<T> extends CommandComponent<T> implements Named, HelpProvid
 			return true;
 		}
 		Object[] parentParsed = context.getAllParsed();
-		if (Arrays.stream(parentParsed).anyMatch(Objects::isNull)) {
+		if (Arrays.stream(parentParsed).skip(1).anyMatch(Objects::isNull)) {
 			return false;
 		}
 		return true;

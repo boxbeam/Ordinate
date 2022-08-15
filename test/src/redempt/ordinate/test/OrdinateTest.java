@@ -58,4 +58,20 @@ public class OrdinateTest {
 		tester.expectFailure("intArgConstraint -1");
 	}
 
+	@Test
+	public void booleanFlagTest() {
+		tester.expect("boolFlag", false);
+		tester.expect("boolFlag --flag", true);
+		tester.expectCompletions("boolFlag");
+		tester.expectCompletions("boolFlag -", "--flag");
+	}
+	
+	@Test
+	public void postArgumentTest() {
+		tester.expect("baseWithPostArgSub a sub", "a");
+		tester.expect("baseWithPostArgSub \"a b c\" sub", "a b c");
+		tester.expect("baseWithPostArgSub a subWithPostArgSub 1 sub", "a", 1);
+		tester.expectCompletions("baseWithPostArgSub a ", "sub", "subWithPostArgSub");
+	}
+	
 }

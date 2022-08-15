@@ -60,7 +60,7 @@ public class CommandTester {
 		Set<String> actualCompletions = new HashSet<>(result.getCompletions());
 		Set<String> expectedCompletions = new HashSet<>();
 		Collections.addAll(expectedCompletions, completions);
-		assertEquals(actualCompletions, expectedCompletions);
+		assertEquals(expectedCompletions, actualCompletions);
 	}
 
 }

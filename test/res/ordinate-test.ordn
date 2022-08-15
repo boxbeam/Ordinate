@@ -17,3 +17,19 @@ boolArg boolean:arg {
 intArgConstraint int<0,100>:num {
 	hook
 }
+boolFlag --flag {
+	hook
+}
+baseWithPostArgSub string:message {
+	sub {
+		hook
+		postArgument
+	}
+	subWithPostArgSub int:num {
+		postArgument
+		sub {
+			hook
+			postArgument
+		}
+	}
+}
