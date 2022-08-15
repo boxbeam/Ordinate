@@ -1,5 +1,7 @@
 package redempt.ordinate.test;
 
+import redempt.ordinate.builder.BuilderOptions;
+import redempt.ordinate.builder.CommandBuilder;
 import redempt.ordinate.creation.ComponentFactory;
 import redempt.ordinate.creation.DefaultComponentFactory;
 import redempt.ordinate.dispatch.CommandManager;
@@ -35,8 +37,13 @@ public class TestCommandManager implements CommandManager<Void> {
 	}
 	
 	@Override
-	public CommandParser<Void> getCommandParser() {
+	public CommandParser<Void> getParser() {
 		return new CommandParser<>(ParserOptions.getDefaults(factory), this);
+	}
+	
+	@Override
+	public CommandBuilder<Void, ?> builder(String... names) {
+		return null;
 	}
 	
 	@Override

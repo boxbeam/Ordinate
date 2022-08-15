@@ -18,7 +18,7 @@ public class CommandTester {
 	
 	public CommandTester(InputStream stream) {
 		TestCommandManager manager = new TestCommandManager();
-		CommandParser<Void> parser = manager.getCommandParser();
+		CommandParser<Void> parser = manager.getParser();
 		parser.addTagProcessors(TagProcessor.create("hook", (cmd, value) -> {
 			cmd.getPipeline().addComponent(manager.getComponentFactory().createDispatch(ctx -> {
 				Object[] arr = ctx.getAllParsed();

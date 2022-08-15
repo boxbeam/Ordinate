@@ -10,6 +10,7 @@ import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.parser.TagProcessor;
 import redempt.ordinate.parser.argument.ArgumentParser;
 import redempt.ordinate.parser.argument.DefaultArgumentParser;
+import redempt.ordinate.processing.MiscUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,7 +29,7 @@ public class ParserOptions<T> {
 		options.insert(numberArgType("float", Float::parseFloat, componentFactory));
 		options.insert(numberArgType("long", Long::parseLong, componentFactory));
 		options.insert(numberArgType("double", Double::parseDouble, componentFactory));
-		options.insert(new ArgType<>("boolean", (ctx, str) -> parseBoolean(str)).completer((ctx, str) -> Arrays.asList("true", "false")));
+		options.insert(new ArgType<>("boolean", (ctx, str) -> MiscUtils.parseBoolean(str)).completer((ctx, str) -> Arrays.asList("true", "false")));
 		options.tagProcessors.put("help", TagProcessor.create("help", (cmd, str) -> {
 			Optional<DescriptionComponent<?>> optionalDescription =
 					cmd.getPipeline().getComponents().stream()
@@ -52,17 +53,6 @@ public class ParserOptions<T> {
 			PostArgumentSubcommand.makePostArgument(cmd);
 		}));
 		return options;
-	}
-	
-	private static Boolean parseBoolean(String str) {
-		switch (str) {
-			case "true":
-				return true;
-			case "false":
-				return false;
-			default:
-				return null;
-		}
 	}
 
 	private static <T, V extends Number & Comparable<V>> ArgType<T, V> numberArgType(String name, Function<String, V> numberParser, ComponentFactory<T> componentFactory) {

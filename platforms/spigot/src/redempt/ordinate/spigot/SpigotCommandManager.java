@@ -6,7 +6,10 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import redempt.ordinate.builder.BuilderOptions;
+import redempt.ordinate.builder.CommandBuilder;
 import redempt.ordinate.command.ArgType;
+import redempt.ordinate.command.Command;
 import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.creation.ComponentFactory;
 import redempt.ordinate.creation.DefaultComponentFactory;
@@ -134,13 +137,21 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 	}
 	
 	@Override
-	public CommandParser<CommandSender> getCommandParser() {
+	public CommandParser<CommandSender> getParser() {
 		ParserOptions<CommandSender> parserOptions = ParserOptions.getDefaults(getComponentFactory());
 		CommandParser<CommandSender> parser = new CommandParser<>(parserOptions, this);
 		applyTagProcessors(parser);
 		applyArgTypes(parser);
 		applyContextProviders(parser);
 		return parser;
+	}
+	
+	@Override
+	public CommandBuilder<CommandSender, ?> builder(String... names) {
+		BuilderOptions<CommandSender> options = BuilderOptions.getDefaults();
+		options.addType(Player.class, Bukkit::getPlayerExact).completerStream(ctx -> Bukkit.getOnlinePlayers().stream().map(Player::getName));
+		options.addType(Material.class, s -> Material.getMaterial(s)).completerStream((ctx, val) -> Arrays.stream(Material.values()).map(Material::name).map(String::toLowerCase));
+		return new SpigotCommandBuilder(names, this, options);
 	}
 	
 	private void applyTagProcessors(CommandParser<CommandSender> parser) {
@@ -157,7 +168,7 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 	private void applyArgTypes(CommandParser<CommandSender> parser) {
 		parser.addArgTypes(new ArgType<>("player", Bukkit::getPlayerExact).completerStream((ctx, val) -> Bukkit.getOnlinePlayers().stream().map(Player::getName)));
 		parser.addArgTypes(new ArgType<>("world", Bukkit::getWorld).completerStream((ctx, val) -> Bukkit.getWorlds().stream().map(World::getName)));
-		parser.addArgTypes(new ArgType<>("material", s -> Material.getMaterial(s)).completerStream((ctx, val) -> Arrays.stream(Material.values()).map(Material::name)));
+		parser.addArgTypes(new ArgType<>("material", s -> Material.getMaterial(s)).completerStream((ctx, val) -> Arrays.stream(Material.values()).map(Material::name).map(String::toLowerCase)));
 	}
 	
 	private void applyContextProviders(CommandParser<CommandSender> parser) {
