@@ -3,7 +3,7 @@ package redempt.ordinate.builder;
 import redempt.ordinate.command.ArgType;
 import redempt.ordinate.command.Command;
 import redempt.ordinate.command.CommandBase;
-import redempt.ordinate.component.BooleanFlagComponent;
+import redempt.ordinate.command.postarg.PostArgumentSubcommand;
 import redempt.ordinate.component.DescriptionComponent;
 import redempt.ordinate.component.HelpSubcommandComponent;
 import redempt.ordinate.context.ContextProvider;
@@ -13,10 +13,7 @@ import redempt.ordinate.dispatch.CommandDispatcher;
 import redempt.ordinate.dispatch.CommandManager;
 import redempt.ordinate.processing.CommandPipeline;
 
-import java.util.ArrayDeque;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -25,9 +22,11 @@ public class CommandBuilder<T, B extends CommandBuilder<T, B>> {
 	protected CommandPipeline<T> pipeline = new CommandPipeline<>();
 	protected CommandManager<T> manager;
 	protected ComponentFactory<T> componentFactory;
+	protected List<Runnable> deferred = new ArrayList<>();
 	private BuilderOptions<T> options;
 	private CommandBuilderFactory<T, B> builderFactory;
 	private String[] names;
+	private boolean postArg;
 	
 	public CommandBuilder(String[] names, CommandManager<T> manager, BuilderOptions<T> options, CommandBuilderFactory<T, B> builderFactory) {
 		this.manager = manager;
@@ -76,6 +75,7 @@ public class CommandBuilder<T, B extends CommandBuilder<T, B>> {
 	
 	public B subcommand(String[] names, Consumer<B> consumer) {
 		B builder = builderFactory.create(names, manager, options);
+		((CommandBuilder<T, B>) builder).deferred = deferred;
 		consumer.accept(builder);
 		pipeline.addComponent(builder.build());
 		return (B) this;
@@ -100,15 +100,25 @@ public class CommandBuilder<T, B extends CommandBuilder<T, B>> {
 		return (B) this;
 	}
 	
+	public B postArgument() {
+		postArg = true;
+		return (B) this;
+	}
+	
 	public Command<T> build() {
-
-		return new Command<>(names, pipeline);
+		Command<T> cmd = new Command<>(names, pipeline);
+		cmd.getPipeline().getComponents().forEach(c -> c.setParent(cmd));
+		if (postArg) {
+			deferred.add(() -> PostArgumentSubcommand.makePostArgument(cmd));
+		}
+		return cmd;
 	}
 	
 	public void register() {
 		Command<T> command = build();
 		Queue<Command<T>> queue = new ArrayDeque<>();
 		queue.add(command);
+		deferred.forEach(Runnable::run);
 		while (!queue.isEmpty()) {
 			Command<T> next = queue.poll();
 			next.preparePipeline(manager);
