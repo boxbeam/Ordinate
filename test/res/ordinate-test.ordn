@@ -11,6 +11,12 @@ stringArg string:arg {
 stringArg string:arg1 string:arg2 {
 	hook
 }
+optionalArg int:arg? {
+	hook
+}
+optionalArgWithDefault int:arg?(100) {
+	hook
+}
 boolArg boolean:arg {
 	hook
 }

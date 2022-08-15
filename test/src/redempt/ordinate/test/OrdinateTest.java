@@ -35,6 +35,15 @@ public class OrdinateTest {
 	}
 	
 	@Test
+	public void optionalArgTest() {
+		tester.expect("optionalArg", new Object[] {null});
+		tester.expect("optionalArg 4", 4);
+		tester.expectFailure("optionalArg a");
+		tester.expect("optionalArgWithDefault", 100);
+		tester.expect("optionalArgWithDefault 4", 4);
+	}
+	
+	@Test
 	public void boolArgTest() {
 		tester.expect("boolArg true", true);
 		tester.expect("boolArg false", false);
@@ -96,7 +105,7 @@ public class OrdinateTest {
 	}
 	
 	@Test
-	public void testConsuming() {
+	public void consumingTest() {
 		tester.expect("consuming a b c", "a b c");
 		tester.expectFailure("consuming");
 		tester.expect("optionalConsuming a b c", "a b c");
@@ -104,7 +113,7 @@ public class OrdinateTest {
 	}
 	
 	@Test
-	public void testVararg() {
+	public void varargTest() {
 		tester.expect("vararg 1 2 3", Arrays.asList(1, 2, 3));
 		tester.expectFailure("vararg");
 		tester.expect("optionalVararg 1 2 3", Arrays.asList(1, 2, 3));
