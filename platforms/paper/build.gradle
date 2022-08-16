@@ -10,6 +10,7 @@ repositories {
 }
 jar {
     from zipTree('../../build/libs/Ordinate.jar')
+    from zipTree('../brigadier/build/libs/Ordinate-brigadier.jar')
     archiveBaseName.set('Ordinate-paper')
 }
 compileJava {
