@@ -15,7 +15,7 @@ public class BrigadierCommandConverter<T, S> {
 	}
 	
 	public CommandNode<T> convertToBrigadier(CommandBase<T> command) {
-	
+		return null;
 	}
 
 }
