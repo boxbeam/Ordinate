@@ -188,8 +188,9 @@ public class CommandBuilder<T, B extends CommandBuilder<T, B>> {
 	
 	/**
 	 * Registers the command. Do not call on subcommands.
+	 * @return The built command
 	 */
-	public void register() {
+	public CommandBase<T> register() {
 		Command<T> command = build();
 		Queue<Command<T>> queue = new ArrayDeque<>();
 		queue.add(command);
@@ -201,6 +202,7 @@ public class CommandBuilder<T, B extends CommandBuilder<T, B>> {
 		}
 		CommandBase<T> base = new CommandBase<>(Collections.singletonList(command), manager);
 		manager.getRegistrar().register(base);
+		return base;
 	}
 	
 	private static class BuilderDispatcher<T> implements CommandDispatcher<T> {
