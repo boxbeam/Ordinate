@@ -12,7 +12,7 @@ jar {
 }
 compileJava {
     sourceCompatibility = 8
-    targetCompatibility = 17
+    targetCompatibility = 16
 }
 dependencies {
     implementation project(':')
