@@ -70,10 +70,10 @@ public class VariableLengthArgumentComponent<T, V> extends ArgumentComponent<T, 
 
 	@Override
 	public CommandResult<T> complete(CommandContext<T> context, Set<String> completions) {
-		if (context.getArguments().size() == 1) {
+		parse(context);
+		if (context.getArguments().size() <= 1) {
 			completions.addAll(getType().complete(context, context.peekArg().getValue()));
 		}
-		parse(context);
 		return success();
 	}
 

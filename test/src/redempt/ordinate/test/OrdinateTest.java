@@ -119,6 +119,7 @@ public class OrdinateTest {
 		tester.expect("optionalVararg 1 2 3", Arrays.asList(1, 2, 3));
 		tester.expect("optionalVararg", Collections.emptyList());
 		tester.expectCompletions("vararg ", "true", "false");
+		tester.expectCompletions("vararg true ", "true", "false");
 	}
 	
 }
