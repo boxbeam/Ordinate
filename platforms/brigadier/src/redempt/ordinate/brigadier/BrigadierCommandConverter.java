@@ -6,8 +6,6 @@ import redempt.ordinate.component.abstracts.CommandComponent;
 
 import java.util.Map;
 
-import static com.mojang.brigadier.builder.LiteralArgumentBuilder.literal;
-
 public class BrigadierCommandConverter<T, S> {
 
 	private Map<Class<? extends CommandComponent<T>>, BrigadierAdapter<T, ?>> converters;

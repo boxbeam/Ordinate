@@ -39,19 +39,20 @@ public class BrigadierBuilder<C> {
 		return this;
 	}
 	
-	private List<CommandNode<C>> buildAll() {
+	private List<CommandNode<C>> buildAll(boolean[] optionalMap) {
 		if (arguments.size() == 0) {
 			node.executes(c -> 0);
 			return Collections.emptyList();
 		}
-		arguments.get(arguments.size() - 1).executes(c -> 0);
+		for (int i = 0; i < arguments.size(); i++) {
+			if (optionalMap[i] || i == arguments.size() - 1) {
+				arguments.get(i).executes(c -> 0);
+			}
+		}
 		return arguments.stream().map(ArgumentBuilder::build).collect(Collectors.toList());
 	}
 	
 	private void link(List<CommandNode<C>> nodes) {
-		if (optionals.contains(arguments.size() - 1)) {
-			arguments.get(arguments.size() - 1).executes(c -> 0);
-		}
 		for (int i = 0; i < arguments.size() - 1; i++) {
 			nodes.get(i).addChild(nodes.get(i + 1));
 		}
@@ -81,8 +82,7 @@ public class BrigadierBuilder<C> {
 		return arr;
 	}
 	
-	private void handleFlags(List<CommandNode<C>> nodes) {
-		boolean[] optionalMap = optionalMap();
+	private void handleFlags(List<CommandNode<C>> nodes, boolean[] optionalMap) {
 		for (BrigadierFlag<C> flag : flags) {
 			handleFlag(nodes, flag, optionalMap);
 		}
@@ -131,10 +131,11 @@ public class BrigadierBuilder<C> {
 	}
 	
 	public void build() {
-		List<CommandNode<C>> built = buildAll();
+		boolean[] optionalMap = optionalMap();
+		List<CommandNode<C>> built = buildAll(optionalMap);
 		link(built);
 		handleOptionals(built);
-		handleFlags(built);
+		handleFlags(built, optionalMap);
 		if (built.size() > 0) {
 			node.then(built.get(0));
 		}
