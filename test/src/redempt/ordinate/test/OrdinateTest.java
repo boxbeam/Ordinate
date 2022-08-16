@@ -114,10 +114,11 @@ public class OrdinateTest {
 	
 	@Test
 	public void varargTest() {
-		tester.expect("vararg 1 2 3", Arrays.asList(1, 2, 3));
+		tester.expect("vararg true false true", Arrays.asList(true, false, true));
 		tester.expectFailure("vararg");
 		tester.expect("optionalVararg 1 2 3", Arrays.asList(1, 2, 3));
 		tester.expect("optionalVararg", Collections.emptyList());
+		tester.expectCompletions("vararg ", "true", "false");
 	}
 	
 }

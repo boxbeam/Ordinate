@@ -51,7 +51,7 @@ consuming string...:arg {
 optionalConsuming string...:arg? {
 	hook
 }
-vararg int[]:nums {
+vararg boolean[]:bools {
 	hook
 }
 optionalVararg int[]:nums? {
