@@ -8,5 +8,5 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.0")
-    implementation("gradle.plugin.com.hierynomus.gradle.plugins:license-gradle-plugin:0.16.1")
+    implementation("com.github.jengelman.gradle.plugins:shadow:6.1.0")
 }

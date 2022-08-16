@@ -1,31 +1,71 @@
-import com.hierynomus.gradle.license.tasks.LicenseCheck
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.kotlin.dsl.`java-library`
+import java.net.URI
 
 plugins {
     `java-library`
-    id("com.github.hierynomus.license")
     `maven-publish`
+    id("com.github.johnrengelman.shadow")
 }
+
+group = "redempt.ordinate"
+
 repositories {
     mavenCentral()
+    maven {
+        url = URI("https://redempt.dev/")
+    }
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    withSourcesJar()
+    withJavadocJar()
+}
 
-tasks.named<Test>("test") {
-    useJUnitPlatform()
+sourceSets {
+    main {
+        java {
+            srcDir("src")
+        }
+        resources {
+            java {
+                srcDir("res")
+            }
+        }
+    }
+    test {
+        java {
+            srcDir("test/src")
+        }
+        resources {
+            java {
+                srcDir("test/res")
+            }
+        }
+    }
 }
 
 tasks {
     withType<JavaCompile> {
         options.encoding = "UTF-8"
-        sourceCompatibility = "1.9"
-        targetCompatibility = "1.8"
     }
-    withType<LicenseCheck> {
-        this.header = rootProject.file("LICENSE")
-        encoding = "UTF-8"
-        mapping("java", "JAVADOC_STYLE")
+    withType<ShadowJar> {
+        archiveClassifier.set("")
+    }
+    withType<Jar> {
+        archiveBaseName.set(project.name)
+    }
+}
 
-        include("**/*.java")
+publishing {
+    publications {
+        register("mavenJava", MavenPublication::class) {
+            groupId = "com.github.Redempt"
+            artifactId = "${rootProject.name}-${project.name}"
+            version = System.getenv("BUILD_VERSION") ?: "1.0"
+            from(components["java"])
+        }
     }
 }

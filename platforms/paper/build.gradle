@@ -1,45 +1,18 @@
 plugins {
-    id 'java-library'
-    id 'maven-publish'
+    id('ordinate.platform-conventions')
 }
 repositories {
     maven { url = 'https://libraries.minecraft.net' }
-    maven { url = 'https://redempt.dev/' }
     maven { url = 'https://repo.papermc.io/repository/maven-public/' }
-    mavenCentral()
 }
-jar {
-    from zipTree('../../build/libs/Ordinate.jar')
-    archiveBaseName.set('Ordinate-paper')
-}
+
 compileJava {
-    sourceCompatibility = 8
     targetCompatibility = 17
 }
 dependencies {
-    implementation project(':')
-    implementation project(':brigadier')
-    implementation project(':spigot')
+    implementation project(':Ordinate-brigadier')
+    implementation project(':Ordinate-spigot')
     compileOnly 'io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT'
     compileOnly 'io.papermc.paper:paper-mojangapi:1.19.2-R0.1-SNAPSHOT'
 }
-sourceSets {
-    main {
-        java {
-            srcDir 'src'
-        }
-        resources {
-            srcDir 'res'
-        }
-    }
-}
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            groupId = 'com.github.Redempt'
-            artifactId = 'Ordinate-brigadier'
-            version = System.env.BUILD_VERSION ?: '1.0'
-            from components.java
-        }
-    }
-}
+

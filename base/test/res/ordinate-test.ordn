@@ -11,19 +11,13 @@ stringArg string:arg {
 stringArg string:arg1 string:arg2 {
 	hook
 }
-optionalArg int:arg? {
-	hook
-}
-optionalArgWithDefault int:arg?(100) {
-	hook
-}
 boolArg boolean:arg {
 	hook
 }
 intArgConstraint int<0,100>:num {
 	hook
 }
-boolFlag --flag,-f {
+boolFlag --flag {
 	hook
 }
 baseWithPostArgSub string:message {
@@ -38,22 +32,4 @@ baseWithPostArgSub string:message {
 			postArgument
 		}
 	}
-}
-switchFlag boolean:--flag,-f {
-	hook
-}
-defaultConstrainedFlag int<0,100>:--flag(4) {
-	hook
-}
-consuming string...:arg {
-	hook
-}
-optionalConsuming string...:arg? {
-	hook
-}
-vararg boolean[]:bools {
-	hook
-}
-optionalVararg int[]:nums? {
-	hook
 }

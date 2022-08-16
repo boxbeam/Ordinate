@@ -1,7 +1,6 @@
 dependencyResolutionManagement {
     includeBuild("build-logic")
     repositories {
-        mavenCentral()
         gradlePluginPortal()
     }
 
@@ -11,12 +10,13 @@ rootProject.name = "Ordinate"
 
 listOf(
     "base",
-    "test",
 ).forEach(::includeProject)
 
 listOf(
     "spigot",
     "sponge",
+    "brigadier",
+    "paper",
 ).forEach {
     includeProject(it, "platforms")
 }
