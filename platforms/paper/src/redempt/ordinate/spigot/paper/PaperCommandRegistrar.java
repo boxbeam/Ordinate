@@ -9,9 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import redempt.ordinate.command.CommandBase;
-import redempt.ordinate.dispatch.CommandManager;
 import redempt.ordinate.dispatch.CommandRegistrar;
-import redempt.ordinate.spigot.SpigotCommandManager;
 import redempt.ordinate.spigot.SpigotCommandRegistrar;
 
 import java.util.HashMap;

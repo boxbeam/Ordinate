@@ -21,7 +21,6 @@ java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
     withSourcesJar()
-    withJavadocJar()
 }
 
 sourceSets {
@@ -52,6 +51,13 @@ tasks {
     }
     withType<Jar> {
         archiveBaseName.set(project.name)
+    }
+    register<Jar>("javadocJar") {
+        from(tasks["javadoc"])
+    }
+    register("buildDocs") {
+        dependsOn(tasks["build"])
+        dependsOn(tasks["javadocJar"])
     }
 }
 

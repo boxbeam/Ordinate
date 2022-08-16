@@ -29,7 +29,7 @@ import static com.mojang.brigadier.builder.RequiredArgumentBuilder.argument;
 
 public class BrigadierCommandConverter<T, S> {
 
-	private Map<Class<? extends CommandComponent<T>>, BrigadierAdapter<T, ?>> converters = new HashMap<>();
+	private Map<Class<? extends CommandComponent<T>>, BrigadierAdapter<?>> converters = new HashMap<>();
 	
 	public BrigadierCommandConverter() {
 		register(ArgumentComponent.class, (component, builder) ->
@@ -72,7 +72,7 @@ public class BrigadierCommandConverter<T, S> {
 		return tails;
 	}
 	
-	public <C extends CommandComponent<T>> void register(Class<C> type, BrigadierAdapter<T, C> adapter) {
+	public <C extends CommandComponent<T>> void register(Class<C> type, BrigadierAdapter<C> adapter) {
 		converters.put(type, adapter);
 	}
 	
@@ -104,7 +104,7 @@ public class BrigadierCommandConverter<T, S> {
 	}
 	
 	private <C extends CommandComponent<T>> void convert(C component, BrigadierBuilder<S> builder) {
-		BrigadierAdapter<T, C> adapter = (BrigadierAdapter<T, C>) converters.get(component.getClass());
+		BrigadierAdapter<C> adapter = (BrigadierAdapter<C>) converters.get(component.getClass());
 		if (adapter == null) {
 			return;
 		}

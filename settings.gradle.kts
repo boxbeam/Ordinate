@@ -3,7 +3,6 @@ dependencyResolutionManagement {
     repositories {
         gradlePluginPortal()
     }
-
 }
 
 rootProject.name = "Ordinate"
