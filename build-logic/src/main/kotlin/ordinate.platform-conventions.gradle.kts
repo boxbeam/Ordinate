@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":Ordinate-base"))
+    implementation(project(":Ordinate-base", "shadow"))
 }

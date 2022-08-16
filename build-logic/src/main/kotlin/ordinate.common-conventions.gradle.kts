@@ -59,7 +59,7 @@ publishing {
     publications {
         register("mavenJava", MavenPublication::class) {
             groupId = "com.github.Redempt"
-            artifactId = "${rootProject.name}-${project.name}"
+            artifactId = project.name
             version = System.getenv("BUILD_VERSION") ?: "1.0"
             from(components["java"])
         }
