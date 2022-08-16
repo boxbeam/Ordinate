@@ -4,6 +4,12 @@ plugins {
 repositories {
     maven { url = 'https://libraries.minecraft.net' }
     maven { url = 'https://repo.papermc.io/repository/maven-public/' }
+    mavenCentral()
+}
+jar {
+    from zipTree('../../build/libs/Ordinate.jar')
+    from zipTree('../brigadier/build/libs/Ordinate-brigadier.jar')
+    archiveBaseName.set('Ordinate-paper')
 }
 
 compileJava {

@@ -18,33 +18,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-class SpigotCommandRegistrar implements CommandRegistrar<CommandSender> {
+public class SpigotCommandRegistrar implements CommandRegistrar<CommandSender> {
 	
-	private Map<String, Command> knownCommands;
-	private CommandMap commandMap;
-	private String fallbackPrefix;
-	private Plugin plugin;
-	
-	public SpigotCommandRegistrar(Plugin plugin, String fallbackPrefix) {
-		this.fallbackPrefix = fallbackPrefix;
-		initKnownCommands();
-		this.plugin = plugin;
-	}
-	
-	private void initKnownCommands() {
-		try {
-			Field field = Bukkit.getPluginManager().getClass().getDeclaredField("commandMap");
-			field.setAccessible(true);
-			commandMap = (SimpleCommandMap) field.get(Bukkit.getPluginManager());
-			field = SimpleCommandMap.class.getDeclaredField("knownCommands");
-			field.setAccessible(true);
-			knownCommands = (Map<String, Command>) field.get(commandMap);
-		} catch (NoSuchFieldException | IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
-	private Command createSpigotCommand(CommandBase<CommandSender> command) {
+	public static Command createSpigotCommand(CommandBase<CommandSender> command) {
 		List<String> aliases = command.getNames();
 		return new Command(command.getCommands().get(0).getName()) {
 			@Override
@@ -65,6 +41,30 @@ class SpigotCommandRegistrar implements CommandRegistrar<CommandSender> {
 		};
 	}
 	
+	private Map<String, Command> knownCommands;
+	private CommandMap commandMap;
+	private String fallbackPrefix;
+	private Plugin plugin;
+	
+	SpigotCommandRegistrar(Plugin plugin, String fallbackPrefix) {
+		this.fallbackPrefix = fallbackPrefix;
+		initKnownCommands();
+		this.plugin = plugin;
+	}
+	
+	private void initKnownCommands() {
+		try {
+			Field field = Bukkit.getPluginManager().getClass().getDeclaredField("commandMap");
+			field.setAccessible(true);
+			commandMap = (SimpleCommandMap) field.get(Bukkit.getPluginManager());
+			field = SimpleCommandMap.class.getDeclaredField("knownCommands");
+			field.setAccessible(true);
+			knownCommands = (Map<String, Command>) field.get(commandMap);
+		} catch (NoSuchFieldException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 	@Override
 	public void register(CommandBase<CommandSender> command) {
 		Command cmd = createSpigotCommand(command);
@@ -80,24 +80,25 @@ class SpigotCommandRegistrar implements CommandRegistrar<CommandSender> {
 		};
 	}
 	
-}
-class UnregisterListener implements Listener {
-	
-	private Plugin plugin;
-	private Runnable toRun;
-	
-	public UnregisterListener(Plugin plugin, Runnable toRun) {
-		this.plugin = plugin;
-		this.toRun = toRun;
-	}
-	
-	@EventHandler
-	public void onPluginDisable(PluginDisableEvent e) {
-		if (!e.getPlugin().equals(plugin)) {
-			return;
+	public static class UnregisterListener implements Listener {
+		
+		private Plugin plugin;
+		private Runnable toRun;
+		
+		public UnregisterListener(Plugin plugin, Runnable toRun) {
+			this.plugin = plugin;
+			this.toRun = toRun;
 		}
-		toRun.run();
-		HandlerList.unregisterAll(this);
+		
+		@EventHandler
+		public void onPluginDisable(PluginDisableEvent e) {
+			if (!e.getPlugin().equals(plugin)) {
+				return;
+			}
+			toRun.run();
+			HandlerList.unregisterAll(this);
+		}
+		
 	}
 	
 }
