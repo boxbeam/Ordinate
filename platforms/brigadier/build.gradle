@@ -7,7 +7,6 @@ repositories {
     mavenCentral()
 }
 jar {
-    from zipTree('../../build/libs/Ordinate.jar')
     archiveBaseName.set('Ordinate-brigadier')
 }
 compileJava {
@@ -15,7 +14,7 @@ compileJava {
     targetCompatibility = 16
 }
 dependencies {
-    implementation project(':')
+    compileOnly project(':')
     compileOnly 'com.mojang:brigadier:1.0.18'
 }
 sourceSets {

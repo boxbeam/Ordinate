@@ -33,6 +33,10 @@ public class BooleanFlagComponent<T> extends CommandComponent<T> implements Name
 		return mainName;
 	}
 
+	public Set<String> getNames() {
+		return names;
+	}
+	
 	@Override
 	public int getMaxParsedObjects() {
 		return 1;

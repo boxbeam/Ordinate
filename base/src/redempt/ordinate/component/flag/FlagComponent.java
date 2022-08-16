@@ -127,4 +127,12 @@ public class FlagComponent<T, V> extends CommandComponent<T> implements Named {
 		return mainName;
 	}
 	
+	public Set<String> getNames() {
+		return names;
+	}
+	
+	public ArgType<T, V> getType() {
+		return type;
+	}
+	
 }

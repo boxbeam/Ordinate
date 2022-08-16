@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface BrigadierAdapter<T, C extends CommandComponent<T>> {
 
-	public List<CommandNode<?>> convert(C component);
+	public void convert(C component, BrigadierBuilder<?> builder);
 	
 }
