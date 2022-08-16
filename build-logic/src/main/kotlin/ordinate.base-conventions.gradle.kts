@@ -8,7 +8,6 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
 }
 
-
 tasks.named<Test>("test") {
     useJUnitPlatform()
     setWorkingDir("test")
