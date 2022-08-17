@@ -16,8 +16,8 @@ compileJava {
     targetCompatibility = 17
 }
 dependencies {
-    implementation project(':Ordinate-brigadier', 'shadow')
-    implementation project(':Ordinate-spigot', 'shadow')
+    implementation project(':Ordinate-brigadier')
+    implementation project(':Ordinate-spigot')
     compileOnly 'io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT'
     compileOnly 'io.papermc.paper:paper-mojangapi:1.19.2-R0.1-SNAPSHOT'
 }
