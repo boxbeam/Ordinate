@@ -2,6 +2,9 @@ package redempt.ordinate.brigadier;
 
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.tree.CommandNode;
+import redempt.ordinate.command.CommandBase;
+
+import java.util.function.BiConsumer;
 
 public class BrigadierFlag<C> {
 	
@@ -11,10 +14,6 @@ public class BrigadierFlag<C> {
 	public BrigadierFlag(ArgumentBuilder<C, ?> flag, ArgumentBuilder<C, ?> arg) {
 		this.flag = flag;
 		this.arg = arg;
-	}
-	
-	public BrigadierFlag(ArgumentBuilder<C, ?> flag) {
-		this(flag, null);
 	}
 	
 	public boolean hasArg() {

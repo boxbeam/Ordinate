@@ -1,11 +1,18 @@
 package redempt.ordinate.brigadier;
 
+import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.CommandNode;
+import redempt.ordinate.command.ArgType;
+import redempt.ordinate.command.CommandBase;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
+
+import static com.mojang.brigadier.builder.LiteralArgumentBuilder.literal;
+import static com.mojang.brigadier.builder.RequiredArgumentBuilder.argument;
 
 public class BrigadierBuilder<C> {
 	
@@ -13,9 +20,16 @@ public class BrigadierBuilder<C> {
 	private Set<Integer> optionals = new HashSet<>();
 	private List<BrigadierFlag<C>> flags = new ArrayList<>();
 	private ArgumentBuilder<C, ?> node;
+	private NodeMutator<C> nodeMutator = (a, b) -> {};
+	private CommandBase<?> base;
 	
-	public BrigadierBuilder(LiteralArgumentBuilder<C> node) {
+	public BrigadierBuilder(CommandBase<?> base, LiteralArgumentBuilder<C> node) {
 		this.node = node;
+		this.base = base;
+	}
+	
+	public void setNodeMutator(NodeMutator<C> nodeMutator) {
+		this.nodeMutator = nodeMutator;
 	}
 	
 	public BrigadierBuilder<C> addArgument(ArgumentBuilder<C, ?> node, boolean optional) {
@@ -30,12 +44,17 @@ public class BrigadierBuilder<C> {
 		return addArgument(node, false);
 	}
 	
-	public BrigadierBuilder<C> addFlag(ArgumentBuilder<C, ?> flag) {
-		return addFlag(new BrigadierFlag<>(flag));
+	public BrigadierBuilder<C> addFlag(String name) {
+		LiteralArgumentBuilder<C> literal = literal(name);
+		nodeMutator.accept(base, literal);
+		flags.add(new BrigadierFlag<>(literal, null));
+		return this;
 	}
 	
-	public BrigadierBuilder<C> addFlag(BrigadierFlag<C> node) {
-		flags.add(node);
+	public BrigadierBuilder<C> addFlag(String name, String typeName, ArgumentType<?> type) {
+		LiteralArgumentBuilder<C> literal = literal(name);
+		nodeMutator.accept(base, literal);
+		flags.add(new BrigadierFlag<>(literal, argument(typeName, type)));
 		return this;
 	}
 	
@@ -49,7 +68,7 @@ public class BrigadierBuilder<C> {
 				arguments.get(i).executes(c -> 0);
 			}
 		}
-		return arguments.stream().map(ArgumentBuilder::build).collect(Collectors.toList());
+		return arguments.stream().peek(a -> nodeMutator.accept(base, a)).map(ArgumentBuilder::build).collect(Collectors.toList());
 	}
 	
 	private void link(List<CommandNode<C>> nodes) {

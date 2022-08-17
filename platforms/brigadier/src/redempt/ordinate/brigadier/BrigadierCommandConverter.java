@@ -1,6 +1,7 @@
 package redempt.ordinate.brigadier;
 
 import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
@@ -16,6 +17,7 @@ import redempt.ordinate.component.flag.BooleanFlagComponent;
 import redempt.ordinate.component.flag.FlagComponent;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 
 import static com.mojang.brigadier.arguments.BoolArgumentType.bool;
 import static com.mojang.brigadier.arguments.DoubleArgumentType.doubleArg;
@@ -30,6 +32,7 @@ import static com.mojang.brigadier.builder.RequiredArgumentBuilder.argument;
 public class BrigadierCommandConverter<T, S> {
 
 	private Map<Class<? extends CommandComponent<T>>, BrigadierAdapter<?>> converters = new HashMap<>();
+	private NodeMutator<S> nodeMutator;
 	
 	public BrigadierCommandConverter() {
 		register(ArgumentComponent.class, (component, builder) ->
@@ -39,7 +42,7 @@ public class BrigadierCommandConverter<T, S> {
 		register(BooleanFlagComponent.class, (component, builder) -> {
 			Set<String> names = component.getNames();
 			for (String name : names) {
-				builder.addFlag(argument(name, string()));
+				builder.addFlag(name);
 			}
 		});
 		register(FlagComponent.class, (component, builder) -> {
@@ -47,11 +50,15 @@ public class BrigadierCommandConverter<T, S> {
 			String typeName = component.getType().getName();
 			ArgumentType<?> type = getType(typeName);
 			for (String name : names) {
-				builder.addFlag(new BrigadierFlag<>(argument(name, string()), argument(typeName, type)));
+				builder.addFlag(name, typeName, type);
 			}
 		});
 		register(VariableLengthArgumentComponent.class, (component, builder) -> builder.addArgument(argument(component.getName(), greedyString()), component.isOptional()));
 		register(ConsumingArgumentComponent.class, (component, builder) -> builder.addArgument(argument(component.getName(), greedyString())));
+	}
+	
+	public void setNodeMutator(NodeMutator<S> nodeMutator) {
+		this.nodeMutator = nodeMutator;
 	}
 	
 	private Set<CommandNode<S>> getTails(CommandNode<S> node) {
@@ -79,27 +86,30 @@ public class BrigadierCommandConverter<T, S> {
 	public CommandNode<S> convertToBrigadier(CommandBase<T> command) {
 		RootCommandNode<S> root = new RootCommandNode<>();
 		for (Command<T> child : command.getCommands()) {
-			addToNode(child, root);
+			addToNode(command, child, root);
 		}
 		return root;
 	}
 	
-	private void addToNode(Command<T> command, CommandNode<S> root) {
+	private void addToNode(CommandBase<T> base, Command<T> command, CommandNode<S> root) {
 		LiteralArgumentBuilder<S> node = literal(command.getName());
-		BrigadierBuilder<S> builder = new BrigadierBuilder<>(node);
+		BrigadierBuilder<S> builder = new BrigadierBuilder<>(base, node);
+		if (nodeMutator != null) {
+			builder.setNodeMutator(nodeMutator);
+		}
 		for (CommandComponent<T> component : command.getPipeline().getComponents()) {
 			convert(component, builder);
 		}
 		builder.build();
-		root.getChildren().add(node.build());
+		root.addChild(node.build());
 		for (String name : command.getNames()) {
 			if (name.equals(command.getName())) {
 				continue;
 			}
 			LiteralArgumentBuilder<S> newNodeBuilder = literal(name);
 			CommandNode<S> newNode = newNodeBuilder.build();
-			newNode.getChildren().addAll(node.getArguments());
-			root.getChildren().add(newNode);
+			node.getArguments().forEach(newNode::addChild);
+			root.addChild(newNode);
 		}
 	}
 	

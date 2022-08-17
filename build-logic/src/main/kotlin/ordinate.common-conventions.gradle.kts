@@ -1,5 +1,4 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.gradle.kotlin.dsl.`java-library`
 import java.net.URI
 
 plugins {
@@ -54,10 +53,10 @@ tasks {
     }
     register<Jar>("javadocJar") {
         from(tasks["javadoc"])
+        archiveClassifier.set("javadoc")
     }
-    register("buildDocs") {
-        dependsOn(tasks["build"])
-        dependsOn(tasks["javadocJar"])
+    build {
+        dependsOn(tasks["shadowJar"])
     }
 }
 
@@ -68,6 +67,7 @@ publishing {
             artifactId = project.name
             version = System.getenv("BUILD_VERSION") ?: "1.0"
             from(components["java"])
+            artifact(tasks["javadocJar"])
         }
     }
 }

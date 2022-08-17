@@ -2,6 +2,9 @@ package redempt.ordinate.spigot.paper;
 
 import com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource;
 import com.destroystokyo.paper.event.brigadier.CommandRegisteredEvent;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.tree.CommandNode;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -12,8 +15,9 @@ import redempt.ordinate.command.CommandBase;
 import redempt.ordinate.dispatch.CommandRegistrar;
 import redempt.ordinate.spigot.SpigotCommandRegistrar;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
+import static com.mojang.brigadier.builder.LiteralArgumentBuilder.literal;
 
 public class PaperCommandRegistrar<S extends BukkitBrigadierCommandSource> implements CommandRegistrar<CommandSender> {
 
@@ -33,7 +37,7 @@ public class PaperCommandRegistrar<S extends BukkitBrigadierCommandSource> imple
 	public void register(CommandBase<CommandSender> command) {
 		Command cmd = SpigotCommandRegistrar.createSpigotCommand(command);
 		commands.put(cmd, command);
-		
+		Bukkit.getCommandMap().register(manager.getFallbackPrefix(), cmd);
 	}
 	
 	@Override
@@ -52,6 +56,13 @@ public class PaperCommandRegistrar<S extends BukkitBrigadierCommandSource> imple
 			if (Compatibility.supportsRawCommands()) {
 				e.setRawCommand(true);
 			}
+			CommandNode<S> node = manager.getBrigadierConverter().convertToBrigadier(base);
+			LiteralCommandNode<S> literal = e.getLiteral();
+			literal.getChildren().remove(literal.getChild("args"));
+			node.getChildren().forEach(command -> {
+				command.getChildren().forEach(literal::addChild);
+			});
+			e.setLiteral(literal);
 		}
 		
 	}
