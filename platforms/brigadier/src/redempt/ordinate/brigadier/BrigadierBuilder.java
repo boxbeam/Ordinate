@@ -152,9 +152,9 @@ public class BrigadierBuilder<C> {
 	public void build() {
 		boolean[] optionalMap = optionalMap();
 		List<CommandNode<C>> built = buildAll(optionalMap);
+		handleFlags(built, optionalMap);
 		link(built);
 		handleOptionals(built);
-		handleFlags(built, optionalMap);
 		if (built.size() > 0) {
 			node.then(built.get(0));
 		}

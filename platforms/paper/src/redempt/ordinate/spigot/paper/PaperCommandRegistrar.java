@@ -54,7 +54,7 @@ public class PaperCommandRegistrar<S extends BukkitBrigadierCommandSource> imple
 				return;
 			}
 			if (Compatibility.supportsRawCommands()) {
-				e.setRawCommand(true);
+//				e.setRawCommand(true);
 			}
 			CommandNode<S> node = manager.getBrigadierConverter().convertToBrigadier(base);
 			LiteralCommandNode<S> literal = e.getLiteral();

@@ -38,13 +38,19 @@ public class PaperCommandManager<S extends BukkitBrigadierCommandSource> extends
 		if (Compatibility.supportsBrigadier()) {
 			converter = new BrigadierCommandConverter<>();
 			converter.setNodeMutator((cmd, node) -> {
-				registerCompletions((CommandBase<CommandSender>) cmd, node);
+				register((CommandBase<CommandSender>) cmd, node);
 			});
 		}
 		registrar = new PaperCommandRegistrar<>(plugin, this);
 	}
 	
-	private void registerCompletions(CommandBase<CommandSender> base, ArgumentBuilder<S, ?> arg) {
+	private void register(CommandBase<CommandSender> base, ArgumentBuilder<S, ?> arg) {
+		arg.executes(ctx -> {
+			String contents = ctx.getInput().split(" ", 2)[1];
+			CommandSender sender = ctx.getSource().getBukkitSender();
+			base.execute(sender, contents);
+			return 0;
+		});
 		if (!(arg instanceof RequiredArgumentBuilder)) {
 			return;
 		}
