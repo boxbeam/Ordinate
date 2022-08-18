@@ -153,7 +153,7 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 	}
 	
 	@Override
-	public CommandBuilder<CommandSender, ?> builder(String... names) {
+	public SpigotCommandBuilder builder(String... names) {
 		return new SpigotCommandBuilder(names, this, builderOptions);
 	}
 	
