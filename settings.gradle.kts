@@ -14,8 +14,6 @@ listOf(
 listOf(
     "spigot",
     "sponge",
-    "brigadier",
-    "paper",
 ).forEach {
     includeProject(it, "platforms")
 }
