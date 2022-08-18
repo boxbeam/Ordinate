@@ -57,3 +57,7 @@ vararg boolean[]:bools {
 optionalVararg int[]:nums? {
 	hook
 }
+withContext string:arg {
+	context = test
+	hook
+}

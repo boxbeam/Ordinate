@@ -122,4 +122,9 @@ public class OrdinateTest {
 		tester.expectCompletions("vararg true ", "true", "false");
 	}
 	
+	@Test
+	public void contextTest() {
+		tester.expect("withContext abc", "test", "abc");
+	}
+	
 }

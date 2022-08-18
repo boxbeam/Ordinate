@@ -1,6 +1,7 @@
 package redempt.ordinate.test;
 
 import redempt.ordinate.command.CommandBase;
+import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.data.CompletionResult;
 import redempt.ordinate.parser.CommandParser;
@@ -25,6 +26,7 @@ public class CommandTester {
 				output = Arrays.copyOfRange(arr, 1, arr.length);
 			}));
 		}));
+		parser.addContextProviders(ContextProvider.create("test", "", ctx -> "test"));
 		parser.parse(stream).getCommands().forEach(command -> command.getNames().forEach(name -> commands.put(name, command)));
 	}
 	

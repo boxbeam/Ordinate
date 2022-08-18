@@ -30,7 +30,7 @@ public class ContextComponent<T, V> extends CommandComponent<T> implements Named
 
 	@Override
 	public int getMaxParsedObjects() {
-		return 0;
+		return 1;
 	}
 
 	@Override
