@@ -5,11 +5,10 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import redempt.ordinate.builder.BuilderOptions;
-import redempt.ordinate.builder.CommandBuilder;
 import redempt.ordinate.command.ArgType;
-import redempt.ordinate.command.Command;
 import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.creation.ComponentFactory;
 import redempt.ordinate.creation.DefaultComponentFactory;
@@ -46,6 +45,7 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 		props.setProperty("invalidSubcommand", "&cInvalid subcommand: %1");
 		props.setProperty("noPermission", "&cYou do not have permission to do that (%1)");
 		props.setProperty("playerOnly", "&cThis command must be executed as a player");
+		props.setProperty("needItem", "&cYou must be holding an item to do this");
 		props.setProperty("helpFormat", "&e%1 &7%2");
 		return props;
 	}
@@ -181,6 +181,10 @@ public class SpigotCommandManager implements CommandManager<CommandSender> {
 	
 	private void applyContextProviders(CommandParser<CommandSender> parser) {
 		parser.addContextProviders(playerContext("self", messages.getFormatter("playerOnly").format(null).toString(), p -> p));
+		parser.addContextProviders(playerContext("mainHand", messages.getFormatter("needItem").format(null).toString(), p -> {
+			ItemStack item = p.getInventory().getItemInMainHand();
+			return item == null || item.getType() == Material.AIR ? null : item;
+		}));
 	}
 	
 	@Override
