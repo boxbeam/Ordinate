@@ -10,9 +10,9 @@ To learn how to use Ordinate, see the [wiki](https://github.com/Redempt/Ordinate
 To begin, first select your platform. For example, `Ordinate-spigot`.
 
 The currently supported platforms are:
-`Ordinate-spigot`
-`Ordinate-sponge`
-`Ordinate-base`
+- `Ordinate-spigot`
+- `Ordinate-sponge`
+- `Ordinate-base`
 
 Then select your version tag. You can see all available versions [here](https://github.com/Redempt/Ordinate/releases).
 
