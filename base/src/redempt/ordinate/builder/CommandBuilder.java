@@ -114,6 +114,14 @@ public class CommandBuilder<T, B extends CommandBuilder<T, B>> {
 		return (B) this;
 	}
 	
+	public <V> B optionalArg(Class<V> type, String name, V defaultValue) {
+		return optionalArg(type, name, (Function<CommandContext<T>, V>) ctx -> defaultValue);
+	}
+	
+	public <V> B optionalArg(Class<V> type, String name) {
+		return optionalArg(type, name, (Function<CommandContext<T>, V>) null);
+	}
+	
 	/**
 	 * Creates a subcommand for the command
 	 * @param names The names of the subcommand

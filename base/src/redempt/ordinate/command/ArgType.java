@@ -17,9 +17,36 @@ import java.util.stream.Stream;
  * @author Redempt
  */
 public class ArgType<T, V> implements Named {
-
+	
+	/**
+	 * Creates an ArgType from a Map from String to the custom type, which will use it for conversions and use its keys for completions
+	 * @param name The name of the argument type
+	 * @param map The map to create the argument type from
+	 * @return The created ArgType
+	 * @param <T> The sender type
+	 * @param <V> The type the ArgType converts to
+	 */
 	public static <T, V> ArgType<T, V> of(String name, Map<String, V> map) {
 		return new ArgType<T, V>(name, (ctx, val) -> map.get(val)).completer((ctx, val) -> map.keySet());
+	}
+	
+	/**
+	 * Creates and ArgType from an enum class, using its constants for conversions and completions
+	 * @param name The name of the argument type
+	 * @param clazz The enum to create the argument type from
+	 * @return The created ArgType
+	 * @param <T> The sender type
+	 * @param <V> The type the ArgType converts to
+	 */
+	public static <T, V extends Enum<V>> ArgType<T, V> of(String name, Class<V> clazz) {
+		try {
+			Object[] values = (Object[]) clazz.getDeclaredMethod("values").invoke(null);
+			List<String> names = Arrays.stream(values).map(Object::toString).collect(Collectors.toList());
+			ArgType<T, V> argType = new ArgType<>(name, s -> Enum.valueOf(clazz, name));
+			return argType.completer(ctx -> names);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	private String name;
@@ -121,6 +148,17 @@ public class ArgType<T, V> implements Named {
 	public ArgType<T, V> completerStream(Function<CommandContext<T>, Stream<String>> completer) {
 		this.completer = (ctx, str) -> completer.apply(ctx).collect(Collectors.toList());
 		return this;
+	}
+	
+	/**
+	 * Create an ArgType that uses this one, then applies transformer function to get another type
+	 * @param name The name of the new argument type
+	 * @param converter The function to convert to the other type from this one
+	 * @return The created ArgType
+	 * @param <K> The type being converted to
+	 */
+	public <K> ArgType<T, K> map(String name, Function<V, K> converter) {
+		return new ArgType<>(name, (ctx, str) -> converter.apply(convert(ctx, str)));
 	}
 	
 	/**

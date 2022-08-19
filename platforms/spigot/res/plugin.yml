@@ -2,3 +2,4 @@ name: Ordinate
 author: Redempt
 version: 1.0
 main: redempt.ordinate.spigot.Ordinate
+api-version: 1.13
