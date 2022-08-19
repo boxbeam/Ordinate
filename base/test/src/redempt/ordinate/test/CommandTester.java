@@ -26,7 +26,11 @@ public class CommandTester {
 				output = Arrays.copyOfRange(arr, 1, arr.length);
 			}));
 		}));
-		parser.addContextProviders(ContextProvider.create("test", "", ctx -> "test"));
+		parser.addContextProviders(
+				ContextProvider.create("test", "", ctx -> "test"),
+				ContextProvider.asserter("passingAsserter", "", ctx -> true),
+				ContextProvider.asserter("failingAsserter", "", ctx -> false)
+		);
 		parser.parse(stream).getCommands().forEach(command -> command.getNames().forEach(name -> commands.put(name, command)));
 	}
 	

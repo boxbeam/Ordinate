@@ -40,10 +40,13 @@ public class ParserOptions<T> {
 			}
 		}));
 		options.tagProcessors.put("context", TagProcessor.create("context", (cmd, str) -> {
-			String[] split = str.split(" ");
-			for (String name : split) {
-				ContextProvider<T, ?> provider = options.getContextProvider(name);
-				cmd.getPipeline().addComponent(componentFactory.createContext(provider, name));
+			for (String name : str.split(" ")) {
+				cmd.getPipeline().addComponent(componentFactory.createContext(options.getContextProvider(name), name));
+			}
+		}));
+		options.tagProcessors.put("assert", TagProcessor.create("assert", (cmd, str) -> {
+			for (String name : str.split(" ")) {
+				cmd.getPipeline().addComponent(componentFactory.createAssert(options.getContextProvider(name)));
 			}
 		}));
 		options.tagProcessors.put("noHelpSubcommand", TagProcessor.create("noHelpSubcommand", (cmd, str) -> {

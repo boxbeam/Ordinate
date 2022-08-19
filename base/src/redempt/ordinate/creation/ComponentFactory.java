@@ -12,6 +12,7 @@ import redempt.ordinate.component.flag.FlagComponent;
 import redempt.ordinate.constraint.Constraint;
 import redempt.ordinate.constraint.ConstraintComponent;
 import redempt.ordinate.constraint.ConstraintParser;
+import redempt.ordinate.context.AssertComponent;
 import redempt.ordinate.context.ContextComponent;
 import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.dispatch.CommandDispatcher;
@@ -30,6 +31,7 @@ public interface ComponentFactory<T> {
 	public BooleanFlagComponent<T> createBooleanFlag(String... names);
 	public <V> FlagComponent<T, V> createFlag(String[] names, ArgType<T, V> type, ContextProvider<T, V> defaultValue);
 	public <V> ContextComponent<T, V> createContext(ContextProvider<T, V> provider, String name);
+	public AssertComponent<T> createAssert(ContextProvider<T, ?> provider);
 	public DispatchComponent<T> createDispatch(CommandDispatcher<T> dispatcher);
 	public <V> ConstraintComponent<T, V> createConstraint(Constraint<T, V> constraint, Supplier<Integer> index, String name);
 	public SubcommandLookupComponent<T> createLookupComponent(List<Command<T>> commands);

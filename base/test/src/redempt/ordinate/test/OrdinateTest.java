@@ -127,4 +127,10 @@ public class OrdinateTest {
 		tester.expect("withContext abc", "test", "abc");
 	}
 	
+	@Test
+	public void assertTest() {
+		tester.expect("passAssert");
+		tester.expectFailure("failAssert");
+	}
+	
 }

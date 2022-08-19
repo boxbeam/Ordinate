@@ -10,6 +10,7 @@ import redempt.ordinate.constraint.Constraint;
 import redempt.ordinate.constraint.ConstraintComponent;
 import redempt.ordinate.constraint.ConstraintParser;
 import redempt.ordinate.constraint.NumberConstraint;
+import redempt.ordinate.context.AssertComponent;
 import redempt.ordinate.context.ContextComponent;
 import redempt.ordinate.context.ContextProvider;
 import redempt.ordinate.dispatch.CommandDispatcher;
@@ -73,7 +74,12 @@ public class DefaultComponentFactory<T> implements ComponentFactory<T> {
 	public <V> ContextComponent<T, V> createContext(ContextProvider<T, V> provider, String name) {
 		return new ContextComponent<>(name, provider, getMessage("contextError"));
 	}
-
+	
+	@Override
+	public AssertComponent<T> createAssert(ContextProvider<T, ?> provider) {
+		return new AssertComponent<>(provider, getMessage("contextError"));
+	}
+	
 	@Override
 	public DispatchComponent<T> createDispatch(CommandDispatcher<T> dispatcher) {
 		return new DispatchComponent<>(dispatcher, getMessage("tooManyArguments"));

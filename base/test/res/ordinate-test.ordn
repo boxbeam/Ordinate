@@ -61,3 +61,11 @@ withContext string:arg {
 	context = test
 	hook
 }
+passAssert {
+	assert = passingAsserter
+	hook
+}
+failAssert {
+	assert = failingAsserter
+	hook
+}

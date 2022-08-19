@@ -4,6 +4,7 @@ import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.Named;
 
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Extracts values from a command's execution context so they can be passed as arguments to the final dispatcher
@@ -37,6 +38,25 @@ public interface ContextProvider<T, V> extends Named {
 			@Override
 			public String getError() {
 				return error;
+			}
+		};
+	}
+	
+	public static <T> ContextProvider<T, Boolean> asserter(String name, String error, Predicate<CommandContext<T>> asserter) {
+		return new ContextProvider<T, Boolean>() {
+			@Override
+			public Boolean provide(CommandContext<T> context) {
+				return asserter.test(context) ? true : null;
+			}
+			
+			@Override
+			public String getError() {
+				return error;
+			}
+			
+			@Override
+			public String getName() {
+				return name;
 			}
 		};
 	}
