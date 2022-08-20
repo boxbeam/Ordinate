@@ -42,6 +42,14 @@ public interface ContextProvider<T, V> extends Named {
 		};
 	}
 	
+	/**
+	 * Create an a ContextProvider intended for use in assertions
+	 * @param name The name of the context provider
+	 * @param error The error to be shown if the assertion fails
+	 * @param asserter The function to check the condition
+	 * @return The created context provider
+	 * @param <T> The sender type
+	 */
 	public static <T> ContextProvider<T, Boolean> asserter(String name, String error, Predicate<CommandContext<T>> asserter) {
 		return new ContextProvider<T, Boolean>() {
 			@Override
