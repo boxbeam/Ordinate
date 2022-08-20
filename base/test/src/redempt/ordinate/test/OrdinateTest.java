@@ -133,4 +133,11 @@ public class OrdinateTest {
 		tester.expectFailure("failAssert");
 	}
 	
+	@Test
+	public void multiOptionalTest() {
+		tester.expect("multiOptional", false, 0);
+		tester.expect("multiOptional true", true, 0);
+		tester.expect("multiOptional 10", false, 10);
+	}
+	
 }

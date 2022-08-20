@@ -35,25 +35,30 @@ public class OptionalArgumentComponent<T, V> extends ArgumentComponent<T, V> {
 		int minWidth = context.getCommand().getPipeline().getMinArgWidth();
 		int providedArgs = context.initialArgCount();
 		if (!context.hasArg() || providedArgs <= minWidth) {
-			if (defaultValue == null) {
-				return success();
-			}
-			V value = defaultValue.provide(context);
-			if (value == null) {
-				return failure(contextError.format(context.sender(), defaultValue.getError())).complete();
-			}
-			context.setParsed(getIndex(), value);
-			context.provide(value);
-			return success();
+			return handleDefault(context);
 		}
 		String value = context.peekArg().getValue();
 		V parsed = getType().convert(context, value);
 		if (parsed == null) {
-			return failure(getInvalidError().format(context.sender(), getName(), value)).complete();
+			CommandResult<T> defaultResult = handleDefault(context);
+			return defaultResult.isSuccess() ? failure(getInvalidError().format(context.sender(), getName(), value)) : defaultResult;
 		}
 		context.pollArg();
 		context.setParsed(getIndex(), parsed);
 		context.provide(parsed);
+		return success();
+	}
+	
+	private CommandResult<T> handleDefault(CommandContext<T> context) {
+		if (defaultValue == null) {
+			return success();
+		}
+		V value = defaultValue.provide(context);
+		if (value == null) {
+			return failure(contextError.format(context.sender(), defaultValue.getError())).complete();
+		}
+		context.setParsed(getIndex(), value);
+		context.provide(value);
 		return success();
 	}
 

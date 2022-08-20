@@ -69,3 +69,6 @@ failAssert {
 	assert = failingAsserter
 	hook
 }
+multiOptional boolean:arg1?(false) int:arg2?(0) {
+	hook
+}
