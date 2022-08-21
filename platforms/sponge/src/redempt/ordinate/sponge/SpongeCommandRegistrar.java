@@ -6,7 +6,6 @@ import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
-import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.command.CommandCompletion;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.exception.CommandException;
@@ -20,14 +19,13 @@ import redempt.ordinate.help.HelpPage;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class SpongeCommandRegistrar implements CommandRegistrar<Subject> {
+public class SpongeCommandRegistrar implements CommandRegistrar<CommandCause> {
 
-    public static Command.Raw createSpongeCommand(CommandBase<Subject> command) {
-        List<String> aliases = command.getNames();
+    public static Command.Raw createSpongeCommand(CommandBase<CommandCause> command) {
 
         return new Command.Raw() {
 
-            final HelpPage<Subject> help = command.getHelpPage();
+            final HelpPage<CommandCause> help = command.getHelpPage();
 
             @Override
             public CommandResult process(CommandCause cause, ArgumentReader.Mutable arguments) throws CommandException {
@@ -87,23 +85,21 @@ public class SpongeCommandRegistrar implements CommandRegistrar<Subject> {
         this.plugin = plugin;
     }
 
-    private final Map<CommandBase<Subject>, Command.Raw> commandMap = new HashMap<>();
+    private final Map<CommandBase<CommandCause>, Command.Raw> commandMap = new HashMap<>();
 
     @Override
-    public void register(CommandBase<Subject> command) {
+    public void register(CommandBase<CommandCause> command) {
         Command.Raw raw = createSpongeCommand(command);
         commandMap.put(command, raw);
     }
 
     @Listener(order = Order.LAST)
     public void registerCommandEvent(RegisterCommandEvent<Command.Raw> event) {
-        commandMap.forEach((cmd, raw) -> {
-            event.register(plugin, raw, cmd.getName(), cmd.getNames().toArray(new String[0]));
-        });
+        commandMap.forEach((cmd, raw) -> event.register(plugin, raw, cmd.getName(), cmd.getNames().toArray(new String[0])));
     }
 
     @Override
-    public void unregister(CommandBase<Subject> command) throws UnsupportedOperationException {
+    public void unregister(CommandBase<CommandCause> command) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Unable to unregister commands");
     }
 }

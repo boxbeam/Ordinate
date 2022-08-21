@@ -2,17 +2,16 @@ package redempt.ordinate.sponge;
 
 import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
-import org.spongepowered.api.service.permission.Subject;
 import redempt.ordinate.component.abstracts.CommandComponent;
 import redempt.ordinate.data.CommandContext;
 import redempt.ordinate.data.CommandResult;
 import redempt.ordinate.message.MessageFormatter;
 
-public class PlayerOnlyComponent extends CommandComponent<Subject> {
+public class PlayerOnlyComponent extends CommandComponent<CommandCause> {
 
-    private MessageFormatter<Subject> error;
+    private final MessageFormatter<CommandCause> error;
 
-    public PlayerOnlyComponent(MessageFormatter<Subject> error) { this.error = error; }
+    public PlayerOnlyComponent(MessageFormatter<CommandCause> error) { this.error = error; }
 
 
     @Override
@@ -31,7 +30,7 @@ public class PlayerOnlyComponent extends CommandComponent<Subject> {
     }
 
     @Override
-    public CommandResult<Subject> parse(CommandContext<Subject> context) {
+    public CommandResult<CommandCause> parse(CommandContext<CommandCause> context) {
         if (context.sender() instanceof ServerPlayer) {
             return success();
         }

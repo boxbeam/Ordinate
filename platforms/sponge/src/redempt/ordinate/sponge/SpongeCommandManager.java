@@ -1,17 +1,12 @@
 package redempt.ordinate.sponge;
 
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import org.spongepowered.api.ResourceKey;
-import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.item.ItemType;
-import org.spongepowered.api.registry.RegistryType;
 import org.spongepowered.api.registry.RegistryTypes;
-import org.spongepowered.api.service.permission.Subject;
-import org.spongepowered.api.world.WorldType;
 import org.spongepowered.plugin.PluginContainer;
 import redempt.ordinate.builder.BuilderOptions;
 import redempt.ordinate.builder.CommandBuilder;
@@ -36,12 +31,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Function;
 
-public class SpongeCommandManager implements CommandManager<Subject> {
+public class SpongeCommandManager implements CommandManager<CommandCause> {
 
     public static Properties getDefaultMessages() {
         Properties props = new Properties();
@@ -59,7 +52,7 @@ public class SpongeCommandManager implements CommandManager<Subject> {
         return props;
     }
 
-    public static <V> ContextProvider<Subject, V> playerContext(String name, String error, Function<ServerPlayer, V> provider) {
+    public static <V> ContextProvider<CommandCause, V> playerContext(String name, String error, Function<ServerPlayer, V> provider) {
         return ContextProvider.create(name, error, ctx -> {
             if (!(ctx.sender() instanceof ServerPlayer)) {
                 return null;
@@ -69,7 +62,7 @@ public class SpongeCommandManager implements CommandManager<Subject> {
     }
 
     public static SpongeCommandManager getInstance(PluginContainer plugin, String fallbackPrefix, Properties messages) {
-        MessageProvider<Subject> messageProvider = new PropertiesMessageProvider<>(messages, (subject, s) -> getAudience(subject).sendMessage(Component.text(s)), FormatUtils::color);
+        MessageProvider<CommandCause> messageProvider = new PropertiesMessageProvider<>(messages, (cause, s) -> cause.audience().sendMessage(Component.text(s)), FormatUtils::color);
         return new SpongeCommandManager(plugin, fallbackPrefix, messageProvider);
     }
 
@@ -87,27 +80,21 @@ public class SpongeCommandManager implements CommandManager<Subject> {
         return getInstance(plugin, name.toLowerCase(), getDefaultMessages());
     }
 
-    private static Audience getAudience(Subject subject) {
-        return (Audience) subject.contextCause().root();
-    }
+    private final CommandRegistrar<CommandCause> registrar;
+    private ComponentFactory<CommandCause> componentFactory;
+    private MessageProvider<CommandCause> messages;
+    private HelpDisplayer<CommandCause> helpDisplayer;
+    private final BuilderOptions<CommandCause> builderOptions = BuilderOptions.getDefaults();
+    private final PluginContainer plugin;
 
-    private String fallbackPrefix;
-    private CommandRegistrar<Subject> registrar;
-    private ComponentFactory<Subject> componentFactory;
-    private MessageProvider<Subject> messages;
-    private HelpDisplayer<Subject> helpDisplayer;
-    private BuilderOptions<Subject> builderOptions = BuilderOptions.getDefaults();
-    private PluginContainer plugin;
-
-    protected SpongeCommandManager(PluginContainer plugin, String fallbackPrefix, MessageProvider<Subject> messages) {
-        this.fallbackPrefix = fallbackPrefix;
+    protected SpongeCommandManager(PluginContainer plugin, String fallbackPrefix, MessageProvider<CommandCause> messages) {
         this.messages = messages;
         registrar = new SpongeCommandRegistrar(plugin, fallbackPrefix);
         componentFactory = new DefaultComponentFactory<>(messages);
         helpDisplayer = new SpongeHelpDisplayer(getCommandPrefix(), messages);
         this.plugin = plugin;
         applyBuilderTypes();
-        Sponge.eventManager().registerListeners(plugin, SpongeCommandRegistrar.class);
+        Sponge.eventManager().registerListeners(plugin, registrar);
     }
 
     public SpongeCommandManager loadMessages() {
@@ -115,7 +102,7 @@ public class SpongeCommandManager implements CommandManager<Subject> {
         return loadMessages(Paths.get(uri));
     }
 
-    public MessageProvider<Subject> getMessages() {
+    public MessageProvider<CommandCause> getMessages() {
         return messages;
     }
 
@@ -134,38 +121,38 @@ public class SpongeCommandManager implements CommandManager<Subject> {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        messages = new PropertiesMessageProvider<>(loaded, (subject, s) -> getAudience(subject).sendMessage(Component.text(s)), FormatUtils::color);
+        messages = new PropertiesMessageProvider<>(loaded, (cause, s) -> cause.audience().sendMessage(Component.text(s)), FormatUtils::color);
         componentFactory = new DefaultComponentFactory<>(messages);
         helpDisplayer = new SpongeHelpDisplayer(getCommandPrefix(), messages);
         return this;
     }
 
     @Override
-    public CommandRegistrar<Subject> getRegistrar() {
+    public CommandRegistrar<CommandCause> getRegistrar() {
         return registrar;
     }
 
     @Override
-    public HelpDisplayer<Subject> getHelpDisplayer() {
+    public HelpDisplayer<CommandCause> getHelpDisplayer() {
         return helpDisplayer;
     }
 
     @Override
-    public ComponentFactory<Subject> getComponentFactory() {
+    public ComponentFactory<CommandCause> getComponentFactory() {
         return componentFactory;
     }
 
     @Override
-    public CommandParser<Subject> getParser() {
-        ParserOptions<Subject> parserOptions = ParserOptions.getDefaults(getComponentFactory());
-        CommandParser<Subject> parser = new CommandParser<>(parserOptions, this);
+    public CommandParser<CommandCause> getParser() {
+        ParserOptions<CommandCause> parserOptions = ParserOptions.getDefaults(getComponentFactory());
+        CommandParser<CommandCause> parser = new CommandParser<>(parserOptions, this);
         applyTagProcessors(parser);
         applyArgTypes(parser);
         applyContextProviders(parser);
         return parser;
     }
 
-    private void applyTagProcessors(CommandParser<Subject> parser) {
+    private void applyTagProcessors(CommandParser<CommandCause> parser) {
         parser.addTagProcessors(
                 TagProcessor.create("permission", (command, arg) -> {
                     command.getPipeline().addComponent(new PermissionComponent(arg, messages.getFormatter("noPermission")));
@@ -186,7 +173,7 @@ public class SpongeCommandManager implements CommandManager<Subject> {
     }
 
 
-    private void applyArgTypes(CommandParser<Subject> parser) {
+    private void applyArgTypes(CommandParser<CommandCause> parser) {
         parser.addArgTypes(new ArgType<>("player", Sponge.server()::player).completerStream((ctx, val) -> Sponge.server().onlinePlayers().stream().map(ServerPlayer::name)));
 
         parser.addArgTypes(new ArgType<>("world", t -> {
@@ -200,12 +187,12 @@ public class SpongeCommandManager implements CommandManager<Subject> {
         }).completerStream((ctx, val) -> Sponge.game().registry(RegistryTypes.ITEM_TYPE).streamEntries().map(reg -> reg.key().formatted())));
     }
 
-    private void applyContextProviders(CommandParser<Subject> parser) {
+    private void applyContextProviders(CommandParser<CommandCause> parser) {
         parser.addContextProviders(playerContext("self", messages.getFormatter("playerOnly").format(null).toString(), p -> p));
     }
 
     @Override
-    public CommandBuilder<Subject, ?> builder(String... names) {
+    public CommandBuilder<CommandCause, ?> builder(String... names) {
         return new SpongeCommandBuilder(names, this, builderOptions);
     }
 

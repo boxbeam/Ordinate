@@ -1,24 +1,24 @@
 package redempt.ordinate.sponge;
 
-import org.spongepowered.api.service.permission.Subject;
+import org.spongepowered.api.command.CommandCause;
 import redempt.ordinate.help.HelpDisplayer;
 import redempt.ordinate.help.HelpEntry;
 import redempt.ordinate.message.MessageFormatter;
 import redempt.ordinate.message.MessageProvider;
 
-public class SpongeHelpDisplayer implements HelpDisplayer<Subject> {
+public class SpongeHelpDisplayer implements HelpDisplayer<CommandCause> {
 
-    private MessageFormatter<Subject> helpMessage;
+    private final MessageFormatter<CommandCause> helpMessage;
 
-    private String commandPrefix;
+    private final String commandPrefix;
 
-    public SpongeHelpDisplayer(String commandPrefix, MessageProvider<Subject> messages) {
+    public SpongeHelpDisplayer(String commandPrefix, MessageProvider<CommandCause> messages) {
         helpMessage = messages.getFormatter("helpFormat");
         this.commandPrefix = commandPrefix;
     }
 
     @Override
-    public void display(Subject cause, HelpEntry<Subject> entry) {
+    public void display(CommandCause cause, HelpEntry<CommandCause> entry) {
         if (!entry.isVisibleTo(cause)) {
             return;
         }
