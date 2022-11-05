@@ -1,8 +1,8 @@
-root ::= break? sep? ((comment | command) (break sep? | <eof>))*
+root ::= break? ((comment | command) (break | <eof>))*
 word ::= [^ \t\n(){}:?*,=.\[\]<>]+
 sep ::= [ \t]+
 newLine ::= "\n"
-break ::= (sep? newLine)+
+break ::= (sep? newLine)+ sep?
 comment ::= "//" [^\n]*
 
 flag ::= (type constraint? ":")? "-" name ("," name)* defaultValue?
@@ -18,9 +18,9 @@ arg ::= type constraint? (consuming | vararg)? ":" name (optional defaultValue?)
 param ::= flag | arg
 paramList ::= (sep param)*
 
-tag ::= word (sep? (("=" sep? (!"//" [^{}\n])+) | sep? ![^\n])) sep?
-entry ::= sep? (tag | command | comment) comment? break sep?
+tag ::= word sep? ("=" sep? (!"//" [^{}\n])+)? sep?
+entry ::= sep? (command | tag | comment) comment? break
 
 cmdName ::= word ("," word)*
 command ::= cmdName paramList break? sep? commandBody
-commandBody ::= "{" comment? break? entry* break? sep? "}"
+commandBody ::= "{" comment? break? entry* break? "}"
