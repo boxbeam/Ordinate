@@ -19,7 +19,7 @@ param ::= flag | arg
 paramList ::= (sep param)*
 
 tag ::= word sep? ("=" sep? (!"//" [^{}\n])+)? sep?
-entry ::= sep? (command | tag | comment) comment? break
+entry ::= (command | tag | comment) comment? break
 
 cmdName ::= word ("," word)*
 command ::= cmdName paramList break? sep? commandBody
